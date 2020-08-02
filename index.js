@@ -663,13 +663,13 @@ instance.prototype.init_presets = function () {
 		},
 		{
 			category: 'Tally',
-			label: 'Tally colour',
+			label: 'GREEN',
 			bank: {
 				style: 'text',
-				text: 'Green',
+				text: 'GREEN',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0),
+				bgcolor: self.rgb(0, 255, 0),
 			},
 			actions: [
 				{
@@ -682,13 +682,13 @@ instance.prototype.init_presets = function () {
 		},
 		{
 			category: 'Tally',
-			label: 'Tally colour',
+			label: 'RED',
 			bank: {
 				style: 'text',
-				text: 'Red',
+				text: 'RED',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0),
+				bgcolor: self.rgb(255, 0, 0),
 			},
 			actions: [
 				{
@@ -701,10 +701,10 @@ instance.prototype.init_presets = function () {
 		},
 		{
 			category: 'Tally',
-			label: 'Tally colour',
+			label: 'OFF',
 			bank: {
 				style: 'text',
-				text: 'Off',
+				text: 'OFF',
 				size: '18',
 				color: '16777215',
 				bgcolor: self.rgb(0, 0, 0),
@@ -788,8 +788,9 @@ instance.prototype.init_presets = function () {
 			category: 'OSD',
 			label: 'UP',
 			bank: {
-				style: 'text',
-				text: 'UP',
+				style: 'png',
+				text: '',
+				png64: image_up,
 				size: '18',
 				color: '16777215',
 				bgcolor: self.rgb(0, 0, 0),
@@ -815,8 +816,9 @@ instance.prototype.init_presets = function () {
 			category: 'OSD',
 			label: 'DOWN',
 			bank: {
-				style: 'text',
-				text: 'DOWN',
+				style: 'png',
+				text: '',
+				png64: image_down,
 				size: '18',
 				color: '16777215',
 				bgcolor: self.rgb(0, 0, 0),
@@ -842,8 +844,9 @@ instance.prototype.init_presets = function () {
 			category: 'OSD',
 			label: 'LEFT',
 			bank: {
-				style: 'text',
-				text: 'LEFT',
+				style: 'png',
+				text: '',
+				png64: image_left,
 				size: '18',
 				color: '16777215',
 				bgcolor: self.rgb(0, 0, 0),
@@ -869,8 +872,9 @@ instance.prototype.init_presets = function () {
 			category: 'OSD',
 			label: 'RIGHT',
 			bank: {
-				style: 'text',
-				text: 'RIGHT',
+				style: 'png',
+				text: '',
+				png64: image_right,
 				size: '18',
 				color: '16777215',
 				bgcolor: self.rgb(0, 0, 0),
