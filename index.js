@@ -897,15 +897,7 @@ instance.prototype.init_presets = function () {
 			]
 		},
 	];
-	// { id: '0', label: 'OSD ON' },
-	// { id: '1', label: 'OSD OFF' },
-	// { id: '2', label: 'ENTER' },
-	// { id: '3', label: 'BACK' },
-	// { id: '4', label: 'UP' },
-	// { id: '5', label: 'DOWN' },
-	// { id: '6', label: 'LEFT' },
-	// { id: '7', label: 'RIGHT' },
-	// { id: '8', label: 'STOP' },
+
 	var save;
 	for (save = 0; save < 63; save++) {
 		presets.push({
