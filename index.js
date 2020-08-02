@@ -7,7 +7,6 @@ var ok_pkt = Buffer.from([0x00, 0x08, 0x81, 0x09, 0x7e, 0x7e, 0x70, 0xff]);
 
 var request_state;
 
-//Iris and Shutter direct setting need work to match Datavideos format
 
 var IRIS = [
 	{ id: '11', label: 'F1.8' },
@@ -791,6 +790,7 @@ instance.prototype.init_presets = function () {
 				style: 'png',
 				text: '',
 				png64: image_up,
+				pngalignment: 'center:center',
 				size: '18',
 				color: '16777215',
 				bgcolor: self.rgb(0, 0, 0),
@@ -819,6 +819,7 @@ instance.prototype.init_presets = function () {
 				style: 'png',
 				text: '',
 				png64: image_down,
+				pngalignment: 'center:center',
 				size: '18',
 				color: '16777215',
 				bgcolor: self.rgb(0, 0, 0),
@@ -847,6 +848,7 @@ instance.prototype.init_presets = function () {
 				style: 'png',
 				text: '',
 				png64: image_left,
+				pngalignment: 'center:center',
 				size: '18',
 				color: '16777215',
 				bgcolor: self.rgb(0, 0, 0),
@@ -875,6 +877,7 @@ instance.prototype.init_presets = function () {
 				style: 'png',
 				text: '',
 				png64: image_right,
+				pngalignment: 'center:center',
 				size: '18',
 				color: '16777215',
 				bgcolor: self.rgb(0, 0, 0),
