@@ -1,0 +1,19 @@
+{
+	"name": "datavideo-visca",
+	"version": "1.0.0",
+	"api_version": "1.0.0",
+	"keywords": [
+		"Protocol",
+		"Camera" ],
+	"manufacturer": "Datavideo",
+	"product": "VISCA",
+	"shortname": "dv-visca",
+	"description": "Module to control PTZ cameras with Datavideo Visca protocol over IP",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	
+	"author": "Rose O, Håkon Nessjøen <haakon@bitfocus.io>",
+	"license": "MIT"
+}
