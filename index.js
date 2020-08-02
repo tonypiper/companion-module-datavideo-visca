@@ -4,6 +4,7 @@ var debug;
 var log;
 
 var ok_pkt = Buffer.from([0x00, 0x08, 0x81, 0x09, 0x7e, 0x7e, 0x70, 0xff]);
+ 
 var request_state;
 
 //Iris and Shutter direct setting need work to match Datavideos format
@@ -123,6 +124,9 @@ instance.prototype.init_tcp = function () {
 		});
 
 		self.tcp.on('connect', () => {
+			//Set slower zoom speed
+			//var connect_packet = '\x81\x01\x7e\x01\x0b\x7e\x02\xff';
+			//self.sendVISCACommand(connect_packet);
 			if (self.config.feedback) {
 				request_state = setInterval(function () { self.requestState(); }, 1000);
 			}
@@ -656,7 +660,64 @@ instance.prototype.init_presets = function () {
 					action: 'shutD',
 				}
 			]
-		}
+		},
+		{
+			category: 'Tally',
+			label: 'Tally colour',
+			bank: {
+				style: 'text',
+				text: 'Green',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0),
+			},
+			actions: [
+				{
+					action: 'tally',
+					options: {
+						val: 1,
+					}
+				}
+			],
+		},
+		{
+			category: 'Tally',
+			label: 'Tally colour',
+			bank: {
+				style: 'text',
+				text: 'Red',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0),
+			},
+			actions: [
+				{
+					action: 'tally',
+					options: {
+						val: 0,
+					}
+				}
+			],
+		},
+		{
+			category: 'Tally',
+			label: 'Tally colour',
+			bank: {
+				style: 'text',
+				text: 'Off',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0),
+			},
+			actions: [
+				{
+					action: 'tally',
+					options: {
+						val: 2,
+					}
+				}
+			],
+		},
 	];
 
 	var save;
@@ -848,6 +909,7 @@ instance.prototype.actions = function (system) {
 					type: 'dropdown',
 					label: 'Colour setting',
 					id: 'val',
+					default: 0,
 					choices: [
 						{ id: '0', label: 'Red' },
 						{ id: '1', label: 'Green' },
@@ -1113,10 +1175,10 @@ instance.prototype.action = function (action) {
 
 		case 'tally':
 			if (opt.val == 0) {
-				cmd = '\x81\x01\x7E\x01\x0A\x00\x03\x02\xFF';
+				cmd = '\x81\x01\x7E\x01\x0A\x00\x02\x03\xFF';
 			}
 			if (opt.val == 1) {
-				cmd = '\x81\x01\x7E\x01\x0A\x00\x02\x03\xFF';
+				cmd = '\x81\x01\x7E\x01\x0A\x00\x03\x02\xFF';
 			}
 			if (opt.val == 2) {
 				cmd = '\x81\x01\x7E\x01\x0A\x00\x03\x03\xFF';
