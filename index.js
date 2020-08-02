@@ -4,7 +4,7 @@ var debug;
 var log;
 
 var ok_pkt = Buffer.from([0x00, 0x08, 0x81, 0x09, 0x7e, 0x7e, 0x70, 0xff]);
- 
+
 var request_state;
 
 //Iris and Shutter direct setting need work to match Datavideos format
@@ -119,7 +119,7 @@ instance.prototype.init_tcp = function () {
 		self.tcp.on('data', function (data) {
 			//Ignore the ok response
 			if (!data.equals(ok_pkt)) {
-				console.log("Data from Datavideo VISCA: ", data);
+				debug("Data from Datavideo VISCA: ", data);
 			}
 		});
 
@@ -203,7 +203,7 @@ instance.prototype.config_fields = function () {
 		{
 			type: 'checkbox',
 			id: 'feedback',
-			label: 'Feedback',
+			label: 'Full Status Inquiry',
 			default: '0',
 		},
 	]
@@ -212,7 +212,7 @@ instance.prototype.config_fields = function () {
 // When module gets deleted
 instance.prototype.destroy = function () {
 	var self = this;
-	
+
 	clearInterval(request_state);
 
 	if (self.tcp !== undefined) {
@@ -718,8 +718,190 @@ instance.prototype.init_presets = function () {
 				}
 			],
 		},
+		{
+			category: 'OSD',
+			label: 'OSD Menu',
+			bank: {
+				style: 'text',
+				text: 'OSD',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0),
+				latch: true,
+			},
+			actions: [
+				{
+					action: 'osd',
+					options: {
+						val: 0,
+					}
+				}
+			],
+			release_actions: [
+				{
+					action: 'osd',
+					options: {
+						val: 1,
+					}
+				}
+			]
+		},
+		{
+			category: 'OSD',
+			label: 'ENTER',
+			bank: {
+				style: 'text',
+				text: 'ENTER',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0),
+			},
+			actions: [
+				{
+					action: 'osd',
+					options: {
+						val: 2,
+					}
+				}
+			],
+		},
+		{
+			category: 'OSD',
+			label: 'BACK',
+			bank: {
+				style: 'text',
+				text: 'BACK',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0),
+			},
+			actions: [
+				{
+					action: 'osd',
+					options: {
+						val: 3,
+					}
+				}
+			],
+		},
+		{
+			category: 'OSD',
+			label: 'UP',
+			bank: {
+				style: 'text',
+				text: 'UP',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0),
+			},
+			actions: [
+				{
+					action: 'osd',
+					options: {
+						val: 4,
+					}
+				}
+			],
+			release_actions: [
+				{
+					action: 'osd',
+					options: {
+						val: 8,
+					}
+				}
+			]
+		},
+		{
+			category: 'OSD',
+			label: 'DOWN',
+			bank: {
+				style: 'text',
+				text: 'DOWN',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0),
+			},
+			actions: [
+				{
+					action: 'osd',
+					options: {
+						val: 5,
+					}
+				}
+			],
+			release_actions: [
+				{
+					action: 'osd',
+					options: {
+						val: 8,
+					}
+				}
+			]
+		},
+		{
+			category: 'OSD',
+			label: 'LEFT',
+			bank: {
+				style: 'text',
+				text: 'LEFT',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0),
+			},
+			actions: [
+				{
+					action: 'osd',
+					options: {
+						val: 6,
+					}
+				}
+			],
+			release_actions: [
+				{
+					action: 'osd',
+					options: {
+						val: 8,
+					}
+				}
+			]
+		},
+		{
+			category: 'OSD',
+			label: 'RIGHT',
+			bank: {
+				style: 'text',
+				text: 'RIGHT',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0),
+			},
+			actions: [
+				{
+					action: 'osd',
+					options: {
+						val: 7,
+					}
+				}
+			],
+			release_actions: [
+				{
+					action: 'osd',
+					options: {
+						val: 8,
+					}
+				}
+			]
+		},
 	];
-
+	// { id: '0', label: 'OSD ON' },
+	// { id: '1', label: 'OSD OFF' },
+	// { id: '2', label: 'ENTER' },
+	// { id: '3', label: 'BACK' },
+	// { id: '4', label: 'UP' },
+	// { id: '5', label: 'DOWN' },
+	// { id: '6', label: 'LEFT' },
+	// { id: '7', label: 'RIGHT' },
+	// { id: '8', label: 'STOP' },
 	var save;
 	for (save = 0; save < 63; save++) {
 		presets.push({
@@ -934,7 +1116,29 @@ instance.prototype.actions = function (system) {
 					choices: SPEED
 				}
 			]
-		}
+		},
+		'osd': {
+			label: 'OSD Controls',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'OSD button',
+					id: 'val',
+					default: 0,
+					choices: [
+						{ id: '0', label: 'OSD ON' },
+						{ id: '1', label: 'OSD OFF' },
+						{ id: '2', label: 'ENTER' },
+						{ id: '3', label: 'BACK' },
+						{ id: '4', label: 'UP' },
+						{ id: '5', label: 'DOWN' },
+						{ id: '6', label: 'LEFT' },
+						{ id: '7', label: 'RIGHT' },
+						{ id: '8', label: 'STOP' },
+					]
+				}
+			]
+		},
 	});
 }
 
@@ -962,7 +1166,7 @@ instance.prototype.sendVISCACommand = function (str) {
 
 	if (self.tcp !== undefined) {
 		var buf = Buffer.from(str, 'binary');
-		console.log(self.prependPacketSize(buf));
+		debug(self.prependPacketSize(buf));
 		self.tcp.send(self.prependPacketSize(buf));
 	}
 };
@@ -1182,6 +1386,48 @@ instance.prototype.action = function (action) {
 			}
 			if (opt.val == 2) {
 				cmd = '\x81\x01\x7E\x01\x0A\x00\x03\x03\xFF';
+			}
+			self.sendVISCACommand(cmd);
+			break;
+
+		case 'osd':
+			switch (opt.val) {
+				case 0:
+					//OSD ON
+					cmd = '\x81\x01\x06\x06\x02\xff';
+					break;
+				case 1:
+					//OSD OFF
+					cmd = '\x81\x01\x06\x06\x03\xff';
+					break;
+				case 2:
+					//ENTER
+					cmd = '\x81\x01\x7e\x01\x02\x00\x01\xff';
+					break;
+				case 3:
+					//BACK
+					cmd = '\x81\x01\x06\x01\x09\x09\x01\x03\xff';
+					break;
+				case 4:
+					//UP
+					cmd = '\x81\x01\x06\x01\x0a\x0a\x03\x01\xff';
+					break;
+				case 5:
+					//DOWN
+					cmd = '\x81\x01\x06\x01\x0a\x0a\x03\x02\xff';
+					break;
+				case 6:
+					//LEFT
+					cmd = '\x81\x01\x06\x01\x0a\x0a\x01\x03\xff';
+					break;
+				case 7:
+					//RIGHT
+					cmd = '\x81\x01\x06\x01\x0a\x0a\x02\x03\xff';
+					break;
+				case 8:
+					//RELEASE/STOP
+					cmd = '\x81\x01\x06\x01\x01\x01\x03\x03\xff';
+					break;
 			}
 			self.sendVISCACommand(cmd);
 			break;
