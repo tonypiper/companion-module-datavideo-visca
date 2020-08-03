@@ -76,6 +76,16 @@ var SPEED = [
 	{ id: '01', label: 'Speed 01 (Slow)' }
 ];
 
+var CHOICE_ZOOMSPEED = [
+	{ id: '07', label: 'Speed 07 (Fast)' },
+	{ id: '06', label: 'Speed 06' },
+	{ id: '05', label: 'Speed 05' },
+	{ id: '04', label: 'Speed 04' },
+	{ id: '03', label: 'Speed 03' },
+	{ id: '02', label: 'Speed 02' },
+	{ id: '01', label: 'Speed 01' },
+	{ id: '00', label: 'Speed 00 (Slow)' }
+];
 
 function hex2str(hexdata) {
 	var result = '';
@@ -147,12 +157,36 @@ instance.prototype.init = function () {
 	self.ptSpeed = '0C';
 	self.ptSpeedIndex = 12;
 
+	self.zoomSpeed = '07';
+	self.zoomSpeedIndex = 7;
+
 	self.status(self.STATUS_UNKNOWN);
 
 	self.init_tcp();
 	self.actions(); // export actions
 	self.init_presets();
+	self.setVariableDefinitions(self.getVariables());
+
+	self.setVariable('pt_speed', self.ptSpeedIndex);
+	self.setVariable('zoom_speed', self.zoomSpeedIndex);
+
 };
+
+instance.prototype.getVariables = function () {
+
+	var variables = [
+		{
+			label: 'Pan/Tilt Speed',
+			name: 'pt_speed'
+		},
+		{
+			label: 'Zoom Speed',
+			name: 'zoom_speed'
+		},
+	];
+
+		return variables;
+}
 
 instance.prototype.updateConfig = function (config) {
 	var self = this;
@@ -495,6 +529,38 @@ instance.prototype.init_presets = function () {
 			release_actions: [
 				{
 					action: 'zoomS',
+				}
+			]
+		},
+		{
+			category: 'Lens',
+			label: 'Speed Up',
+			bank: {
+				style: 'text',
+				text: 'Z SPEED\\nUP',
+				size: '14',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0)
+			},
+			actions: [
+				{
+					action: 'zoomSpeedU',
+				}
+			]
+		},
+		{
+			category: 'Lens',
+			label: 'Speed Down',
+			bank: {
+				style: 'text',
+				text: 'Z SPEED\\nDOWN',
+				size: '14',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0)
+			},
+			actions: [
+				{
+					action: 'zoomSpeedD',
 				}
 			]
 		},
@@ -992,6 +1058,58 @@ instance.prototype.actions = function (system) {
 		'zoomI': { label: 'Zoom In' },
 		'zoomO': { label: 'Zoom Out' },
 		'zoomS': { label: 'Zoom Stop' },
+		'zoomSpeedS': {
+			label: 'Zoom Speed',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'speed setting',
+					id: 'speed',
+					choices: CHOICE_ZOOMSPEED
+				}
+			]
+		},
+		'zoomSpeedU': { label: 'Zoom Speed Up' },
+		'zoomSpeedD': { label: 'Zoom Speed Down' },
+		'zoomTime': {
+			label: 'Zoom Postion In/Out (ms)',
+			options: [
+				{
+					type: 'number',
+					label: 'Zoom In (ms)',
+					id: 'zIn',
+					default: 2500,
+				},
+				{
+					type: 'number',
+					label: 'Zoom Out (ms)',
+					id: 'zOut',
+					default: 1000,
+				}
+			]
+		},
+		'zInMS': {
+			label: 'Zoom In for ms',
+			options: [
+				{
+					type: 'number',
+					label: 'Zoom In (ms)',
+					id: 'ms',
+					default: 1000,
+				}
+			]
+		},
+		'zOutMS': {
+			label: 'Zoom Out for ms',
+			options: [
+				{
+					type: 'number',
+					label: 'Zoom Out (ms)',
+					id: 'ms',
+					default: 1000,
+				}
+			]
+		},
 		'focusN': { label: 'Focus Near' },
 		'focusF': { label: 'Focus Far' },
 		'focusS': { label: 'Focus Stop' },
@@ -1138,6 +1256,7 @@ instance.prototype.actions = function (system) {
 				}
 			]
 		},
+
 	});
 }
 
@@ -1177,6 +1296,7 @@ instance.prototype.action = function (action) {
 
 	var panspeed = String.fromCharCode(parseInt(self.ptSpeed, 16) & 0xFF);
 	var tiltspeed = String.fromCharCode(Math.min(parseInt(self.ptSpeed, 16), 0x14) & 0xFF);
+
 
 	switch (action.action) {
 
@@ -1266,13 +1386,55 @@ instance.prototype.action = function (action) {
 			self.ptSpeed = SPEED[self.ptSpeedIndex].id
 			break;
 
+		case 'zoomSpeedS':
+			self.zoomSpeed = opt.speed;
+
+			var idx = -1;
+			for (var i = 0; i < CHOICE_ZOOMSPEED.length; ++i) {
+				if (CHOICE_ZOOMSPEED[i].id == self.zoomSpeed) {
+					idx = i;
+					break;
+				}
+			}
+			if (idx > -1) {
+				self.zoomSpeedIndex = idx;
+			}
+			debug(self.zoomSpeed + ' == ' + self.zoomSpeedIndex)
+			break;
+
+		case 'zoomSpeedD':
+			if (self.zoomSpeedIndex == 7) {
+				self.zoomSpeedIndex = 7;
+			}
+			else if (self.zoomSpeedIndex < 7) {
+				self.zoomSpeedIndex++;
+			}
+			self.zoomSpeed = CHOICE_ZOOMSPEED[self.zoomSpeedIndex].id
+			break;
+
+		case 'zoomSpeedU':
+			if (self.zoomSpeedIndex == 0) {
+				self.zoomSpeedIndex = 0;
+			}
+			else if (self.zoomSpeedIndex > 0) {
+				self.zoomSpeedIndex--;
+			}
+			self.zoomSpeed = CHOICE_ZOOMSPEED[self.zoomSpeedIndex].id
+			break;
+
 		case 'zoomI':
-			cmd = '\x81\x01\x04\x07\x02\xFF';
+			//Variable zoom speed
+			var zoomspeed = String.fromCharCode(parseInt(self.zoomSpeed, 16) + 32 & 0xFF);
+
+			cmd = '\x81\x01\x04\x07' + zoomspeed + '\xff';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'zoomO':
-			cmd = '\x81\x01\x04\x07\x03\xFF';
+			//Variable zoom speed
+			var zoomspeed = String.fromCharCode(parseInt(self.zoomSpeed, 16) + 48 & 0xFF);
+
+			cmd = '\x81\x01\x04\x07' + zoomspeed + '\xff';
 			self.sendVISCACommand(cmd);
 			break;
 
@@ -1443,7 +1605,54 @@ instance.prototype.action = function (action) {
 			}
 			break;
 
+		case 'zoomTime':
+			//For heads that do not support direct Zoom control
+
+			//Zoom in for ms
+			cmd = '\x81\x01\x04\x07\x27\xff';
+			self.sendVISCACommand(cmd);
+
+			setTimeout(function () {
+				//Stop
+				cmd = '\x81\x01\x04\x07\x00\xFF';
+
+				//Zoom out for ms
+				cmd = '\x81\x01\x04\x07\x37\xff';
+				self.sendVISCACommand(cmd);
+				setTimeout(function () {
+					//Stop
+					cmd = '\x81\x01\x04\x07\x00\xFF';
+					self.sendVISCACommand(cmd);
+				}.bind(this), opt.zOut);
+
+			}.bind(this), opt.zIn);
+			break;
+		case 'zInMS':
+			//Zoom in for ms
+			cmd = '\x81\x01\x04\x07\x27\xff';
+			self.sendVISCACommand(cmd);
+
+			setTimeout(function () {
+				//Stop
+				cmd = '\x81\x01\x04\x07\x00\xFF';
+				self.sendVISCACommand(cmd);
+			}.bind(this), opt.ms);
+			break;
+		case 'zOutMS':
+			//Zoom out for ms
+			cmd = '\x81\x01\x04\x07\x37\xff';
+			self.sendVISCACommand(cmd);
+
+			setTimeout(function () {
+				//Stop
+				cmd = '\x81\x01\x04\x07\x00\xFF';
+				self.sendVISCACommand(cmd);
+			}.bind(this), opt.ms);
+			break;
 	}
+
+	self.setVariable('pt_speed', self.ptSpeedIndex);
+	self.setVariable('zoom_speed', self.zoomSpeedIndex);
 };
 
 instance_skel.extendedBy(instance);
