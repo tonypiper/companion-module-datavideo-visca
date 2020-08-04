@@ -1079,12 +1079,16 @@ instance.prototype.actions = function (system) {
 					label: 'Zoom In (ms)',
 					id: 'zIn',
 					default: 2500,
+					min: 0,
+					max: 99999,
 				},
 				{
 					type: 'number',
 					label: 'Zoom Out (ms)',
 					id: 'zOut',
 					default: 1000,
+					min: 0,
+					max: 99999,
 				}
 			]
 		},
@@ -1096,6 +1100,8 @@ instance.prototype.actions = function (system) {
 					label: 'Zoom In (ms)',
 					id: 'ms',
 					default: 1000,
+					min: 0,
+					max: 99999,
 				}
 			]
 		},
@@ -1107,6 +1113,8 @@ instance.prototype.actions = function (system) {
 					label: 'Zoom Out (ms)',
 					id: 'ms',
 					default: 1000,
+					min: 0,
+					max: 99999,
 				}
 			]
 		},
