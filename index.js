@@ -7,6 +7,8 @@ var ok_pkt = Buffer.from([0x00, 0x08, 0x81, 0x09, 0x7e, 0x7e, 0x70, 0xff]);
 
 var request_state;
 
+var deviceAddress;
+
 
 var IRIS = [
 	{ id: '11', label: 'F1.8' },
@@ -117,6 +119,9 @@ instance.prototype.init_tcp = function () {
 	if (self.config.host !== undefined) {
 		self.tcp = new tcp(self.config.host, self.config.port);
 
+		self.deviceAddress = Buffer.alloc(1);
+		self.deviceAddress.writeUInt8(self.config.deviceAddress + 128, 0);
+
 		self.tcp.on('status_change', function (status, message) {
 			self.status(status, message);
 		});
@@ -134,8 +139,9 @@ instance.prototype.init_tcp = function () {
 
 		self.tcp.on('connect', () => {
 			//Set slower zoom speed
-			//var connect_packet = '\x81\x01\x7e\x01\x0b\x7e\x02\xff';
+			//var connect_packet = '\x01\x7e\x01\x0b\x7e\x02\xff';
 			//self.sendVISCACommand(connect_packet);
+
 			if (self.config.feedback) {
 				request_state = setInterval(function () { self.requestState(); }, 1000);
 			}
@@ -232,6 +238,15 @@ instance.prototype.config_fields = function () {
 			width: 6,
 			default: 5002,
 			regex: self.REGEX_PORT
+		},
+		{
+			type: 'number',
+			id: 'deviceAddress',
+			label: 'Device Address (1-7)',
+			width: 6,
+			default: 1,
+			min: 1,
+			max: 7,
 		},
 		{
 			type: 'checkbox',
@@ -1271,7 +1286,7 @@ instance.prototype.actions = function (system) {
 instance.prototype.requestState = function () {
 	var self = this;
 
-	cmd = '\x81\x09\x7E\x7E\x70\xFF';
+	cmd = '\x09\x7E\x7E\x70\xFF';
 	self.sendVISCACommand(cmd);
 }
 
@@ -1292,6 +1307,9 @@ instance.prototype.sendVISCACommand = function (str) {
 
 	if (self.tcp !== undefined) {
 		var buf = Buffer.from(str, 'binary');
+		//Add device ID
+		buf = Buffer.concat([self.deviceAddress, buf]);
+
 		debug(self.prependPacketSize(buf));
 		self.tcp.send(self.prependPacketSize(buf));
 	}
@@ -1309,52 +1327,52 @@ instance.prototype.action = function (action) {
 	switch (action.action) {
 
 		case 'left':
-			cmd = '\x81\x01\x06\x01' + panspeed + tiltspeed + '\x01\x03\xFF';
+			cmd = '\x01\x06\x01' + panspeed + tiltspeed + '\x01\x03\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'right':
-			cmd = '\x81\x01\x06\x01' + panspeed + tiltspeed + '\x02\x03\xFF';
+			cmd = '\x01\x06\x01' + panspeed + tiltspeed + '\x02\x03\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'up':
-			cmd = '\x81\x01\x06\x01' + panspeed + tiltspeed + '\x03\x01\xFF';
+			cmd = '\x01\x06\x01' + panspeed + tiltspeed + '\x03\x01\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'down':
-			cmd = '\x81\x01\x06\x01' + panspeed + tiltspeed + '\x03\x02\xFF';
+			cmd = '\x01\x06\x01' + panspeed + tiltspeed + '\x03\x02\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'upLeft':
-			cmd = '\x81\x01\x06\x01' + panspeed + tiltspeed + '\x01\x01\xFF';
+			cmd = '\x01\x06\x01' + panspeed + tiltspeed + '\x01\x01\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'upRight':
-			cmd = '\x81\x01\x06\x01' + panspeed + tiltspeed + '\x02\x01\xFF';
+			cmd = '\x01\x06\x01' + panspeed + tiltspeed + '\x02\x01\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'downLeft':
-			cmd = '\x81\x01\x06\x01' + panspeed + tiltspeed + '\x01\x02\xFF';
+			cmd = '\x01\x06\x01' + panspeed + tiltspeed + '\x01\x02\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'downRight':
-			cmd = '\x81\x01\x06\x01' + panspeed + tiltspeed + '\x02\x02\xFF';
+			cmd = '\x01\x06\x01' + panspeed + tiltspeed + '\x02\x02\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'stop':
-			cmd = '\x81\x01\x06\x01' + panspeed + tiltspeed + '\x03\x03\xFF';
+			cmd = '\x01\x06\x01' + panspeed + tiltspeed + '\x03\x03\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'home':
-			cmd = '\x81\x01\x06\x04\xFF';
+			cmd = '\x01\x06\x04\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
@@ -1434,7 +1452,7 @@ instance.prototype.action = function (action) {
 			//Variable zoom speed
 			var zoomspeed = String.fromCharCode(parseInt(self.zoomSpeed, 16) + 32 & 0xFF);
 
-			cmd = '\x81\x01\x04\x07' + zoomspeed + '\xff';
+			cmd = '\x01\x04\x07' + zoomspeed + '\xff';
 			self.sendVISCACommand(cmd);
 			break;
 
@@ -1442,71 +1460,71 @@ instance.prototype.action = function (action) {
 			//Variable zoom speed
 			var zoomspeed = String.fromCharCode(parseInt(self.zoomSpeed, 16) + 48 & 0xFF);
 
-			cmd = '\x81\x01\x04\x07' + zoomspeed + '\xff';
+			cmd = '\x01\x04\x07' + zoomspeed + '\xff';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'zoomS':
-			cmd = '\x81\x01\x04\x07\x00\xFF';
+			cmd = '\x01\x04\x07\x00\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'focusN':
-			cmd = '\x81\x01\x04\x08\x03\xFF';
+			cmd = '\x01\x04\x08\x03\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'focusF':
-			cmd = '\x81\x01\x04\x08\x02\xFF';
+			cmd = '\x01\x04\x08\x02\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'focusS':
-			cmd = '\x81\x01\x04\x08\x00\xFF';
+			cmd = '\x01\x04\x08\x00\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'focusM':
 			if (opt.bol == 0) {
-				cmd = '\x81\x01\x04\x38\x02\xFF';
+				cmd = '\x01\x04\x38\x02\xFF';
 			}
 			if (opt.bol == 1) {
-				cmd = '\x81\x01\x04\x38\x03\xFF';
+				cmd = '\x01\x04\x38\x03\xFF';
 			}
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'expM':
 			if (opt.val == 0) {
-				cmd = '\x81\x01\x04\x39\x00\xFF';
+				cmd = '\x01\x04\x39\x00\xFF';
 			}
 			if (opt.val == 1) {
-				cmd = '\x81\x01\x04\x39\x03\xFF';
+				cmd = '\x01\x04\x39\x03\xFF';
 			}
 			if (opt.val == 2) {
-				cmd = '\x81\x01\x04\x39\x0A\xFF';
+				cmd = '\x01\x04\x39\x0A\xFF';
 			}
 			if (opt.val == 3) {
-				cmd = '\x81\x01\x04\x39\x0B\xFF';
+				cmd = '\x01\x04\x39\x0B\xFF';
 			}
 			if (opt.val == 4) {
-				cmd = '\x81\x01\x04\x39\x0D\xFF';
+				cmd = '\x01\x04\x39\x0D\xFF';
 			}
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'irisU':
-			cmd = '\x81\x01\x04\x0B\x02\xFF';
+			cmd = '\x01\x04\x0B\x02\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'irisD':
-			cmd = '\x81\x01\x04\x0B\x03\xFF';
+			cmd = '\x01\x04\x0B\x03\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'irisS':
-			var cmd = Buffer.from('\x81\x01\x04\x4B\x00\x00\x00\x00\xFF', 'binary');
+			var cmd = Buffer.from('\x01\x04\x4B\x00\x00\x00\x00\xFF', 'binary');
 			cmd.writeUInt8((parseInt(opt.val, 16) & 0xF0) >> 4, 6);
 			cmd.writeUInt8(parseInt(opt.val, 16) & 0x0F, 7);
 			self.sendVISCACommand(cmd);
@@ -1514,17 +1532,17 @@ instance.prototype.action = function (action) {
 			break;
 
 		case 'shutU':
-			cmd = '\x81\x01\x04\x0A\x02\xFF';
+			cmd = '\x01\x04\x0A\x02\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'shutD':
-			cmd = '\x81\x01\x04\x0A\x03\xFF';
+			cmd = '\x01\x04\x0A\x03\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'shutS':
-			var cmd = Buffer.from('\x81\x01\x04\x4A\x00\x00\x00\x00\xFF', 'binary');
+			var cmd = Buffer.from('\x01\x04\x4A\x00\x00\x00\x00\xFF', 'binary');
 			cmd.writeUInt8((parseInt(opt.val, 16) & 0xF0) >> 4, 6);
 			cmd.writeUInt8(parseInt(opt.val, 16) & 0x0F, 7);
 			self.sendVISCACommand(cmd);
@@ -1532,29 +1550,29 @@ instance.prototype.action = function (action) {
 			break;
 
 		case 'savePset':
-			cmd = '\x81\x01\x04\x3F\x01' + String.fromCharCode(parseInt(opt.val, 16) & 0xFF) + '\xFF';
+			cmd = '\x01\x04\x3F\x01' + String.fromCharCode(parseInt(opt.val, 16) & 0xFF) + '\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'recallPset':
-			cmd = '\x81\x01\x04\x3F\x02' + String.fromCharCode(parseInt(opt.val, 16) & 0xFF) + '\xFF';
+			cmd = '\x01\x04\x3F\x02' + String.fromCharCode(parseInt(opt.val, 16) & 0xFF) + '\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'speedPset':
-			cmd = '\x81\x01\x7E\x01\x0B' + String.fromCharCode(parseInt(opt.val, 16) & 0xFF) + String.fromCharCode(parseInt(opt.speed, 16) & 0xFF) + '\xFF';
+			cmd = '\x01\x7E\x01\x0B' + String.fromCharCode(parseInt(opt.val, 16) & 0xFF) + String.fromCharCode(parseInt(opt.speed, 16) & 0xFF) + '\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'tally':
 			if (opt.val == 0) {
-				cmd = '\x81\x01\x7E\x01\x0A\x00\x02\x03\xFF';
+				cmd = '\x01\x7E\x01\x0A\x00\x02\x03\xFF';
 			}
 			if (opt.val == 1) {
-				cmd = '\x81\x01\x7E\x01\x0A\x00\x03\x02\xFF';
+				cmd = '\x01\x7E\x01\x0A\x00\x03\x02\xFF';
 			}
 			if (opt.val == 2) {
-				cmd = '\x81\x01\x7E\x01\x0A\x00\x03\x03\xFF';
+				cmd = '\x01\x7E\x01\x0A\x00\x03\x03\xFF';
 			}
 			self.sendVISCACommand(cmd);
 			break;
@@ -1563,39 +1581,39 @@ instance.prototype.action = function (action) {
 			switch (opt.val) {
 				case 0:
 					//OSD ON
-					cmd = '\x81\x01\x06\x06\x02\xff';
+					cmd = '\x01\x06\x06\x02\xff';
 					break;
 				case 1:
 					//OSD OFF
-					cmd = '\x81\x01\x06\x06\x03\xff';
+					cmd = '\x01\x06\x06\x03\xff';
 					break;
 				case 2:
 					//ENTER
-					cmd = '\x81\x01\x7e\x01\x02\x00\x01\xff';
+					cmd = '\x01\x7e\x01\x02\x00\x01\xff';
 					break;
 				case 3:
 					//BACK
-					cmd = '\x81\x01\x06\x01\x09\x09\x01\x03\xff';
+					cmd = '\x01\x06\x01\x09\x09\x01\x03\xff';
 					break;
 				case 4:
 					//UP
-					cmd = '\x81\x01\x06\x01\x0a\x0a\x03\x01\xff';
+					cmd = '\x01\x06\x01\x0a\x0a\x03\x01\xff';
 					break;
 				case 5:
 					//DOWN
-					cmd = '\x81\x01\x06\x01\x0a\x0a\x03\x02\xff';
+					cmd = '\x01\x06\x01\x0a\x0a\x03\x02\xff';
 					break;
 				case 6:
 					//LEFT
-					cmd = '\x81\x01\x06\x01\x0a\x0a\x01\x03\xff';
+					cmd = '\x01\x06\x01\x0a\x0a\x01\x03\xff';
 					break;
 				case 7:
 					//RIGHT
-					cmd = '\x81\x01\x06\x01\x0a\x0a\x02\x03\xff';
+					cmd = '\x01\x06\x01\x0a\x0a\x02\x03\xff';
 					break;
 				case 8:
 					//RELEASE/STOP
-					cmd = '\x81\x01\x06\x01\x01\x01\x03\x03\xff';
+					cmd = '\x01\x06\x01\x01\x01\x03\x03\xff';
 					break;
 			}
 			self.sendVISCACommand(cmd);
@@ -1617,19 +1635,19 @@ instance.prototype.action = function (action) {
 			//For heads that do not support direct Zoom control
 
 			//Zoom in for ms
-			cmd = '\x81\x01\x04\x07\x27\xff';
+			cmd = '\x01\x04\x07\x27\xff';
 			self.sendVISCACommand(cmd);
 
 			setTimeout(function () {
 				//Stop
-				cmd = '\x81\x01\x04\x07\x00\xFF';
+				cmd = '\x01\x04\x07\x00\xFF';
 
 				//Zoom out for ms
-				cmd = '\x81\x01\x04\x07\x37\xff';
+				cmd = '\x01\x04\x07\x37\xff';
 				self.sendVISCACommand(cmd);
 				setTimeout(function () {
 					//Stop
-					cmd = '\x81\x01\x04\x07\x00\xFF';
+					cmd = '\x01\x04\x07\x00\xFF';
 					self.sendVISCACommand(cmd);
 				}.bind(this), opt.zOut);
 
@@ -1637,23 +1655,23 @@ instance.prototype.action = function (action) {
 			break;
 		case 'zInMS':
 			//Zoom in for ms
-			cmd = '\x81\x01\x04\x07\x27\xff';
+			cmd = '\x01\x04\x07\x27\xff';
 			self.sendVISCACommand(cmd);
 
 			setTimeout(function () {
 				//Stop
-				cmd = '\x81\x01\x04\x07\x00\xFF';
+				cmd = '\x01\x04\x07\x00\xFF';
 				self.sendVISCACommand(cmd);
 			}.bind(this), opt.ms);
 			break;
 		case 'zOutMS':
 			//Zoom out for ms
-			cmd = '\x81\x01\x04\x07\x37\xff';
+			cmd = '\x01\x04\x07\x37\xff';
 			self.sendVISCACommand(cmd);
 
 			setTimeout(function () {
 				//Stop
-				cmd = '\x81\x01\x04\x07\x00\xFF';
+				cmd = '\x01\x04\x07\x00\xFF';
 				self.sendVISCACommand(cmd);
 			}.bind(this), opt.ms);
 			break;
