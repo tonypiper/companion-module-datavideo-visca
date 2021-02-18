@@ -1624,11 +1624,8 @@ instance.prototype.action = function (action) {
 			var tempBuffer = Buffer.from(hexData, 'hex');
 			cmd = tempBuffer.toString('binary');
 
-			if ((tempBuffer[0] & 0xF0) === 0x80) {
-				self.sendVISCACommand(cmd);
-			} else {
-				self.log('error', 'Error, command "' + opt.custom + '" does not start with 8');
-			}
+			self.sendVISCACommand(cmd);
+
 			break;
 
 		case 'zoomTime':
