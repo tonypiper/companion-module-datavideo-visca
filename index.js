@@ -942,18 +942,18 @@ class ModuleInstance extends InstanceBase {
 
 	actions() {
 		return {
-			left: { label: 'Pan Left' },
-			right: { label: 'Pan Right' },
-			up: { label: 'Tilt Up' },
-			down: { label: 'Tilt Down' },
-			upLeft: { label: 'Up Left' },
-			upRight: { label: 'Up Right' },
-			downLeft: { label: 'Down Left' },
-			downRight: { label: 'Down Right' },
-			stop: { label: 'P/T Stop' },
-			home: { label: 'P/T Home' },
+			left: { name: 'Pan Left', callback: async (_event) => {}, options: [] },
+			right: { name: 'Pan Right', callback: async (_event) => {}, options: [] },
+			up: { name: 'Tilt Up', callback: async (_event) => {}, options: [] },
+			down: { name: 'Tilt Down', callback: async (_event) => {}, options: [] },
+			upLeft: { name: 'Up Left', callback: async (_event) => {}, options: [] },
+			upRight: { name: 'Up Right', callback: async (_event) => {}, options: [] },
+			downLeft: { name: 'Down Left', callback: async (_event) => {}, options: [] },
+			downRight: { name: 'Down Right', callback: async (_event) => {}, options: [] },
+			stop: { name: 'P/T Stop', callback: async (_event) => {}, options: [] },
+			home: { name: 'P/T Home', callback: async (_event) => {}, options: [] },
 			ptSpeedS: {
-				label: 'P/T Speed',
+				name: 'P/T Speed',
 				options: [
 					{
 						type: 'dropdown',
@@ -962,11 +962,12 @@ class ModuleInstance extends InstanceBase {
 						choices: SPEED,
 					},
 				],
+				callback: async (_event) => {},
 			},
-			ptSpeedU: { label: 'P/T Speed Up' },
-			ptSpeedD: { label: 'P/T Speed Down' },
+			ptSpeedU: { name: 'P/T Speed Up', callback: async (_event) => {}, options: [] },
+			ptSpeedD: { name: 'P/T Speed Down', callback: async (_event) => {}, options: [] },
 			ptSlow: {
-				label: 'P/T Slow Mode',
+				name: 'P/T Slow Mode',
 				options: [
 					{
 						type: 'dropdown',
@@ -978,12 +979,13 @@ class ModuleInstance extends InstanceBase {
 						],
 					},
 				],
+				callback: async (_event) => {},
 			},
-			zoomI: { label: 'Zoom In' },
-			zoomO: { label: 'Zoom Out' },
-			zoomS: { label: 'Zoom Stop' },
+			zoomI: { name: 'Zoom In', callback: async (_event) => {}, options: [] },
+			zoomO: { name: 'Zoom Out', callback: async (_event) => {}, options: [] },
+			zoomS: { name: 'Zoom Stop', callback: async (_event) => {}, options: [] },
 			zoomSpeedS: {
-				label: 'Zoom Speed',
+				name: 'Zoom Speed',
 				options: [
 					{
 						type: 'dropdown',
@@ -992,11 +994,12 @@ class ModuleInstance extends InstanceBase {
 						choices: CHOICE_ZOOMSPEED,
 					},
 				],
+				callback: async (_event) => {},
 			},
-			zoomSpeedU: { label: 'Zoom Speed Up' },
-			zoomSpeedD: { label: 'Zoom Speed Down' },
+			zoomSpeedU: { name: 'Zoom Speed Up', callback: async (_event) => {}, options: [] },
+			zoomSpeedD: { name: 'Zoom Speed Down', callback: async (_event) => {}, options: [] },
 			zoomTime: {
-				label: 'Zoom Postion In/Out (ms)',
+				name: 'Zoom Postion In/Out (ms)',
 				options: [
 					{
 						type: 'number',
@@ -1015,9 +1018,10 @@ class ModuleInstance extends InstanceBase {
 						max: 99_999,
 					},
 				],
+				callback: async (_event) => {},
 			},
 			zInMS: {
-				label: 'Zoom In for ms',
+				name: 'Zoom In for ms',
 				options: [
 					{
 						type: 'number',
@@ -1028,9 +1032,10 @@ class ModuleInstance extends InstanceBase {
 						max: 99_999,
 					},
 				],
+				callback: async (_event) => {},
 			},
 			zOutMS: {
-				label: 'Zoom Out for ms',
+				name: 'Zoom Out for ms',
 				options: [
 					{
 						type: 'number',
@@ -1041,10 +1046,11 @@ class ModuleInstance extends InstanceBase {
 						max: 99_999,
 					},
 				],
+				callback: async (_event) => {},
 			},
-			focusN: { label: 'Focus Near' },
-			focusF: { label: 'Focus Far' },
-			focusS: { label: 'Focus Stop' },
+			focusN: { name: 'Focus Near', callback: async (_event) => {}, options: [] },
+			focusF: { name: 'Focus Far', callback: async (_event) => {}, options: [] },
+			focusS: { name: 'Focus Stop', callback: async (_event) => {}, options: [] },
 			focusM: {
 				label: 'Focus Mode',
 				options: [
@@ -1058,9 +1064,10 @@ class ModuleInstance extends InstanceBase {
 						],
 					},
 				],
+				callback: async (_event) => {},
 			},
 			expM: {
-				label: 'Exposure Mode',
+				name: 'Exposure Mode',
 				options: [
 					{
 						type: 'dropdown',
@@ -1075,11 +1082,12 @@ class ModuleInstance extends InstanceBase {
 						],
 					},
 				],
+				callback: async (_event) => {},
 			},
-			irisU: { label: 'Iris Up' },
-			irisD: { label: 'Iris Down' },
+			irisU: { name: 'Iris Up', callback: async (_event) => {}, options: [] },
+			irisD: { name: 'Iris Down', callback: async (_event) => {}, options: [] },
 			irisS: {
-				label: 'Set Iris',
+				name: 'Set Iris',
 				options: [
 					{
 						type: 'dropdown',
@@ -1088,9 +1096,10 @@ class ModuleInstance extends InstanceBase {
 						choices: IRIS,
 					},
 				],
+				callback: async (_event) => {},
 			},
-			shutU: { label: 'Shutter Up' },
-			shutD: { label: 'Shutter Down' },
+			shutU: { name: 'Shutter Up', callback: async (_event) => {}, options: [] },
+			shutD: { name: 'Shutter Down', callback: async (_event) => {}, options: [] },
 			shutS: {
 				label: 'Set Shutter',
 				options: [
@@ -1101,9 +1110,10 @@ class ModuleInstance extends InstanceBase {
 						choices: SHUTTER,
 					},
 				],
+				callback: async (_event) => {},
 			},
 			savePset: {
-				label: 'Save Preset',
+				name: 'Save Preset',
 				options: [
 					{
 						type: 'dropdown',
@@ -1112,9 +1122,10 @@ class ModuleInstance extends InstanceBase {
 						choices: PRESET,
 					},
 				],
+				callback: async (_event) => {},
 			},
 			recallPset: {
-				label: 'Recall Preset',
+				name: 'Recall Preset',
 				options: [
 					{
 						type: 'dropdown',
@@ -1123,9 +1134,10 @@ class ModuleInstance extends InstanceBase {
 						choices: PRESET,
 					},
 				],
+				callback: async (_event) => {},
 			},
 			custom: {
-				label: 'Custom command',
+				name: 'Custom command',
 				options: [
 					{
 						type: 'textinput',
@@ -1135,9 +1147,10 @@ class ModuleInstance extends InstanceBase {
 						width: 6,
 					},
 				],
+				callback: async (_event) => {},
 			},
 			tally: {
-				label: 'Tally Colour',
+				name: 'Tally Colour',
 				options: [
 					{
 						type: 'dropdown',
@@ -1151,9 +1164,10 @@ class ModuleInstance extends InstanceBase {
 						],
 					},
 				],
+				callback: async (_event) => {},
 			},
 			speedPset: {
-				label: 'Preset Drive Speed',
+				name: 'Preset Drive Speed',
 				options: [
 					{
 						type: 'dropdown',
@@ -1168,9 +1182,10 @@ class ModuleInstance extends InstanceBase {
 						choices: SPEED,
 					},
 				],
+				callback: async (_event) => {},
 			},
 			osd: {
-				label: 'OSD Controls',
+				name: 'OSD Controls',
 				options: [
 					{
 						type: 'dropdown',
@@ -1190,6 +1205,7 @@ class ModuleInstance extends InstanceBase {
 						],
 					},
 				],
+				callback: async (_event) => {},
 			},
 		}
 	}
