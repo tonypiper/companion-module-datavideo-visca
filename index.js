@@ -941,17 +941,90 @@ class ModuleInstance extends InstanceBase {
 	}
 
 	actions() {
+		const panspeed = String.fromCharCode(parseInt(this.ptSpeed, 16) & 0xff)
+		const tiltspeed = String.fromCharCode(Math.min(parseInt(this.ptSpeed, 16), 0x14) & 0xff)
+
 		return {
-			left: { name: 'Pan Left', callback: async (_event) => {}, options: [] },
-			right: { name: 'Pan Right', callback: async (_event) => {}, options: [] },
-			up: { name: 'Tilt Up', callback: async (_event) => {}, options: [] },
-			down: { name: 'Tilt Down', callback: async (_event) => {}, options: [] },
-			upLeft: { name: 'Up Left', callback: async (_event) => {}, options: [] },
-			upRight: { name: 'Up Right', callback: async (_event) => {}, options: [] },
-			downLeft: { name: 'Down Left', callback: async (_event) => {}, options: [] },
-			downRight: { name: 'Down Right', callback: async (_event) => {}, options: [] },
-			stop: { name: 'P/T Stop', callback: async (_event) => {}, options: [] },
-			home: { name: 'P/T Home', callback: async (_event) => {}, options: [] },
+			left: {
+				name: 'Pan Left',
+				callback: async (_action) => {
+					const cmd = `\x01\x06\x01${panspeed}${tiltspeed}\x01\x03\xFF`
+					this.sendVISCACommand(cmd)
+				},
+				options: [],
+			},
+			right: {
+				name: 'Pan Right',
+				callback: async (_action) => {
+					const cmd = `\x01\x06\x01${panspeed}${tiltspeed}\x02\x03\xFF`
+					this.sendVISCACommand(cmd)
+				},
+				options: [],
+			},
+			up: {
+				name: 'Tilt Up',
+				callback: async (_action) => {
+					const cmd = `\x01\x06\x01${panspeed}${tiltspeed}\x03\x01\xFF`
+					this.sendVISCACommand(cmd)
+				},
+				options: [],
+			},
+			down: {
+				name: 'Tilt Down',
+				callback: async (_action) => {
+					const cmd = `\x01\x06\x01${panspeed}${tiltspeed}\x03\x02\xFF`
+					this.sendVISCACommand(cmd)
+				},
+				options: [],
+			},
+			upLeft: {
+				name: 'Up Left',
+				callback: async (_action) => {
+					const cmd = `\x01\x06\x01${panspeed}${tiltspeed}\x01\x01\xFF`
+					this.sendVISCACommand(cmd)
+				},
+				options: [],
+			},
+			upRight: {
+				name: 'Up Right',
+				callback: async (_action) => {
+					const cmd = `\x01\x06\x01${panspeed}${tiltspeed}\x02\x01\xFF`
+					this.sendVISCACommand(cmd)
+				},
+				options: [],
+			},
+			downLeft: {
+				name: 'Down Left',
+				callback: async (_action) => {
+					const cmd = `\x01\x06\x01${panspeed}${tiltspeed}\x01\x02\xFF`
+					this.sendVISCACommand(cmd)
+				},
+				options: [],
+			},
+			downRight: {
+				name: 'Down Right',
+				callback: async (_action) => {
+					const cmd = `\x01\x06\x01${panspeed}${tiltspeed}\x02\x02\xFF`
+					this.sendVISCACommand(cmd)
+				},
+				options: [],
+			},
+			stop: {
+				name: 'P/T Stop',
+				callback: async (_action) => {
+					const cmd = `\x01\x06\x01${panspeed}${tiltspeed}\x03\x03\xFF`
+					this.sendVISCACommand(cmd)
+				},
+				options: [],
+			},
+			home: {
+				name: 'P/T Home',
+				callback: async (_action) => {
+					const cmd = '\x01\x06\x04\xFF'
+					this.sendVISCACommand(cmd)
+				},
+				options: [],
+			},
 			ptSpeedS: {
 				name: 'P/T Speed',
 				options: [
@@ -962,10 +1035,46 @@ class ModuleInstance extends InstanceBase {
 						choices: SPEED,
 					},
 				],
-				callback: async (_event) => {},
+				callback: async (action) => {
+					this.ptSpeed = action.options.speed
+
+					let idx = -1
+					for (let i = 0; i < SPEED.length; ++i) {
+						if (SPEED[i].id == this.ptSpeed) {
+							idx = i
+							break
+						}
+					}
+					if (idx > -1) {
+						this.ptSpeedIndex = idx
+					}
+					this.debug(`${this.ptSpeed} == ${this.ptSpeedIndex}`)
+				},
 			},
-			ptSpeedU: { name: 'P/T Speed Up', callback: async (_event) => {}, options: [] },
-			ptSpeedD: { name: 'P/T Speed Down', callback: async (_event) => {}, options: [] },
+			ptSpeedU: {
+				name: 'P/T Speed Up',
+				callback: async (_action) => {
+					if (this.ptSpeedIndex == 23) {
+						this.ptSpeedIndex = 23
+					} else if (this.ptSpeedIndex < 23) {
+						this.ptSpeedIndex++
+					}
+					this.ptSpeed = SPEED[this.ptSpeedIndex].id
+				},
+				options: [],
+			},
+			ptSpeedD: {
+				name: 'P/T Speed Down',
+				callback: async (_action) => {
+					if (this.ptSpeedIndex == 0) {
+						this.ptSpeedIndex = 0
+					} else if (this.ptSpeedIndex > 0) {
+						this.ptSpeedIndex--
+					}
+					this.ptSpeed = SPEED[this.ptSpeedIndex].id
+				},
+				options: [],
+			},
 			ptSlow: {
 				name: 'P/T Slow Mode',
 				options: [
@@ -979,11 +1088,37 @@ class ModuleInstance extends InstanceBase {
 						],
 					},
 				],
-				callback: async (_event) => {},
+				callback: async (_action) => {},
 			},
-			zoomI: { name: 'Zoom In', callback: async (_event) => {}, options: [] },
-			zoomO: { name: 'Zoom Out', callback: async (_event) => {}, options: [] },
-			zoomS: { name: 'Zoom Stop', callback: async (_event) => {}, options: [] },
+			zoomI: {
+				name: 'Zoom In',
+				callback: async (_action) => {
+					const zoomspeed = String.fromCharCode((parseInt(this.zoomSpeed, 16) + 32) & 0xff)
+
+					const cmd = `\x01\x04\x07${zoomspeed}\xff`
+					this.sendVISCACommand(cmd)
+				},
+				options: [],
+			},
+			zoomO: {
+				name: 'Zoom Out',
+				callback: async (_action) => {
+					//Variable zoom speed
+					const zoomspeed = String.fromCharCode((parseInt(this.zoomSpeed, 16) + 48) & 0xff)
+
+					const cmd = `\x01\x04\x07${zoomspeed}\xff`
+					this.sendVISCACommand(cmd)
+				},
+				options: [],
+			},
+			zoomS: {
+				name: 'Zoom Stop',
+				callback: async (_action) => {
+					const cmd = '\x01\x04\x07\x00\xFF'
+					this.sendVISCACommand(cmd)
+				},
+				options: [],
+			},
 			zoomSpeedS: {
 				name: 'Zoom Speed',
 				options: [
@@ -994,10 +1129,46 @@ class ModuleInstance extends InstanceBase {
 						choices: CHOICE_ZOOMSPEED,
 					},
 				],
-				callback: async (_event) => {},
+				callback: async (action) => {
+					this.zoomSpeed = action.options.speed
+
+					let idx = -1
+					for (let i = 0; i < CHOICE_ZOOMSPEED.length; ++i) {
+						if (CHOICE_ZOOMSPEED[i].id == this.zoomSpeed) {
+							idx = i
+							break
+						}
+					}
+					if (idx > -1) {
+						this.zoomSpeedIndex = idx
+					}
+					this.debug(`${this.zoomSpeed} == ${this.zoomSpeedIndex}`)
+				},
 			},
-			zoomSpeedU: { name: 'Zoom Speed Up', callback: async (_event) => {}, options: [] },
-			zoomSpeedD: { name: 'Zoom Speed Down', callback: async (_event) => {}, options: [] },
+			zoomSpeedU: {
+				name: 'Zoom Speed Up',
+				callback: async (_action) => {
+					if (this.zoomSpeedIndex == 7) {
+						this.zoomSpeedIndex = 7
+					} else if (this.zoomSpeedIndex < 7) {
+						this.zoomSpeedIndex++
+					}
+					this.zoomSpeed = CHOICE_ZOOMSPEED[this.zoomSpeedIndex].id
+				},
+				options: [],
+			},
+			zoomSpeedD: {
+				name: 'Zoom Speed Down',
+				callback: async (_action) => {
+					if (this.zoomSpeedIndex == 1) {
+						this.zoomSpeedIndex = 1
+					} else if (this.zoomSpeedIndex > 0) {
+						this.zoomSpeedIndex--
+					}
+					this.zoomSpeed = CHOICE_ZOOMSPEED[this.zoomSpeedIndex].id
+				},
+				options: [],
+			},
 			zoomTime: {
 				name: 'Zoom Postion In/Out (ms)',
 				options: [
@@ -1018,7 +1189,24 @@ class ModuleInstance extends InstanceBase {
 						max: 99_999,
 					},
 				],
-				callback: async (_event) => {},
+				callback: async (action) => {
+					//For heads that do not support direct Zoom control
+
+					//Zoom in for ms
+					const cmd = '\x01\x04\x07\x27\xff'
+					this.sendVISCACommand(cmd)
+
+					setTimeout(() => {
+						//Zoom out for ms
+						const cmd = '\x01\x04\x07\x37\xff'
+						this.sendVISCACommand(cmd)
+						setTimeout(() => {
+							//Stop
+							const cmd = '\x01\x04\x07\x00\xFF'
+							this.sendVISCACommand(cmd)
+						}, action.options.zOut)
+					}, action.options.zIn)
+				},
 			},
 			zInMS: {
 				name: 'Zoom In for ms',
@@ -1032,7 +1220,17 @@ class ModuleInstance extends InstanceBase {
 						max: 99_999,
 					},
 				],
-				callback: async (_event) => {},
+				callback: async (action) => {
+					//Zoom in for ms
+					const cmd = '\x01\x04\x07\x27\xff'
+					this.sendVISCACommand(cmd)
+
+					setTimeout(() => {
+						//Stop
+						const cmd = '\x01\x04\x07\x00\xFF'
+						this.sendVISCACommand(cmd)
+					}, action.options.ms)
+				},
 			},
 			zOutMS: {
 				name: 'Zoom Out for ms',
@@ -1046,11 +1244,42 @@ class ModuleInstance extends InstanceBase {
 						max: 99_999,
 					},
 				],
-				callback: async (_event) => {},
+				callback: async (action) => {
+					//Zoom out for ms
+					const cmd = '\x01\x04\x07\x37\xff'
+					this.sendVISCACommand(cmd)
+
+					setTimeout(() => {
+						//Stop
+						const cmd = '\x01\x04\x07\x00\xFF'
+						this.sendVISCACommand(cmd)
+					}, action.options.ms)
+				},
 			},
-			focusN: { name: 'Focus Near', callback: async (_event) => {}, options: [] },
-			focusF: { name: 'Focus Far', callback: async (_event) => {}, options: [] },
-			focusS: { name: 'Focus Stop', callback: async (_event) => {}, options: [] },
+			focusN: {
+				name: 'Focus Near',
+				callback: async (_action) => {
+					const cmd = '\x01\x04\x08\x03\xFF'
+					this.sendVISCACommand(cmd)
+				},
+				options: [],
+			},
+			focusF: {
+				name: 'Focus Far',
+				callback: async (_action) => {
+					const cmd = '\x01\x04\x08\x02\xFF'
+					this.sendVISCACommand(cmd)
+				},
+				options: [],
+			},
+			focusS: {
+				name: 'Focus Stop',
+				callback: async (_action) => {
+					const cmd = '\x01\x04\x08\x00\xFF'
+					this.sendVISCACommand(cmd)
+				},
+				options: [],
+			},
 			focusM: {
 				label: 'Focus Mode',
 				options: [
@@ -1064,7 +1293,16 @@ class ModuleInstance extends InstanceBase {
 						],
 					},
 				],
-				callback: async (_event) => {},
+				callback: async (action) => {
+					let cmd
+					if (action.options.bol == 0) {
+						cmd = '\x01\x04\x38\x02\xFF'
+					}
+					if (action.options.bol == 1) {
+						cmd = '\x01\x04\x38\x03\xFF'
+					}
+					this.sendVISCACommand(cmd)
+				},
 			},
 			expM: {
 				name: 'Exposure Mode',
@@ -1082,10 +1320,42 @@ class ModuleInstance extends InstanceBase {
 						],
 					},
 				],
-				callback: async (_event) => {},
+				callback: async (action) => {
+					let cmd
+					if (action.options.val == 0) {
+						cmd = '\x01\x04\x39\x00\xFF'
+					}
+					if (action.options.val == 1) {
+						cmd = '\x01\x04\x39\x03\xFF'
+					}
+					if (action.options.val == 2) {
+						cmd = '\x01\x04\x39\x0A\xFF'
+					}
+					if (action.options.val == 3) {
+						cmd = '\x01\x04\x39\x0B\xFF'
+					}
+					if (action.options.val == 4) {
+						cmd = '\x01\x04\x39\x0D\xFF'
+					}
+					this.sendVISCACommand(cmd)
+				},
 			},
-			irisU: { name: 'Iris Up', callback: async (_event) => {}, options: [] },
-			irisD: { name: 'Iris Down', callback: async (_event) => {}, options: [] },
+			irisU: {
+				name: 'Iris Up',
+				callback: async (_action) => {
+					const cmd = '\x01\x04\x0B\x02\xFF'
+					this.sendVISCACommand(cmd)
+				},
+				options: [],
+			},
+			irisD: {
+				name: 'Iris Down',
+				callback: async (_action) => {
+					const cmd = '\x01\x04\x0B\x03\xFF'
+					this.sendVISCACommand(cmd)
+				},
+				options: [],
+			},
 			irisS: {
 				name: 'Set Iris',
 				options: [
@@ -1096,10 +1366,30 @@ class ModuleInstance extends InstanceBase {
 						choices: IRIS,
 					},
 				],
-				callback: async (_event) => {},
+				callback: async (action) => {
+					const cmd = Buffer.from('\x01\x04\x4B\x00\x00\x00\x00\xFF', 'binary')
+					cmd.writeUInt8((parseInt(action.options.val, 16) & 0xf0) >> 4, 6)
+					cmd.writeUInt8(parseInt(action.options.val, 16) & 0x0f, 7)
+					this.sendVISCACommand(cmd)
+					this.debug('cmd=', cmd)
+				},
 			},
-			shutU: { name: 'Shutter Up', callback: async (_event) => {}, options: [] },
-			shutD: { name: 'Shutter Down', callback: async (_event) => {}, options: [] },
+			shutU: {
+				name: 'Shutter Up',
+				callback: async (_action) => {
+					const cmd = '\x01\x04\x0A\x02\xFF'
+					this.sendVISCACommand(cmd)
+				},
+				options: [],
+			},
+			shutD: {
+				name: 'Shutter Down',
+				callback: async (_action) => {
+					const cmd = '\x01\x04\x0A\x03\xFF'
+					this.sendVISCACommand(cmd)
+				},
+				options: [],
+			},
 			shutS: {
 				label: 'Set Shutter',
 				options: [
@@ -1110,7 +1400,13 @@ class ModuleInstance extends InstanceBase {
 						choices: SHUTTER,
 					},
 				],
-				callback: async (_event) => {},
+				callback: async (action) => {
+					const cmd = Buffer.from('\x01\x04\x4A\x00\x00\x00\x00\xFF', 'binary')
+					cmd.writeUInt8((parseInt(action.options.val, 16) & 0xf0) >> 4, 6)
+					cmd.writeUInt8(parseInt(action.options.val, 16) & 0x0f, 7)
+					this.sendVISCACommand(cmd)
+					this.debug('cmd=', cmd)
+				},
 			},
 			savePset: {
 				name: 'Save Preset',
@@ -1122,7 +1418,10 @@ class ModuleInstance extends InstanceBase {
 						choices: PRESET,
 					},
 				],
-				callback: async (_event) => {},
+				callback: async (action) => {
+					const cmd = `\x01\x04\x3F\x01${String.fromCharCode(parseInt(action.options.val, 16) & 0xff)}\xFF`
+					this.sendVISCACommand(cmd)
+				},
 			},
 			recallPset: {
 				name: 'Recall Preset',
@@ -1134,7 +1433,10 @@ class ModuleInstance extends InstanceBase {
 						choices: PRESET,
 					},
 				],
-				callback: async (_event) => {},
+				callback: async (action) => {
+					const cmd = `\x01\x04\x3F\x02${String.fromCharCode(parseInt(action.options.val, 16) & 0xff)}\xFF`
+					this.sendVISCACommand(cmd)
+				},
 			},
 			custom: {
 				name: 'Custom command',
@@ -1147,7 +1449,13 @@ class ModuleInstance extends InstanceBase {
 						width: 6,
 					},
 				],
-				callback: async (_event) => {},
+				callback: async (action) => {
+					const hexData = action.options.custom.replace(/\s+/g, '')
+					const tempBuffer = Buffer.from(hexData, 'hex')
+					const cmd = tempBuffer.toString('binary')
+
+					this.sendVISCACommand(cmd)
+				},
 			},
 			tally: {
 				name: 'Tally Colour',
@@ -1164,7 +1472,19 @@ class ModuleInstance extends InstanceBase {
 						],
 					},
 				],
-				callback: async (_event) => {},
+				callback: async (action) => {
+					let cmd
+					if (action.options.val == 0) {
+						cmd = '\x01\x7E\x01\x0A\x00\x02\x03\xFF'
+					}
+					if (action.options.val == 1) {
+						cmd = '\x01\x7E\x01\x0A\x00\x03\x02\xFF'
+					}
+					if (action.options.val == 2) {
+						cmd = '\x01\x7E\x01\x0A\x00\x03\x03\xFF'
+					}
+					this.sendVISCACommand(cmd)
+				},
 			},
 			speedPset: {
 				name: 'Preset Drive Speed',
@@ -1182,7 +1502,10 @@ class ModuleInstance extends InstanceBase {
 						choices: SPEED,
 					},
 				],
-				callback: async (_event) => {},
+				callback: async (action) => {
+					const cmd = `\x01\x7E\x01\x0B${String.fromCharCode(parseInt(action.options.val, 16) & 0xff)}${String.fromCharCode(parseInt(action.options.speed, 16) & 0xff)}\xFF`
+					this.sendVISCACommand(cmd)
+				},
 			},
 			osd: {
 				name: 'OSD Controls',
@@ -1205,7 +1528,48 @@ class ModuleInstance extends InstanceBase {
 						],
 					},
 				],
-				callback: async (_event) => {},
+				callback: async (action) => {
+					let cmd
+					switch (action.options.val) {
+						case 0:
+							//OSD ON
+							cmd = '\x01\x06\x06\x02\xff'
+							break
+						case 1:
+							//OSD OFF
+							cmd = '\x01\x06\x06\x03\xff'
+							break
+						case 2:
+							//ENTER
+							cmd = '\x01\x7e\x01\x02\x00\x01\xff'
+							break
+						case 3:
+							//BACK
+							cmd = '\x01\x06\x01\x09\x09\x01\x03\xff'
+							break
+						case 4:
+							//UP
+							cmd = '\x01\x06\x01\x0a\x0a\x03\x01\xff'
+							break
+						case 5:
+							//DOWN
+							cmd = '\x01\x06\x01\x0a\x0a\x03\x02\xff'
+							break
+						case 6:
+							//LEFT
+							cmd = '\x01\x06\x01\x0a\x0a\x01\x03\xff'
+							break
+						case 7:
+							//RIGHT
+							cmd = '\x01\x06\x01\x0a\x0a\x02\x03\xff'
+							break
+						case 8:
+							//RELEASE/STOP
+							cmd = '\x01\x06\x01\x01\x01\x03\x03\xff'
+							break
+					}
+					this.sendVISCACommand(cmd)
+				},
 			},
 		}
 	}
@@ -1238,396 +1602,7 @@ class ModuleInstance extends InstanceBase {
 		this.tcp.send(this.prependPacketSize(buf))
 	}
 
-	action = function (action) {
-		const opt = action.options
-
-		const panspeed = String.fromCharCode(parseInt(this.ptSpeed, 16) & 0xff)
-		const tiltspeed = String.fromCharCode(Math.min(parseInt(this.ptSpeed, 16), 0x14) & 0xff)
-
-		switch (action.action) {
-			case 'left': {
-				const cmd = `\x01\x06\x01${panspeed}${tiltspeed}\x01\x03\xFF`
-				this.sendVISCACommand(cmd)
-				break
-			}
-
-			case 'right': {
-				const cmd = `\x01\x06\x01${panspeed}${tiltspeed}\x02\x03\xFF`
-				this.sendVISCACommand(cmd)
-				break
-			}
-
-			case 'up': {
-				const cmd = `\x01\x06\x01${panspeed}${tiltspeed}\x03\x01\xFF`
-				this.sendVISCACommand(cmd)
-				break
-			}
-
-			case 'down': {
-				const cmd = `\x01\x06\x01${panspeed}${tiltspeed}\x03\x02\xFF`
-				this.sendVISCACommand(cmd)
-				break
-			}
-
-			case 'upLeft': {
-				const cmd = `\x01\x06\x01${panspeed}${tiltspeed}\x01\x01\xFF`
-				this.sendVISCACommand(cmd)
-				break
-			}
-
-			case 'upRight': {
-				const cmd = `\x01\x06\x01${panspeed}${tiltspeed}\x02\x01\xFF`
-				this.sendVISCACommand(cmd)
-				break
-			}
-
-			case 'downLeft': {
-				const cmd = `\x01\x06\x01${panspeed}${tiltspeed}\x01\x02\xFF`
-				this.sendVISCACommand(cmd)
-				break
-			}
-
-			case 'downRight': {
-				const cmd = `\x01\x06\x01${panspeed}${tiltspeed}\x02\x02\xFF`
-				this.sendVISCACommand(cmd)
-				break
-			}
-
-			case 'stop': {
-				const cmd = `\x01\x06\x01${panspeed}${tiltspeed}\x03\x03\xFF`
-				this.sendVISCACommand(cmd)
-				break
-			}
-
-			case 'home': {
-				const cmd = '\x01\x06\x04\xFF'
-				this.sendVISCACommand(cmd)
-				break
-			}
-
-			case 'ptSpeedS': {
-				this.ptSpeed = opt.speed
-
-				let idx = -1
-				for (let i = 0; i < SPEED.length; ++i) {
-					if (SPEED[i].id == this.ptSpeed) {
-						idx = i
-						break
-					}
-				}
-				if (idx > -1) {
-					this.ptSpeedIndex = idx
-				}
-				this.debug(`${this.ptSpeed} == ${this.ptSpeedIndex}`)
-				break
-			}
-
-			case 'ptSpeedU': {
-				if (this.ptSpeedIndex == 23) {
-					this.ptSpeedIndex = 23
-				} else if (this.ptSpeedIndex < 23) {
-					this.ptSpeedIndex++
-				}
-				this.ptSpeed = SPEED[this.ptSpeedIndex].id
-				break
-			}
-
-			case 'ptSpeedD': {
-				if (this.ptSpeedIndex == 0) {
-					this.ptSpeedIndex = 0
-				} else if (this.ptSpeedIndex > 0) {
-					this.ptSpeedIndex--
-				}
-				this.ptSpeed = SPEED[this.ptSpeedIndex].id
-				break
-			}
-
-			case 'zoomSpeedS': {
-				this.zoomSpeed = opt.speed
-
-				let idx = -1
-				for (let i = 0; i < CHOICE_ZOOMSPEED.length; ++i) {
-					if (CHOICE_ZOOMSPEED[i].id == this.zoomSpeed) {
-						idx = i
-						break
-					}
-				}
-				if (idx > -1) {
-					this.zoomSpeedIndex = idx
-				}
-				this.debug(`${this.zoomSpeed} == ${this.zoomSpeedIndex}`)
-				break
-			}
-
-			case 'zoomSpeedU': {
-				if (this.zoomSpeedIndex == 7) {
-					this.zoomSpeedIndex = 7
-				} else if (this.zoomSpeedIndex < 7) {
-					this.zoomSpeedIndex++
-				}
-				this.zoomSpeed = CHOICE_ZOOMSPEED[this.zoomSpeedIndex].id
-				break
-			}
-
-			case 'zoomSpeedD': {
-				if (this.zoomSpeedIndex == 1) {
-					this.zoomSpeedIndex = 1
-				} else if (this.zoomSpeedIndex > 0) {
-					this.zoomSpeedIndex--
-				}
-				this.zoomSpeed = CHOICE_ZOOMSPEED[this.zoomSpeedIndex].id
-				break
-			}
-
-			case 'zoomI': {
-				//Variable zoom speed
-				const zoomspeed = String.fromCharCode((parseInt(this.zoomSpeed, 16) + 32) & 0xff)
-
-				const cmd = `\x01\x04\x07${zoomspeed}\xff`
-				this.sendVISCACommand(cmd)
-				break
-			}
-
-			case 'zoomO': {
-				//Variable zoom speed
-				const zoomspeed = String.fromCharCode((parseInt(this.zoomSpeed, 16) + 48) & 0xff)
-
-				const cmd = `\x01\x04\x07${zoomspeed}\xff`
-				this.sendVISCACommand(cmd)
-				break
-			}
-
-			case 'zoomS': {
-				const cmd = '\x01\x04\x07\x00\xFF'
-				this.sendVISCACommand(cmd)
-				break
-			}
-
-			case 'focusN': {
-				const cmd = '\x01\x04\x08\x03\xFF'
-				this.sendVISCACommand(cmd)
-				break
-			}
-
-			case 'focusF': {
-				const cmd = '\x01\x04\x08\x02\xFF'
-				this.sendVISCACommand(cmd)
-				break
-			}
-
-			case 'focusS': {
-				const cmd = '\x01\x04\x08\x00\xFF'
-				this.sendVISCACommand(cmd)
-				break
-			}
-
-			case 'focusM': {
-				let cmd
-				if (opt.bol == 0) {
-					cmd = '\x01\x04\x38\x02\xFF'
-				}
-				if (opt.bol == 1) {
-					cmd = '\x01\x04\x38\x03\xFF'
-				}
-				this.sendVISCACommand(cmd)
-				break
-			}
-
-			case 'expM': {
-				let cmd
-				if (opt.val == 0) {
-					cmd = '\x01\x04\x39\x00\xFF'
-				}
-				if (opt.val == 1) {
-					cmd = '\x01\x04\x39\x03\xFF'
-				}
-				if (opt.val == 2) {
-					cmd = '\x01\x04\x39\x0A\xFF'
-				}
-				if (opt.val == 3) {
-					cmd = '\x01\x04\x39\x0B\xFF'
-				}
-				if (opt.val == 4) {
-					cmd = '\x01\x04\x39\x0D\xFF'
-				}
-				this.sendVISCACommand(cmd)
-				break
-			}
-
-			case 'irisU': {
-				const cmd = '\x01\x04\x0B\x02\xFF'
-				this.sendVISCACommand(cmd)
-				break
-			}
-
-			case 'irisD': {
-				const cmd = '\x01\x04\x0B\x03\xFF'
-				this.sendVISCACommand(cmd)
-				break
-			}
-
-			case 'irisS': {
-				const cmd = Buffer.from('\x01\x04\x4B\x00\x00\x00\x00\xFF', 'binary')
-				cmd.writeUInt8((parseInt(opt.val, 16) & 0xf0) >> 4, 6)
-				cmd.writeUInt8(parseInt(opt.val, 16) & 0x0f, 7)
-				this.sendVISCACommand(cmd)
-				this.debug('cmd=', cmd)
-				break
-			}
-
-			case 'shutU': {
-				const cmd = '\x01\x04\x0A\x02\xFF'
-				this.sendVISCACommand(cmd)
-				break
-			}
-
-			case 'shutD': {
-				const cmd = '\x01\x04\x0A\x03\xFF'
-				this.sendVISCACommand(cmd)
-				break
-			}
-
-			case 'shutS': {
-				const cmd = Buffer.from('\x01\x04\x4A\x00\x00\x00\x00\xFF', 'binary')
-				cmd.writeUInt8((parseInt(opt.val, 16) & 0xf0) >> 4, 6)
-				cmd.writeUInt8(parseInt(opt.val, 16) & 0x0f, 7)
-				this.sendVISCACommand(cmd)
-				this.debug('cmd=', cmd)
-				break
-			}
-
-			case 'savePset': {
-				const cmd = `\x01\x04\x3F\x01${String.fromCharCode(parseInt(opt.val, 16) & 0xff)}\xFF`
-				this.sendVISCACommand(cmd)
-				break
-			}
-
-			case 'recallPset': {
-				const cmd = `\x01\x04\x3F\x02${String.fromCharCode(parseInt(opt.val, 16) & 0xff)}\xFF`
-				this.sendVISCACommand(cmd)
-				break
-			}
-
-			case 'speedPset': {
-				const cmd = `\x01\x7E\x01\x0B${String.fromCharCode(parseInt(opt.val, 16) & 0xff)}${String.fromCharCode(parseInt(opt.speed, 16) & 0xff)}\xFF`
-				this.sendVISCACommand(cmd)
-				break
-			}
-
-			case 'tally': {
-				let cmd
-				if (opt.val == 0) {
-					cmd = '\x01\x7E\x01\x0A\x00\x02\x03\xFF'
-				}
-				if (opt.val == 1) {
-					cmd = '\x01\x7E\x01\x0A\x00\x03\x02\xFF'
-				}
-				if (opt.val == 2) {
-					cmd = '\x01\x7E\x01\x0A\x00\x03\x03\xFF'
-				}
-				this.sendVISCACommand(cmd)
-				break
-			}
-
-			case 'osd': {
-				let cmd
-				switch (opt.val) {
-					case 0:
-						//OSD ON
-						cmd = '\x01\x06\x06\x02\xff'
-						break
-					case 1:
-						//OSD OFF
-						cmd = '\x01\x06\x06\x03\xff'
-						break
-					case 2:
-						//ENTER
-						cmd = '\x01\x7e\x01\x02\x00\x01\xff'
-						break
-					case 3:
-						//BACK
-						cmd = '\x01\x06\x01\x09\x09\x01\x03\xff'
-						break
-					case 4:
-						//UP
-						cmd = '\x01\x06\x01\x0a\x0a\x03\x01\xff'
-						break
-					case 5:
-						//DOWN
-						cmd = '\x01\x06\x01\x0a\x0a\x03\x02\xff'
-						break
-					case 6:
-						//LEFT
-						cmd = '\x01\x06\x01\x0a\x0a\x01\x03\xff'
-						break
-					case 7:
-						//RIGHT
-						cmd = '\x01\x06\x01\x0a\x0a\x02\x03\xff'
-						break
-					case 8:
-						//RELEASE/STOP
-						cmd = '\x01\x06\x01\x01\x01\x03\x03\xff'
-						break
-				}
-				this.sendVISCACommand(cmd)
-				break
-			}
-
-			case 'custom': {
-				const hexData = opt.custom.replace(/\s+/g, '')
-				const tempBuffer = Buffer.from(hexData, 'hex')
-				const cmd = tempBuffer.toString('binary')
-
-				this.sendVISCACommand(cmd)
-
-				break
-			}
-
-			case 'zoomTime': {
-				//For heads that do not support direct Zoom control
-
-				//Zoom in for ms
-				const cmd = '\x01\x04\x07\x27\xff'
-				this.sendVISCACommand(cmd)
-
-				setTimeout(() => {
-					//Zoom out for ms
-					const cmd = '\x01\x04\x07\x37\xff'
-					this.sendVISCACommand(cmd)
-					setTimeout(() => {
-						//Stop
-						const cmd = '\x01\x04\x07\x00\xFF'
-						this.sendVISCACommand(cmd)
-					}, opt.zOut)
-				}, opt.zIn)
-				break
-			}
-			case 'zInMS': {
-				//Zoom in for ms
-				const cmd = '\x01\x04\x07\x27\xff'
-				this.sendVISCACommand(cmd)
-
-				setTimeout(() => {
-					//Stop
-					const cmd = '\x01\x04\x07\x00\xFF'
-					this.sendVISCACommand(cmd)
-				}, opt.ms)
-				break
-			}
-			case 'zOutMS': {
-				//Zoom out for ms
-				const cmd = '\x01\x04\x07\x37\xff'
-				this.sendVISCACommand(cmd)
-
-				setTimeout(() => {
-					//Stop
-					const cmd = '\x01\x04\x07\x00\xFF'
-					this.sendVISCACommand(cmd)
-				}, opt.ms)
-				break
-			}
-		}
-
+	action = function (_action) {
 		this.setVariable('pt_speed', this.ptSpeedIndex)
 		this.setVariable('zoom_speed', this.zoomSpeedIndex)
 	}
