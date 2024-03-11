@@ -30,7 +30,7 @@ class ModuleInstance extends InstanceBase {
 		this.updateStatus(InstanceStatus.Ok, 'Ready')
 		this.updateActions()
 		// this.updateFeedbacks() - there aren't any feedbacks yet defined
-		this.init_presets()
+		this.initPresets()
 		this.updateVariables()
 	}
 
@@ -180,13 +180,13 @@ class ModuleInstance extends InstanceBase {
 		this.debug('destroy', this.id)
 	}
 
-	init_presets() {
-		const presets = [
-			{
+	initPresets() {
+		const presets = {
+			up: {
+				type: 'button',
 				category: 'Pan/Tilt',
-				label: 'UP',
-				bank: {
-					style: 'png',
+				name: 'UP',
+				style: {
 					text: '',
 					png64: IMAGE.up,
 					pngalignment: 'center:center',
@@ -205,11 +205,11 @@ class ModuleInstance extends InstanceBase {
 					},
 				],
 			},
-			{
+			down: {
+				type: 'button',
 				category: 'Pan/Tilt',
-				label: 'DOWN',
-				bank: {
-					style: 'png',
+				name: 'DOWN',
+				style: {
 					text: '',
 					png64: IMAGE.down,
 					pngalignment: 'center:center',
@@ -228,11 +228,11 @@ class ModuleInstance extends InstanceBase {
 					},
 				],
 			},
-			{
+			left: {
+				type: 'button',
 				category: 'Pan/Tilt',
-				label: 'LEFT',
-				bank: {
-					style: 'png',
+				name: 'LEFT',
+				style: {
 					text: '',
 					png64: IMAGE.left,
 					pngalignment: 'center:center',
@@ -251,11 +251,11 @@ class ModuleInstance extends InstanceBase {
 					},
 				],
 			},
-			{
+			right: {
+				type: 'button',
 				category: 'Pan/Tilt',
-				label: 'RIGHT',
-				bank: {
-					style: 'png',
+				name: 'RIGHT',
+				style: {
 					text: '',
 					png64: IMAGE.right,
 					pngalignment: 'center:center',
@@ -274,11 +274,11 @@ class ModuleInstance extends InstanceBase {
 					},
 				],
 			},
-			{
+			upRight: {
+				type: 'button',
 				category: 'Pan/Tilt',
-				label: 'UP RIGHT',
-				bank: {
-					style: 'png',
+				name: 'UP RIGHT',
+				style: {
 					text: '',
 					png64: IMAGE.up_right,
 					pngalignment: 'center:center',
@@ -297,11 +297,11 @@ class ModuleInstance extends InstanceBase {
 					},
 				],
 			},
-			{
+			upLeft: {
+				type: 'button',
 				category: 'Pan/Tilt',
-				label: 'UP LEFT',
-				bank: {
-					style: 'png',
+				name: 'UP LEFT',
+				style: {
 					text: '',
 					png64: IMAGE.up_left,
 					pngalignment: 'center:center',
@@ -320,11 +320,11 @@ class ModuleInstance extends InstanceBase {
 					},
 				],
 			},
-			{
+			downLeft: {
+				type: 'button',
 				category: 'Pan/Tilt',
-				label: 'DOWN LEFT',
-				bank: {
-					style: 'png',
+				name: 'DOWN LEFT',
+				style: {
 					text: '',
 					png64: IMAGE.down_left,
 					pngalignment: 'center:center',
@@ -343,11 +343,11 @@ class ModuleInstance extends InstanceBase {
 					},
 				],
 			},
-			{
+			downRight: {
+				type: 'button',
 				category: 'Pan/Tilt',
-				label: 'DOWN RIGHT',
-				bank: {
-					style: 'png',
+				name: 'DOWN RIGHT',
+				style: {
 					text: '',
 					png64: IMAGE.down_right,
 					pngalignment: 'center:center',
@@ -366,11 +366,11 @@ class ModuleInstance extends InstanceBase {
 					},
 				],
 			},
-			{
+			home: {
+				type: 'button',
 				category: 'Pan/Tilt',
-				label: 'Home',
-				bank: {
-					style: 'text',
+				name: 'Home',
+				style: {
 					text: 'HOME',
 					size: '18',
 					color: COLOR.white,
@@ -382,11 +382,11 @@ class ModuleInstance extends InstanceBase {
 					},
 				],
 			},
-			{
+			speedUp: {
+				type: 'button',
 				category: 'Pan/Tilt',
-				label: 'Speed Up',
-				bank: {
-					style: 'text',
+				name: 'Speed Up',
+				style: {
 					text: 'SPEED\\nUP',
 					size: '18',
 					color: COLOR.white,
@@ -398,11 +398,11 @@ class ModuleInstance extends InstanceBase {
 					},
 				],
 			},
-			{
+			speedDown: {
+				type: 'button',
 				category: 'Pan/Tilt',
-				label: 'Speed Down',
-				bank: {
-					style: 'text',
+				name: 'Speed Down',
+				style: {
 					text: 'SPEED\\nDOWN',
 					size: '18',
 					color: COLOR.white,
@@ -414,11 +414,11 @@ class ModuleInstance extends InstanceBase {
 					},
 				],
 			},
-			{
+			zoomIn: {
+				type: 'button',
 				category: 'Lens',
-				label: 'Zoom In',
-				bank: {
-					style: 'text',
+				name: 'Zoom In',
+				style: {
 					text: 'ZOOM\\nIN',
 					size: '18',
 					color: COLOR.white,
@@ -435,11 +435,11 @@ class ModuleInstance extends InstanceBase {
 					},
 				],
 			},
-			{
+			zoomOut: {
+				type: 'button',
 				category: 'Lens',
-				label: 'Zoom Out',
-				bank: {
-					style: 'text',
+				name: 'Zoom Out',
+				style: {
 					text: 'ZOOM\\nOUT',
 					size: '18',
 					color: COLOR.white,
@@ -456,11 +456,11 @@ class ModuleInstance extends InstanceBase {
 					},
 				],
 			},
-			{
+			zoomSpeedUp: {
+				type: 'button',
 				category: 'Lens',
-				label: 'Speed Up',
-				bank: {
-					style: 'text',
+				name: 'Speed Up',
+				style: {
 					text: 'Z SPEED\\nUP',
 					size: '14',
 					color: COLOR.white,
@@ -472,11 +472,11 @@ class ModuleInstance extends InstanceBase {
 					},
 				],
 			},
-			{
+			zoomSpeedDown: {
+				type: 'button',
 				category: 'Lens',
-				label: 'Speed Down',
-				bank: {
-					style: 'text',
+				name: 'Speed Down',
+				style: {
 					text: 'Z SPEED\\nDOWN',
 					size: '14',
 					color: COLOR.white,
@@ -488,11 +488,11 @@ class ModuleInstance extends InstanceBase {
 					},
 				],
 			},
-			{
+			focusNear: {
+				type: 'button',
 				category: 'Lens',
-				label: 'Focus Near',
-				bank: {
-					style: 'text',
+				name: 'Focus Near',
+				style: {
 					text: 'FOCUS\\nNEAR',
 					size: '18',
 					color: COLOR.white,
@@ -509,11 +509,11 @@ class ModuleInstance extends InstanceBase {
 					},
 				],
 			},
-			{
+			focusFar: {
+				type: 'button',
 				category: 'Lens',
-				label: 'Focus Far',
-				bank: {
-					style: 'text',
+				name: 'Focus Far',
+				style: {
 					text: 'FOCUS\\nFAR',
 					size: '18',
 					color: COLOR.white,
@@ -530,11 +530,11 @@ class ModuleInstance extends InstanceBase {
 					},
 				],
 			},
-			{
+			focusAuto: {
+				type: 'button',
 				category: 'Lens',
-				label: 'Auto Focus',
-				bank: {
-					style: 'text',
+				name: 'Auto Focus',
+				style: {
 					text: 'AUTO\\nFOCUS',
 					size: '18',
 					color: COLOR.white,
@@ -558,11 +558,11 @@ class ModuleInstance extends InstanceBase {
 					},
 				],
 			},
-			{
+			exposureMode: {
+				type: 'button',
 				category: 'Exposure',
-				label: 'Exposure Mode',
-				bank: {
-					style: 'text',
+				name: 'Exposure Mode',
+				style: {
 					text: 'EXP\\nMODE',
 					size: '18',
 					color: COLOR.white,
@@ -586,11 +586,11 @@ class ModuleInstance extends InstanceBase {
 					},
 				],
 			},
-			{
+			irisUp: {
+				type: 'button',
 				category: 'Exposure',
-				label: 'Iris Up',
-				bank: {
-					style: 'text',
+				name: 'Iris Up',
+				style: {
 					text: 'IRIS\\nUP',
 					size: '18',
 					color: COLOR.white,
@@ -602,11 +602,11 @@ class ModuleInstance extends InstanceBase {
 					},
 				],
 			},
-			{
+			irisDown: {
+				type: 'button',
 				category: 'Exposure',
-				label: 'Iris Down',
-				bank: {
-					style: 'text',
+				name: 'Iris Down',
+				style: {
 					text: 'IRIS\\nDOWN',
 					size: '18',
 					color: COLOR.white,
@@ -618,11 +618,11 @@ class ModuleInstance extends InstanceBase {
 					},
 				],
 			},
-			{
+			shutterUp: {
+				type: 'button',
 				category: 'Exposure',
-				label: 'Shutter Up',
-				bank: {
-					style: 'text',
+				name: 'Shutter Up',
+				style: {
 					text: 'Shut\\nUP',
 					size: '18',
 					color: COLOR.white,
@@ -634,11 +634,11 @@ class ModuleInstance extends InstanceBase {
 					},
 				],
 			},
-			{
+			shutterDown: {
+				type: 'button',
 				category: 'Exposure',
-				label: 'Shutter Down',
-				bank: {
-					style: 'text',
+				name: 'Shutter Down',
+				style: {
 					text: 'Shut\\nDOWN',
 					size: '18',
 					color: COLOR.white,
@@ -650,11 +650,11 @@ class ModuleInstance extends InstanceBase {
 					},
 				],
 			},
-			{
+			tallyGreen: {
+				type: 'button',
 				category: 'Tally',
-				label: 'GREEN',
-				bank: {
-					style: 'text',
+				name: 'GREEN',
+				style: {
 					text: 'GREEN',
 					size: '18',
 					color: COLOR.white,
@@ -669,11 +669,11 @@ class ModuleInstance extends InstanceBase {
 					},
 				],
 			},
-			{
+			tallyRed: {
+				type: 'button',
 				category: 'Tally',
-				label: 'RED',
-				bank: {
-					style: 'text',
+				name: 'RED',
+				style: {
 					text: 'RED',
 					size: '18',
 					color: COLOR.white,
@@ -688,11 +688,11 @@ class ModuleInstance extends InstanceBase {
 					},
 				],
 			},
-			{
+			tallyOff: {
+				type: 'button',
 				category: 'Tally',
-				label: 'OFF',
-				bank: {
-					style: 'text',
+				name: 'OFF',
+				style: {
 					text: 'OFF',
 					size: '18',
 					color: COLOR.white,
@@ -707,11 +707,11 @@ class ModuleInstance extends InstanceBase {
 					},
 				],
 			},
-			{
+			osdMenu: {
+				type: 'button',
 				category: 'OSD',
-				label: 'OSD Menu',
-				bank: {
-					style: 'text',
+				name: 'OSD Menu',
+				style: {
 					text: 'OSD',
 					size: '18',
 					color: COLOR.white,
@@ -735,11 +735,12 @@ class ModuleInstance extends InstanceBase {
 					},
 				],
 			},
-			{
+			osdEnter: {
+				type: 'button',
+
 				category: 'OSD',
-				label: 'ENTER',
-				bank: {
-					style: 'text',
+				name: 'ENTER',
+				style: {
 					text: 'ENTER',
 					size: '18',
 					color: COLOR.white,
@@ -754,11 +755,12 @@ class ModuleInstance extends InstanceBase {
 					},
 				],
 			},
-			{
+			osdBack: {
+				type: 'button',
+
 				category: 'OSD',
-				label: 'BACK',
-				bank: {
-					style: 'text',
+				name: 'BACK',
+				style: {
 					text: 'BACK',
 					size: '18',
 					color: COLOR.white,
@@ -773,11 +775,12 @@ class ModuleInstance extends InstanceBase {
 					},
 				],
 			},
-			{
+			osdUp: {
+				type: 'button',
+
 				category: 'OSD',
-				label: 'UP',
-				bank: {
-					style: 'png',
+				name: 'UP',
+				style: {
 					text: '',
 					png64: IMAGE.up,
 					pngalignment: 'center:center',
@@ -802,11 +805,12 @@ class ModuleInstance extends InstanceBase {
 					},
 				],
 			},
-			{
+			osdDown: {
+				type: 'button',
+
 				category: 'OSD',
-				label: 'DOWN',
-				bank: {
-					style: 'png',
+				name: 'DOWN',
+				style: {
 					text: '',
 					png64: IMAGE.down,
 					pngalignment: 'center:center',
@@ -831,11 +835,12 @@ class ModuleInstance extends InstanceBase {
 					},
 				],
 			},
-			{
+			oseLeft: {
+				type: 'button',
+
 				category: 'OSD',
-				label: 'LEFT',
-				bank: {
-					style: 'png',
+				name: 'LEFT',
+				style: {
 					text: '',
 					png64: IMAGE.left,
 					pngalignment: 'center:center',
@@ -860,11 +865,12 @@ class ModuleInstance extends InstanceBase {
 					},
 				],
 			},
-			{
+			osdRight: {
+				type: 'button',
+
 				category: 'OSD',
-				label: 'RIGHT',
-				bank: {
-					style: 'png',
+				name: 'RIGHT',
+				style: {
 					text: '',
 					png64: IMAGE.right,
 					pngalignment: 'center:center',
@@ -889,15 +895,15 @@ class ModuleInstance extends InstanceBase {
 					},
 				],
 			},
-		]
+		}
 
 		let save
 		for (save = 0; save < 63; save++) {
-			presets.push({
+			presets[`save${save + 1}`] = {
+				type: 'button',
 				category: 'Save Preset',
-				label: `Save Preset ${parseInt(save + 1)}`,
-				bank: {
-					style: 'text',
+				name: `Save Preset ${parseInt(save + 1)}`,
+				style: {
 					text: `SAVE\\nPSET\\n${parseInt(save + 1)}`,
 					size: '14',
 					color: COLOR.white,
@@ -911,16 +917,16 @@ class ModuleInstance extends InstanceBase {
 						},
 					},
 				],
-			})
+			}
 		}
 
 		let recall
 		for (recall = 0; recall < 63; recall++) {
-			presets.push({
+			presets[`recall${recall + 1}`] = {
+				type: 'button',
 				category: 'Recall Preset',
-				label: `Recall Preset ${parseInt(recall + 1)}`,
-				bank: {
-					style: 'text',
+				name: `Recall Preset ${parseInt(recall + 1)}`,
+				style: {
 					text: `Recall\\nPSET\\n${parseInt(recall + 1)}`,
 					size: '14',
 					color: COLOR.white,
@@ -934,8 +940,10 @@ class ModuleInstance extends InstanceBase {
 						},
 					},
 				],
-			})
+			}
 		}
+
+		console.log(presets)
 
 		this.setPresetDefinitions(presets)
 	}
