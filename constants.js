@@ -1,11 +1,11 @@
 import { combineRgb } from '@companion-module/base'
 
-export const PRESET = []
+export const CHOICE_PRESET = []
 for (let i = 0; i < 64; ++i) {
-	PRESET.push({ id: `0${i.toString(16)}`.slice(-2), label: `Preset ${i}` })
+	CHOICE_PRESET.push({ id: `0${i.toString(16)}`.slice(-2), label: `Preset ${i}` })
 }
 
-export const IRIS = [
+export const CHOICE_IRIS = [
 	{ id: '11', label: 'F1.8' },
 	{ id: '10', label: 'F2.0' },
 	{ id: '0F', label: 'F2.4' },
@@ -20,7 +20,7 @@ export const IRIS = [
 	{ id: '06', label: 'F11' },
 	{ id: '00', label: 'CLOSED' },
 ]
-export const SHUTTER = [
+export const CHOICE_SHUTTER = [
 	{ id: '11', label: '1/1000000' },
 	{ id: '10', label: '1/6000' },
 	{ id: '0F', label: '1/4000' },
@@ -39,7 +39,7 @@ export const SHUTTER = [
 	{ id: '02', label: '1/60' },
 	{ id: '01', label: '1/30' },
 ]
-export const SPEED = [
+export const CHOICE_SPEED = [
 	{ id: '01', label: 'Speed 01 (Slow)' },
 	{ id: '02', label: 'Speed 02' },
 	{ id: '03', label: 'Speed 03' },

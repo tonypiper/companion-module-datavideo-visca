@@ -1,4 +1,4 @@
-import { ActionId, PRESET, SPEED, CHOICE_ZOOMSPEED, IRIS, SHUTTER } from './constants.js'
+import { ActionId, CHOICE_PRESET, CHOICE_SPEED, CHOICE_ZOOMSPEED, CHOICE_IRIS, CHOICE_SHUTTER } from './constants.js'
 
 export function getActions(instance) {
 	const panspeed = String.fromCharCode(parseInt(instance.ptSpeed, 16) & 0xff)
@@ -92,15 +92,15 @@ export function getActions(instance) {
 					type: 'dropdown',
 					label: 'speed setting',
 					id: 'speed',
-					choices: SPEED,
+					choices: CHOICE_SPEED,
 				},
 			],
 			callback: async (action) => {
 				instance.ptSpeed = action.options.speed
 
 				let idx = -1
-				for (let i = 0; i < SPEED.length; ++i) {
-					if (SPEED[i].id == instance.ptSpeed) {
+				for (let i = 0; i < CHOICE_SPEED.length; ++i) {
+					if (CHOICE_SPEED[i].id == instance.ptSpeed) {
 						idx = i
 						break
 					}
@@ -114,24 +114,16 @@ export function getActions(instance) {
 		[ActionId.ptSpeedU]: {
 			name: 'P/T Speed Up',
 			callback: async (_action) => {
-				if (instance.ptSpeedIndex == 23) {
-					instance.ptSpeedIndex = 23
-				} else if (instance.ptSpeedIndex < 23) {
-					instance.ptSpeedIndex++
-				}
-				instance.ptSpeed = SPEED[instance.ptSpeedIndex].id
+				instance.ptSpeedIndex = Math.min(23, instance.ptSpeedIndex++)
+				instance.ptSpeed = CHOICE_SPEED[instance.ptSpeedIndex].id
 			},
 			options: [],
 		},
 		[ActionId.ptSpeedD]: {
 			name: 'P/T Speed Down',
 			callback: async (_action) => {
-				if (instance.ptSpeedIndex == 0) {
-					instance.ptSpeedIndex = 0
-				} else if (instance.ptSpeedIndex > 0) {
-					instance.ptSpeedIndex--
-				}
-				instance.ptSpeed = SPEED[instance.ptSpeedIndex].id
+				instance.ptSpeedIndex = Math.max(0, instance.ptSpeedIndex--)
+				instance.ptSpeed = CHOICE_SPEED[instance.ptSpeedIndex].id
 			},
 			options: [],
 		},
@@ -208,11 +200,7 @@ export function getActions(instance) {
 		[ActionId.zoomSpeedU]: {
 			name: 'Zoom Speed Up',
 			callback: async (_action) => {
-				if (instance.zoomSpeedIndex == 7) {
-					instance.zoomSpeedIndex = 7
-				} else if (instance.zoomSpeedIndex < 7) {
-					instance.zoomSpeedIndex++
-				}
+				instance.zoomSpeedIndex = Math.min(7, instance.zoomSpeedIndex++)
 				instance.zoomSpeed = CHOICE_ZOOMSPEED[instance.zoomSpeedIndex].id
 			},
 			options: [],
@@ -220,11 +208,7 @@ export function getActions(instance) {
 		[ActionId.zoomSpeedD]: {
 			name: 'Zoom Speed Down',
 			callback: async (_action) => {
-				if (instance.zoomSpeedIndex == 1) {
-					instance.zoomSpeedIndex = 1
-				} else if (instance.zoomSpeedIndex > 0) {
-					instance.zoomSpeedIndex--
-				}
+				instance.zoomSpeedIndex = Math.max(1, instance.zoomSpeedIndex--)
 				instance.zoomSpeed = CHOICE_ZOOMSPEED[instance.zoomSpeedIndex].id
 			},
 			options: [],
@@ -354,13 +338,7 @@ export function getActions(instance) {
 				},
 			],
 			callback: async (action) => {
-				let cmd
-				if (action.options.bol == 0) {
-					cmd = '\x01\x04\x38\x02\xFF'
-				}
-				if (action.options.bol == 1) {
-					cmd = '\x01\x04\x38\x03\xFF'
-				}
+				const cmd = action.options.bol == 0 ? '\x01\x04\x38\x02\xFF' : '\x01\x04\x38\x03\xFF'
 				instance.sendVISCACommand(cmd)
 			},
 		},
@@ -381,22 +359,15 @@ export function getActions(instance) {
 				},
 			],
 			callback: async (action) => {
-				let cmd
-				if (action.options.val == 0) {
-					cmd = '\x01\x04\x39\x00\xFF'
-				}
-				if (action.options.val == 1) {
-					cmd = '\x01\x04\x39\x03\xFF'
-				}
-				if (action.options.val == 2) {
-					cmd = '\x01\x04\x39\x0A\xFF'
-				}
-				if (action.options.val == 3) {
-					cmd = '\x01\x04\x39\x0B\xFF'
-				}
-				if (action.options.val == 4) {
-					cmd = '\x01\x04\x39\x0D\xFF'
-				}
+				const commands = [
+					'\x01\x04\x39\x00\xFF', // Full auto
+					'\x01\x04\x39\x03\xFF', // Manual
+					'\x01\x04\x39\x0A\xFF', // Shutter Pri
+					'\x01\x04\x39\x0B\xFF', // Iris Pri
+					'\x01\x04\x39\x0D\xFF', // Bright mode (manual)
+				]
+				const cmd = commands[action.options.val]
+
 				instance.sendVISCACommand(cmd)
 			},
 		},
@@ -423,7 +394,7 @@ export function getActions(instance) {
 					type: 'dropdown',
 					label: 'Iris setting',
 					id: 'val',
-					choices: IRIS,
+					choices: CHOICE_IRIS,
 				},
 			],
 			callback: async (action) => {
@@ -457,7 +428,7 @@ export function getActions(instance) {
 					type: 'dropdown',
 					label: 'Shutter setting',
 					id: 'val',
-					choices: SHUTTER,
+					choices: CHOICE_SHUTTER,
 				},
 			],
 			callback: async (action) => {
@@ -475,7 +446,7 @@ export function getActions(instance) {
 					type: 'dropdown',
 					label: 'Preset Nr.',
 					id: 'val',
-					choices: PRESET,
+					choices: CHOICE_PRESET,
 				},
 			],
 			callback: async (action) => {
@@ -490,7 +461,7 @@ export function getActions(instance) {
 					type: 'dropdown',
 					label: 'Preset Nr.',
 					id: 'val',
-					choices: PRESET,
+					choices: CHOICE_PRESET,
 				},
 			],
 			callback: async (action) => {
@@ -533,16 +504,12 @@ export function getActions(instance) {
 				},
 			],
 			callback: async (action) => {
-				let cmd
-				if (action.options.val == 0) {
-					cmd = '\x01\x7E\x01\x0A\x00\x02\x03\xFF'
-				}
-				if (action.options.val == 1) {
-					cmd = '\x01\x7E\x01\x0A\x00\x03\x02\xFF'
-				}
-				if (action.options.val == 2) {
-					cmd = '\x01\x7E\x01\x0A\x00\x03\x03\xFF'
-				}
+				const commands = [
+					'\x01\x7E\x01\x0A\x00\x02\x03\xFF', // Red
+					'\x01\x7E\x01\x0A\x00\x03\x02\xFF', // Green
+					'\x01\x7E\x01\x0A\x00\x03\x03\xFF', // Off
+				]
+				const cmd = commands[action.options.val]
 				instance.sendVISCACommand(cmd)
 			},
 		},
@@ -553,13 +520,13 @@ export function getActions(instance) {
 					type: 'dropdown',
 					label: 'Preset Nr.',
 					id: 'val',
-					choices: PRESET,
+					choices: CHOICE_PRESET,
 				},
 				{
 					type: 'dropdown',
 					label: 'speed setting',
 					id: 'speed',
-					choices: SPEED,
+					choices: CHOICE_SPEED,
 				},
 			],
 			callback: async (action) => {
@@ -589,45 +556,18 @@ export function getActions(instance) {
 				},
 			],
 			callback: async (action) => {
-				let cmd
-				switch (action.options.val) {
-					case 0:
-						//OSD ON
-						cmd = '\x01\x06\x06\x02\xff'
-						break
-					case 1:
-						//OSD OFF
-						cmd = '\x01\x06\x06\x03\xff'
-						break
-					case 2:
-						//ENTER
-						cmd = '\x01\x7e\x01\x02\x00\x01\xff'
-						break
-					case 3:
-						//BACK
-						cmd = '\x01\x06\x01\x09\x09\x01\x03\xff'
-						break
-					case 4:
-						//UP
-						cmd = '\x01\x06\x01\x0a\x0a\x03\x01\xff'
-						break
-					case 5:
-						//DOWN
-						cmd = '\x01\x06\x01\x0a\x0a\x03\x02\xff'
-						break
-					case 6:
-						//LEFT
-						cmd = '\x01\x06\x01\x0a\x0a\x01\x03\xff'
-						break
-					case 7:
-						//RIGHT
-						cmd = '\x01\x06\x01\x0a\x0a\x02\x03\xff'
-						break
-					case 8:
-						//RELEASE/STOP
-						cmd = '\x01\x06\x01\x01\x01\x03\x03\xff'
-						break
-				}
+				const commands = [
+					'\x01\x06\x06\x02\xff', // OSD On
+					'\x01\x06\x06\x03\xff', // OSD Off
+					'\x01\x7e\x01\x02\x00\x01\xff', // ENTER
+					'\x01\x06\x01\x09\x09\x01\x03\xff', // BACK
+					'\x01\x06\x01\x0a\x0a\x03\x01\xff', // UP
+					'\x01\x06\x01\x0a\x0a\x03\x02\xff', // DOWN
+					'\x01\x06\x01\x0a\x0a\x01\x03\xff', // LEFT
+					'\x01\x06\x01\x0a\x0a\x02\x03\xff', // RIGHT
+					'\x01\x06\x01\x01\x01\x03\x03\xff', // RELEASE/STOP
+				]
+				const cmd = commands[action.options.val]
 				instance.sendVISCACommand(cmd)
 			},
 		},
