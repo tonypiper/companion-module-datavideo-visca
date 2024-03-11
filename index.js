@@ -909,12 +909,17 @@ class ModuleInstance extends InstanceBase {
 					color: COLOR.white,
 					bgcolor: COLOR.black,
 				},
-				actions: [
+				steps: [
 					{
-						action: 'savePset',
-						options: {
-							val: `0${save.toString(16).toUpperCase()}`.slice(-2),
-						},
+						down: [
+							{
+								actionId: 'savePset',
+								options: {
+									val: `0${save.toString(16).toUpperCase()}`.slice(-2),
+								},
+							},
+						],
+						up: [],
 					},
 				],
 			}
@@ -932,12 +937,17 @@ class ModuleInstance extends InstanceBase {
 					color: COLOR.white,
 					bgcolor: COLOR.black,
 				},
-				actions: [
+				steps: [
 					{
-						action: 'recallPset',
-						options: {
-							val: `0${recall.toString(16).toUpperCase()}`.slice(-2),
-						},
+						down: [
+							{
+								actionId: 'recallPset',
+								options: {
+									val: `0${recall.toString(16).toUpperCase()}`.slice(-2),
+								},
+							},
+						],
+						up: [],
 					},
 				],
 			}
