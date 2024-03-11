@@ -1,25 +1,11 @@
 {
 	"name": "datavideo-visca",
-	"version": "1.0.5",
-	"api_version": "1.0.0",
-	"keywords": [
-		"Protocol",
-		"Camera"
-	],
-	"manufacturer": "Datavideo",
-	"product": "VISCA",
-	"shortname": "dv-visca",
-	"description": "Module to control PTZ cameras with Datavideo Visca protocol over IP",
+	"version": "2.0.0",
 	"main": "index.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
-	"author": "Rose O, Håkon Nessjøen <haakon@bitfocus.io>",
 	"license": "MIT",
-	"homepage": "https://github.com/bitfocus/companion-module-datavideo-visca#readme",
-	"bugs": {
-		"url": "https://github.com/bitfocus/companion-module-datavideo-visca/issues"
-	},
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/bitfocus/companion-module-datavideo-visca.git"
