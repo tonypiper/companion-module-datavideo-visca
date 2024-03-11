@@ -21,11 +21,6 @@
 		"entrypoint": "../index.js"
 	},
 	"manufacturer": "Datavideo",
-	"products": [
-		"VISCA"
-	],
-	"keywords": [
-		"Protocol",
-		"Camera"
-	]
+	"products": ["VISCA"],
+	"keywords": ["Protocol", "Camera"]
 }

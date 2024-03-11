@@ -9,7 +9,6 @@
 		"lint:raw": "eslint --ext .ts --ext .js --ignore-pattern dist --ignore-pattern pkg",
 		"lint": "yarn lint:raw .",
 		"package": "companion-module-build"
-
 	},
 	"license": "MIT",
 	"repository": {
