@@ -1,5 +1,10 @@
 import { combineRgb } from '@companion-module/base'
 
+export const PRESET = []
+for (let i = 0; i < 64; ++i) {
+	PRESET.push({ id: `0${i.toString(16)}`.slice(-2), label: `Preset ${i}` })
+}
+
 export const IRIS = [
 	{ id: '11', label: 'F1.8' },
 	{ id: '10', label: 'F2.0' },
@@ -136,3 +141,5 @@ export const ActionId = {
 	speedPset: 'speedPset',
 	osd: 'osd',
 }
+
+export const ok_pkt = Buffer.from([0, 8, 129, 9, 126, 126, 112, 255])
