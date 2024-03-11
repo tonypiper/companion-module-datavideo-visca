@@ -662,7 +662,5 @@ export function getPresets() {
 		}
 	}
 
-	console.log(presets)
-
 	return presets
 }
