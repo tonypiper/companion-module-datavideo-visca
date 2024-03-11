@@ -1,7 +1,6 @@
 const instance_skel = require('../../instance_skel')
 const tcp = require('../../tcp')
 let debug
-let log
 
 const ok_pkt = Buffer.from([0x00, 0x08, 0x81, 0x09, 0x7e, 0x7e, 0x70, 0xff])
 
@@ -85,15 +84,6 @@ const CHOICE_ZOOMSPEED = [
 	{ id: '06', label: 'Speed 06' },
 	{ id: '07', label: 'Speed 07 (Fast)' },
 ]
-
-function hex2str(hexdata) {
-	let result = ''
-	for (let i = 0; i < hexdata.length; i += 2) {
-		result += String.fromCharCode(parseInt(hexdata.substr(i, 2), 16))
-	}
-
-	return result
-}
 
 function instance(system, id, config) {
 	// super-constructor
