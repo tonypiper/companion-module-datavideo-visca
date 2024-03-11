@@ -1,6 +1,6 @@
 import { InstanceBase, Regex, runEntrypoint, InstanceStatus, TCPHelper } from '@companion-module/base'
 import UpgradeScripts from './upgrades.js'
-import { IRIS, SHUTTER, SPEED, CHOICE_ZOOMSPEED, COLOR, IMAGE } from './constants.js'
+import { IRIS, SHUTTER, SPEED, CHOICE_ZOOMSPEED, COLOR, IMAGE, ActionId } from './constants.js'
 
 const ok_pkt = Buffer.from([0x00, 0x08, 0x81, 0x09, 0x7e, 0x7e, 0x70, 0xff])
 
@@ -963,7 +963,7 @@ class ModuleInstance extends InstanceBase {
 		const tiltspeed = String.fromCharCode(Math.min(parseInt(this.ptSpeed, 16), 0x14) & 0xff)
 
 		return {
-			left: {
+			[ActionId.left]: {
 				name: 'Pan Left',
 				callback: async (_action) => {
 					const cmd = `\x01\x06\x01${panspeed}${tiltspeed}\x01\x03\xFF`
@@ -971,7 +971,7 @@ class ModuleInstance extends InstanceBase {
 				},
 				options: [],
 			},
-			right: {
+			[ActionId.right]: {
 				name: 'Pan Right',
 				callback: async (_action) => {
 					const cmd = `\x01\x06\x01${panspeed}${tiltspeed}\x02\x03\xFF`
@@ -979,7 +979,7 @@ class ModuleInstance extends InstanceBase {
 				},
 				options: [],
 			},
-			up: {
+			[ActionId.up]: {
 				name: 'Tilt Up',
 				callback: async (_action) => {
 					const cmd = `\x01\x06\x01${panspeed}${tiltspeed}\x03\x01\xFF`
@@ -987,7 +987,7 @@ class ModuleInstance extends InstanceBase {
 				},
 				options: [],
 			},
-			down: {
+			[ActionId.down]: {
 				name: 'Tilt Down',
 				callback: async (_action) => {
 					const cmd = `\x01\x06\x01${panspeed}${tiltspeed}\x03\x02\xFF`
@@ -995,7 +995,7 @@ class ModuleInstance extends InstanceBase {
 				},
 				options: [],
 			},
-			upLeft: {
+			[ActionId.upLeft]: {
 				name: 'Up Left',
 				callback: async (_action) => {
 					const cmd = `\x01\x06\x01${panspeed}${tiltspeed}\x01\x01\xFF`
@@ -1003,7 +1003,7 @@ class ModuleInstance extends InstanceBase {
 				},
 				options: [],
 			},
-			upRight: {
+			[ActionId.upRight]: {
 				name: 'Up Right',
 				callback: async (_action) => {
 					const cmd = `\x01\x06\x01${panspeed}${tiltspeed}\x02\x01\xFF`
@@ -1011,7 +1011,7 @@ class ModuleInstance extends InstanceBase {
 				},
 				options: [],
 			},
-			downLeft: {
+			[ActionId.downLeft]: {
 				name: 'Down Left',
 				callback: async (_action) => {
 					const cmd = `\x01\x06\x01${panspeed}${tiltspeed}\x01\x02\xFF`
@@ -1019,7 +1019,7 @@ class ModuleInstance extends InstanceBase {
 				},
 				options: [],
 			},
-			downRight: {
+			[ActionId.downRight]: {
 				name: 'Down Right',
 				callback: async (_action) => {
 					const cmd = `\x01\x06\x01${panspeed}${tiltspeed}\x02\x02\xFF`
@@ -1027,7 +1027,7 @@ class ModuleInstance extends InstanceBase {
 				},
 				options: [],
 			},
-			stop: {
+			[ActionId.stop]: {
 				name: 'P/T Stop',
 				callback: async (_action) => {
 					const cmd = `\x01\x06\x01${panspeed}${tiltspeed}\x03\x03\xFF`
@@ -1035,7 +1035,7 @@ class ModuleInstance extends InstanceBase {
 				},
 				options: [],
 			},
-			home: {
+			[ActionId.home]: {
 				name: 'P/T Home',
 				callback: async (_action) => {
 					const cmd = '\x01\x06\x04\xFF'
@@ -1043,7 +1043,7 @@ class ModuleInstance extends InstanceBase {
 				},
 				options: [],
 			},
-			ptSpeedS: {
+			[ActionId.ptSpeedS]: {
 				name: 'P/T Speed',
 				options: [
 					{
@@ -1069,7 +1069,7 @@ class ModuleInstance extends InstanceBase {
 					this.debug(`${this.ptSpeed} == ${this.ptSpeedIndex}`)
 				},
 			},
-			ptSpeedU: {
+			[ActionId.ptSpeedU]: {
 				name: 'P/T Speed Up',
 				callback: async (_action) => {
 					if (this.ptSpeedIndex == 23) {
@@ -1081,7 +1081,7 @@ class ModuleInstance extends InstanceBase {
 				},
 				options: [],
 			},
-			ptSpeedD: {
+			[ActionId.ptSpeedD]: {
 				name: 'P/T Speed Down',
 				callback: async (_action) => {
 					if (this.ptSpeedIndex == 0) {
@@ -1093,7 +1093,7 @@ class ModuleInstance extends InstanceBase {
 				},
 				options: [],
 			},
-			ptSlow: {
+			[ActionId.ptSlow]: {
 				name: 'P/T Slow Mode',
 				options: [
 					{
@@ -1108,7 +1108,7 @@ class ModuleInstance extends InstanceBase {
 				],
 				callback: async (_action) => {},
 			},
-			zoomI: {
+			[ActionId.zoomI]: {
 				name: 'Zoom In',
 				callback: async (_action) => {
 					const zoomspeed = String.fromCharCode((parseInt(this.zoomSpeed, 16) + 32) & 0xff)
@@ -1118,7 +1118,7 @@ class ModuleInstance extends InstanceBase {
 				},
 				options: [],
 			},
-			zoomO: {
+			[ActionId.zoomO]: {
 				name: 'Zoom Out',
 				callback: async (_action) => {
 					//Variable zoom speed
@@ -1129,7 +1129,7 @@ class ModuleInstance extends InstanceBase {
 				},
 				options: [],
 			},
-			zoomS: {
+			[ActionId.zoomS]: {
 				name: 'Zoom Stop',
 				callback: async (_action) => {
 					const cmd = '\x01\x04\x07\x00\xFF'
@@ -1137,7 +1137,7 @@ class ModuleInstance extends InstanceBase {
 				},
 				options: [],
 			},
-			zoomSpeedS: {
+			[ActionId.zoomSpeedS]: {
 				name: 'Zoom Speed',
 				options: [
 					{
@@ -1163,7 +1163,7 @@ class ModuleInstance extends InstanceBase {
 					this.debug(`${this.zoomSpeed} == ${this.zoomSpeedIndex}`)
 				},
 			},
-			zoomSpeedU: {
+			[ActionId.zoomSpeedU]: {
 				name: 'Zoom Speed Up',
 				callback: async (_action) => {
 					if (this.zoomSpeedIndex == 7) {
@@ -1175,7 +1175,7 @@ class ModuleInstance extends InstanceBase {
 				},
 				options: [],
 			},
-			zoomSpeedD: {
+			[ActionId.zoomSpeedD]: {
 				name: 'Zoom Speed Down',
 				callback: async (_action) => {
 					if (this.zoomSpeedIndex == 1) {
@@ -1187,7 +1187,7 @@ class ModuleInstance extends InstanceBase {
 				},
 				options: [],
 			},
-			zoomTime: {
+			[ActionId.zoomTime]: {
 				name: 'Zoom Postion In/Out (ms)',
 				options: [
 					{
@@ -1226,7 +1226,7 @@ class ModuleInstance extends InstanceBase {
 					}, action.options.zIn)
 				},
 			},
-			zInMS: {
+			[ActionId.zInMs]: {
 				name: 'Zoom In for ms',
 				options: [
 					{
@@ -1250,7 +1250,7 @@ class ModuleInstance extends InstanceBase {
 					}, action.options.ms)
 				},
 			},
-			zOutMS: {
+			[ActionId.zOutMs]: {
 				name: 'Zoom Out for ms',
 				options: [
 					{
@@ -1274,7 +1274,7 @@ class ModuleInstance extends InstanceBase {
 					}, action.options.ms)
 				},
 			},
-			focusN: {
+			[ActionId.focusN]: {
 				name: 'Focus Near',
 				callback: async (_action) => {
 					const cmd = '\x01\x04\x08\x03\xFF'
@@ -1282,7 +1282,7 @@ class ModuleInstance extends InstanceBase {
 				},
 				options: [],
 			},
-			focusF: {
+			[ActionId.focusF]: {
 				name: 'Focus Far',
 				callback: async (_action) => {
 					const cmd = '\x01\x04\x08\x02\xFF'
@@ -1290,7 +1290,7 @@ class ModuleInstance extends InstanceBase {
 				},
 				options: [],
 			},
-			focusS: {
+			[ActionId.focusS]: {
 				name: 'Focus Stop',
 				callback: async (_action) => {
 					const cmd = '\x01\x04\x08\x00\xFF'
@@ -1298,7 +1298,7 @@ class ModuleInstance extends InstanceBase {
 				},
 				options: [],
 			},
-			focusM: {
+			[ActionId.focusM]: {
 				label: 'Focus Mode',
 				options: [
 					{
@@ -1322,7 +1322,7 @@ class ModuleInstance extends InstanceBase {
 					this.sendVISCACommand(cmd)
 				},
 			},
-			expM: {
+			[ActionId.expM]: {
 				name: 'Exposure Mode',
 				options: [
 					{
@@ -1358,7 +1358,7 @@ class ModuleInstance extends InstanceBase {
 					this.sendVISCACommand(cmd)
 				},
 			},
-			irisU: {
+			[ActionId.irisU]: {
 				name: 'Iris Up',
 				callback: async (_action) => {
 					const cmd = '\x01\x04\x0B\x02\xFF'
@@ -1366,7 +1366,7 @@ class ModuleInstance extends InstanceBase {
 				},
 				options: [],
 			},
-			irisD: {
+			[ActionId.irisD]: {
 				name: 'Iris Down',
 				callback: async (_action) => {
 					const cmd = '\x01\x04\x0B\x03\xFF'
@@ -1374,7 +1374,7 @@ class ModuleInstance extends InstanceBase {
 				},
 				options: [],
 			},
-			irisS: {
+			[ActionId.irisS]: {
 				name: 'Set Iris',
 				options: [
 					{
@@ -1392,7 +1392,7 @@ class ModuleInstance extends InstanceBase {
 					this.debug('cmd=', cmd)
 				},
 			},
-			shutU: {
+			[ActionId.shutU]: {
 				name: 'Shutter Up',
 				callback: async (_action) => {
 					const cmd = '\x01\x04\x0A\x02\xFF'
@@ -1400,7 +1400,7 @@ class ModuleInstance extends InstanceBase {
 				},
 				options: [],
 			},
-			shutD: {
+			[ActionId.shutD]: {
 				name: 'Shutter Down',
 				callback: async (_action) => {
 					const cmd = '\x01\x04\x0A\x03\xFF'
@@ -1408,7 +1408,7 @@ class ModuleInstance extends InstanceBase {
 				},
 				options: [],
 			},
-			shutS: {
+			[ActionId.shutS]: {
 				label: 'Set Shutter',
 				options: [
 					{
@@ -1426,7 +1426,7 @@ class ModuleInstance extends InstanceBase {
 					this.debug('cmd=', cmd)
 				},
 			},
-			savePset: {
+			[ActionId.savePset]: {
 				name: 'Save Preset',
 				options: [
 					{
@@ -1441,7 +1441,7 @@ class ModuleInstance extends InstanceBase {
 					this.sendVISCACommand(cmd)
 				},
 			},
-			recallPset: {
+			[ActionId.recallPset]: {
 				name: 'Recall Preset',
 				options: [
 					{
@@ -1456,7 +1456,7 @@ class ModuleInstance extends InstanceBase {
 					this.sendVISCACommand(cmd)
 				},
 			},
-			custom: {
+			[ActionId.custom]: {
 				name: 'Custom command',
 				options: [
 					{
@@ -1475,7 +1475,7 @@ class ModuleInstance extends InstanceBase {
 					this.sendVISCACommand(cmd)
 				},
 			},
-			tally: {
+			[ActionId.tally]: {
 				name: 'Tally Colour',
 				options: [
 					{
@@ -1504,7 +1504,7 @@ class ModuleInstance extends InstanceBase {
 					this.sendVISCACommand(cmd)
 				},
 			},
-			speedPset: {
+			[ActionId.speedPset]: {
 				name: 'Preset Drive Speed',
 				options: [
 					{
@@ -1525,7 +1525,7 @@ class ModuleInstance extends InstanceBase {
 					this.sendVISCACommand(cmd)
 				},
 			},
-			osd: {
+			[ActionId.osd]: {
 				name: 'OSD Controls',
 				options: [
 					{
