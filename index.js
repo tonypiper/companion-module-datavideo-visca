@@ -1,4 +1,4 @@
-import { InstanceBase, Regex, runEntrypoint, InstanceStatus, TCPHelper } from '@companion-module/base'
+import { InstanceBase, Regex, runEntrypoint, InstanceStatus, TCPHelper, combineRgb } from '@companion-module/base'
 import UpgradeScripts from './upgrades.js'
 
 const ok_pkt = Buffer.from([0x00, 0x08, 0x81, 0x09, 0x7e, 0x7e, 0x70, 0xff])
@@ -82,6 +82,13 @@ const CHOICE_ZOOMSPEED = [
 	{ id: '07', label: 'Speed 07 (Fast)' },
 ]
 
+const COLOR = {
+	black: combineRgb(0, 0, 0),
+	white: combineRgb(255, 255, 255),
+	red: combineRgb(255, 0, 0),
+	green: combineRgb(0, 255, 0),
+}
+
 class ModuleInstance extends InstanceBase {
 	request_state
 	config = {}
@@ -103,8 +110,6 @@ class ModuleInstance extends InstanceBase {
 		this.updateStatus(InstanceStatus.Ok, 'Ready')
 		this.updateActions()
 		// this.updateFeedbacks() - there aren't any feedbacks yet defined
-		this.updateVariableDefinitions()
-		this.actions() // export actions
 		this.init_presets()
 		this.updateVariables()
 	}
@@ -230,23 +235,20 @@ class ModuleInstance extends InstanceBase {
 	}
 
 	updateActions() {
-		//
+		this.setActionDefinitions(this.actions())
 	}
 
 	updateFeedbacks() {
 		//
 	}
 
-	updateVariableDefinitions() {
-		//
-	}
-
-	updateVaribles() {
+	updateVariables() {
 		this.setVariableDefinitions(this.getVariables())
 
-		this.setVariable('pt_speed', this.ptSpeedIndex)
-		this.setVariable('zoom_speed', this.zoomSpeedIndex)
-
+		this.setVariableValues({
+			pt_speed: this.ptSpeedIndex,
+			zoom_speed: this.zoomSpeedIndex,
+		})
 	}
 
 	async destroy() {
@@ -269,8 +271,8 @@ class ModuleInstance extends InstanceBase {
 					png64: image_up,
 					pngalignment: 'center:center',
 					size: '18',
-					color: '16777215',
-					bgcolor: this.rgb(0, 0, 0),
+					color: COLOR.white,
+					bgcolor: COLOR.black,
 				},
 				actions: [
 					{
@@ -292,8 +294,8 @@ class ModuleInstance extends InstanceBase {
 					png64: image_down,
 					pngalignment: 'center:center',
 					size: '18',
-					color: '16777215',
-					bgcolor: this.rgb(0, 0, 0),
+					color: COLOR.white,
+					bgcolor: COLOR.black,
 				},
 				actions: [
 					{
@@ -315,8 +317,8 @@ class ModuleInstance extends InstanceBase {
 					png64: image_left,
 					pngalignment: 'center:center',
 					size: '18',
-					color: '16777215',
-					bgcolor: this.rgb(0, 0, 0),
+					color: COLOR.white,
+					bgcolor: COLOR.black,
 				},
 				actions: [
 					{
@@ -338,8 +340,8 @@ class ModuleInstance extends InstanceBase {
 					png64: image_right,
 					pngalignment: 'center:center',
 					size: '18',
-					color: '16777215',
-					bgcolor: this.rgb(0, 0, 0),
+					color: COLOR.white,
+					bgcolor: COLOR.black,
 				},
 				actions: [
 					{
@@ -361,8 +363,8 @@ class ModuleInstance extends InstanceBase {
 					png64: image_up_right,
 					pngalignment: 'center:center',
 					size: '18',
-					color: '16777215',
-					bgcolor: this.rgb(0, 0, 0),
+					color: COLOR.white,
+					bgcolor: COLOR.black,
 				},
 				actions: [
 					{
@@ -384,8 +386,8 @@ class ModuleInstance extends InstanceBase {
 					png64: image_up_left,
 					pngalignment: 'center:center',
 					size: '18',
-					color: '16777215',
-					bgcolor: this.rgb(0, 0, 0),
+					color: COLOR.white,
+					bgcolor: COLOR.black,
 				},
 				actions: [
 					{
@@ -407,8 +409,8 @@ class ModuleInstance extends InstanceBase {
 					png64: image_down_left,
 					pngalignment: 'center:center',
 					size: '18',
-					color: '16777215',
-					bgcolor: this.rgb(0, 0, 0),
+					color: COLOR.white,
+					bgcolor: COLOR.black,
 				},
 				actions: [
 					{
@@ -430,8 +432,8 @@ class ModuleInstance extends InstanceBase {
 					png64: image_down_right,
 					pngalignment: 'center:center',
 					size: '18',
-					color: '16777215',
-					bgcolor: this.rgb(0, 0, 0),
+					color: COLOR.white,
+					bgcolor: COLOR.black,
 				},
 				actions: [
 					{
@@ -451,8 +453,8 @@ class ModuleInstance extends InstanceBase {
 					style: 'text',
 					text: 'HOME',
 					size: '18',
-					color: '16777215',
-					bgcolor: this.rgb(0, 0, 0),
+					color: COLOR.white,
+					bgcolor: COLOR.black,
 				},
 				actions: [
 					{
@@ -467,8 +469,8 @@ class ModuleInstance extends InstanceBase {
 					style: 'text',
 					text: 'SPEED\\nUP',
 					size: '18',
-					color: '16777215',
-					bgcolor: this.rgb(0, 0, 0),
+					color: COLOR.white,
+					bgcolor: COLOR.black,
 				},
 				actions: [
 					{
@@ -483,8 +485,8 @@ class ModuleInstance extends InstanceBase {
 					style: 'text',
 					text: 'SPEED\\nDOWN',
 					size: '18',
-					color: '16777215',
-					bgcolor: this.rgb(0, 0, 0),
+					color: COLOR.white,
+					bgcolor: COLOR.black,
 				},
 				actions: [
 					{
@@ -499,8 +501,8 @@ class ModuleInstance extends InstanceBase {
 					style: 'text',
 					text: 'ZOOM\\nIN',
 					size: '18',
-					color: '16777215',
-					bgcolor: this.rgb(0, 0, 0),
+					color: COLOR.white,
+					bgcolor: COLOR.black,
 				},
 				actions: [
 					{
@@ -520,8 +522,8 @@ class ModuleInstance extends InstanceBase {
 					style: 'text',
 					text: 'ZOOM\\nOUT',
 					size: '18',
-					color: '16777215',
-					bgcolor: this.rgb(0, 0, 0),
+					color: COLOR.white,
+					bgcolor: COLOR.black,
 				},
 				actions: [
 					{
@@ -541,8 +543,8 @@ class ModuleInstance extends InstanceBase {
 					style: 'text',
 					text: 'Z SPEED\\nUP',
 					size: '14',
-					color: '16777215',
-					bgcolor: this.rgb(0, 0, 0),
+					color: COLOR.white,
+					bgcolor: COLOR.black,
 				},
 				actions: [
 					{
@@ -557,8 +559,8 @@ class ModuleInstance extends InstanceBase {
 					style: 'text',
 					text: 'Z SPEED\\nDOWN',
 					size: '14',
-					color: '16777215',
-					bgcolor: this.rgb(0, 0, 0),
+					color: COLOR.white,
+					bgcolor: COLOR.black,
 				},
 				actions: [
 					{
@@ -573,8 +575,8 @@ class ModuleInstance extends InstanceBase {
 					style: 'text',
 					text: 'FOCUS\\nNEAR',
 					size: '18',
-					color: '16777215',
-					bgcolor: this.rgb(0, 0, 0),
+					color: COLOR.white,
+					bgcolor: COLOR.black,
 				},
 				actions: [
 					{
@@ -594,8 +596,8 @@ class ModuleInstance extends InstanceBase {
 					style: 'text',
 					text: 'FOCUS\\nFAR',
 					size: '18',
-					color: '16777215',
-					bgcolor: this.rgb(0, 0, 0),
+					color: COLOR.white,
+					bgcolor: COLOR.black,
 				},
 				actions: [
 					{
@@ -615,8 +617,8 @@ class ModuleInstance extends InstanceBase {
 					style: 'text',
 					text: 'AUTO\\nFOCUS',
 					size: '18',
-					color: '16777215',
-					bgcolor: this.rgb(0, 0, 0),
+					color: COLOR.white,
+					bgcolor: COLOR.black,
 					latch: true,
 				},
 				actions: [
@@ -643,8 +645,8 @@ class ModuleInstance extends InstanceBase {
 					style: 'text',
 					text: 'EXP\\nMODE',
 					size: '18',
-					color: '16777215',
-					bgcolor: this.rgb(0, 0, 0),
+					color: COLOR.white,
+					bgcolor: COLOR.black,
 					latch: true,
 				},
 				actions: [
@@ -671,8 +673,8 @@ class ModuleInstance extends InstanceBase {
 					style: 'text',
 					text: 'IRIS\\nUP',
 					size: '18',
-					color: '16777215',
-					bgcolor: this.rgb(0, 0, 0),
+					color: COLOR.white,
+					bgcolor: COLOR.black,
 				},
 				actions: [
 					{
@@ -687,8 +689,8 @@ class ModuleInstance extends InstanceBase {
 					style: 'text',
 					text: 'IRIS\\nDOWN',
 					size: '18',
-					color: '16777215',
-					bgcolor: this.rgb(0, 0, 0),
+					color: COLOR.white,
+					bgcolor: COLOR.black,
 				},
 				actions: [
 					{
@@ -703,8 +705,8 @@ class ModuleInstance extends InstanceBase {
 					style: 'text',
 					text: 'Shut\\nUP',
 					size: '18',
-					color: '16777215',
-					bgcolor: this.rgb(0, 0, 0),
+					color: COLOR.white,
+					bgcolor: COLOR.black,
 				},
 				actions: [
 					{
@@ -719,8 +721,8 @@ class ModuleInstance extends InstanceBase {
 					style: 'text',
 					text: 'Shut\\nDOWN',
 					size: '18',
-					color: '16777215',
-					bgcolor: this.rgb(0, 0, 0),
+					color: COLOR.white,
+					bgcolor: COLOR.black,
 				},
 				actions: [
 					{
@@ -735,8 +737,8 @@ class ModuleInstance extends InstanceBase {
 					style: 'text',
 					text: 'GREEN',
 					size: '18',
-					color: '16777215',
-					bgcolor: this.rgb(0, 255, 0),
+					color: COLOR.white,
+					bgcolor: COLOR.green,
 				},
 				actions: [
 					{
@@ -754,8 +756,8 @@ class ModuleInstance extends InstanceBase {
 					style: 'text',
 					text: 'RED',
 					size: '18',
-					color: '16777215',
-					bgcolor: this.rgb(255, 0, 0),
+					color: COLOR.white,
+					bgcolor: COLOR.red,
 				},
 				actions: [
 					{
@@ -773,8 +775,8 @@ class ModuleInstance extends InstanceBase {
 					style: 'text',
 					text: 'OFF',
 					size: '18',
-					color: '16777215',
-					bgcolor: this.rgb(0, 0, 0),
+					color: COLOR.white,
+					bgcolor: COLOR.black,
 				},
 				actions: [
 					{
@@ -792,8 +794,8 @@ class ModuleInstance extends InstanceBase {
 					style: 'text',
 					text: 'OSD',
 					size: '18',
-					color: '16777215',
-					bgcolor: this.rgb(0, 0, 0),
+					color: COLOR.white,
+					bgcolor: COLOR.black,
 					latch: true,
 				},
 				actions: [
@@ -820,8 +822,8 @@ class ModuleInstance extends InstanceBase {
 					style: 'text',
 					text: 'ENTER',
 					size: '18',
-					color: '16777215',
-					bgcolor: this.rgb(0, 0, 0),
+					color: COLOR.white,
+					bgcolor: COLOR.black,
 				},
 				actions: [
 					{
@@ -839,8 +841,8 @@ class ModuleInstance extends InstanceBase {
 					style: 'text',
 					text: 'BACK',
 					size: '18',
-					color: '16777215',
-					bgcolor: this.rgb(0, 0, 0),
+					color: COLOR.white,
+					bgcolor: COLOR.black,
 				},
 				actions: [
 					{
@@ -860,8 +862,8 @@ class ModuleInstance extends InstanceBase {
 					png64: image_up,
 					pngalignment: 'center:center',
 					size: '18',
-					color: '16777215',
-					bgcolor: this.rgb(0, 0, 0),
+					color: COLOR.white,
+					bgcolor: COLOR.black,
 				},
 				actions: [
 					{
@@ -889,8 +891,8 @@ class ModuleInstance extends InstanceBase {
 					png64: image_down,
 					pngalignment: 'center:center',
 					size: '18',
-					color: '16777215',
-					bgcolor: this.rgb(0, 0, 0),
+					color: COLOR.white,
+					bgcolor: COLOR.black,
 				},
 				actions: [
 					{
@@ -918,8 +920,8 @@ class ModuleInstance extends InstanceBase {
 					png64: image_left,
 					pngalignment: 'center:center',
 					size: '18',
-					color: '16777215',
-					bgcolor: this.rgb(0, 0, 0),
+					color: COLOR.white,
+					bgcolor: COLOR.black,
 				},
 				actions: [
 					{
@@ -947,8 +949,8 @@ class ModuleInstance extends InstanceBase {
 					png64: image_right,
 					pngalignment: 'center:center',
 					size: '18',
-					color: '16777215',
-					bgcolor: this.rgb(0, 0, 0),
+					color: COLOR.white,
+					bgcolor: COLOR.black,
 				},
 				actions: [
 					{
@@ -978,8 +980,8 @@ class ModuleInstance extends InstanceBase {
 					style: 'text',
 					text: `SAVE\\nPSET\\n${parseInt(save + 1)}`,
 					size: '14',
-					color: '16777215',
-					bgcolor: this.rgb(0, 0, 0),
+					color: COLOR.white,
+					bgcolor: COLOR.black,
 				},
 				actions: [
 					{
@@ -1001,8 +1003,8 @@ class ModuleInstance extends InstanceBase {
 					style: 'text',
 					text: `Recall\\nPSET\\n${parseInt(recall + 1)}`,
 					size: '14',
-					color: '16777215',
-					bgcolor: this.rgb(0, 0, 0),
+					color: COLOR.white,
+					bgcolor: COLOR.black,
 				},
 				actions: [
 					{
@@ -1019,7 +1021,7 @@ class ModuleInstance extends InstanceBase {
 	}
 
 	actions() {
-		this.setActions({
+		return {
 			left: { label: 'Pan Left' },
 			right: { label: 'Pan Right' },
 			up: { label: 'Tilt Up' },
@@ -1269,7 +1271,7 @@ class ModuleInstance extends InstanceBase {
 					},
 				],
 			},
-		})
+		}
 	}
 	requestState() {
 		const cmd = '\x09\x7E\x7E\x70\xFF'
