@@ -194,14 +194,10 @@ class ModuleInstance extends InstanceBase {
 					color: COLOR.white,
 					bgcolor: COLOR.black,
 				},
-				actions: [
+				steps: [
 					{
-						action: 'up',
-					},
-				],
-				release_actions: [
-					{
-						action: 'stop',
+						down: [{ actionId: ActionId.up }],
+						up: [{ actionId: ActionId.stop }],
 					},
 				],
 			},
@@ -217,14 +213,10 @@ class ModuleInstance extends InstanceBase {
 					color: COLOR.white,
 					bgcolor: COLOR.black,
 				},
-				actions: [
+				steps: [
 					{
-						action: 'down',
-					},
-				],
-				release_actions: [
-					{
-						action: 'stop',
+						down: [{ actionId: ActionId.down }],
+						up: [{ actionId: ActionId.stop }],
 					},
 				],
 			},
@@ -240,14 +232,10 @@ class ModuleInstance extends InstanceBase {
 					color: COLOR.white,
 					bgcolor: COLOR.black,
 				},
-				actions: [
+				steps: [
 					{
-						action: 'left',
-					},
-				],
-				release_actions: [
-					{
-						action: 'stop',
+						down: [{ actionId: ActionId.left }],
+						up: [{ actionId: ActionId.stop }],
 					},
 				],
 			},
@@ -263,14 +251,10 @@ class ModuleInstance extends InstanceBase {
 					color: COLOR.white,
 					bgcolor: COLOR.black,
 				},
-				actions: [
+				steps: [
 					{
-						action: 'right',
-					},
-				],
-				release_actions: [
-					{
-						action: 'stop',
+						down: [{ actionId: ActionId.right }],
+						up: [{ actionId: ActionId.stop }],
 					},
 				],
 			},
@@ -286,14 +270,10 @@ class ModuleInstance extends InstanceBase {
 					color: COLOR.white,
 					bgcolor: COLOR.black,
 				},
-				actions: [
+				steps: [
 					{
-						action: 'upRight',
-					},
-				],
-				release_actions: [
-					{
-						action: 'stop',
+						down: [{ actionId: ActionId.upRight }],
+						up: [{ actionId: ActionId.stop }],
 					},
 				],
 			},
@@ -309,14 +289,10 @@ class ModuleInstance extends InstanceBase {
 					color: COLOR.white,
 					bgcolor: COLOR.black,
 				},
-				actions: [
+				steps: [
 					{
-						action: 'upLeft',
-					},
-				],
-				release_actions: [
-					{
-						action: 'stop',
+						down: [{ actionId: ActionId.upLeft }],
+						up: [{ actionId: ActionId.stop }],
 					},
 				],
 			},
@@ -332,14 +308,10 @@ class ModuleInstance extends InstanceBase {
 					color: COLOR.white,
 					bgcolor: COLOR.black,
 				},
-				actions: [
+				steps: [
 					{
-						action: 'downLeft',
-					},
-				],
-				release_actions: [
-					{
-						action: 'stop',
+						down: [{ actionId: ActionId.downLeft }],
+						up: [{ actionId: ActionId.stop }],
 					},
 				],
 			},
@@ -355,14 +327,10 @@ class ModuleInstance extends InstanceBase {
 					color: COLOR.white,
 					bgcolor: COLOR.black,
 				},
-				actions: [
+				steps: [
 					{
-						action: 'downRight',
-					},
-				],
-				release_actions: [
-					{
-						action: 'stop',
+						down: [{ actionId: ActionId.downRight }],
+						up: [{ actionId: ActionId.stop }],
 					},
 				],
 			},
@@ -376,9 +344,10 @@ class ModuleInstance extends InstanceBase {
 					color: COLOR.white,
 					bgcolor: COLOR.black,
 				},
-				actions: [
+				steps: [
 					{
-						action: 'home',
+						down: [{ actionId: ActionId.home }],
+						up: [],
 					},
 				],
 			},
@@ -392,9 +361,10 @@ class ModuleInstance extends InstanceBase {
 					color: COLOR.white,
 					bgcolor: COLOR.black,
 				},
-				actions: [
+				steps: [
 					{
-						action: 'ptSpeedU',
+						down: [{ actionId: ActionId.ptSpeedU }],
+						up: [],
 					},
 				],
 			},
@@ -408,9 +378,10 @@ class ModuleInstance extends InstanceBase {
 					color: COLOR.white,
 					bgcolor: COLOR.black,
 				},
-				actions: [
+				steps: [
 					{
-						action: 'ptSpeedD',
+						down: [{ actionId: ActionId.ptSpeedD }],
+						up: [],
 					},
 				],
 			},
@@ -424,14 +395,10 @@ class ModuleInstance extends InstanceBase {
 					color: COLOR.white,
 					bgcolor: COLOR.black,
 				},
-				actions: [
+				steps: [
 					{
-						action: 'zoomI',
-					},
-				],
-				release_actions: [
-					{
-						action: 'zoomS',
+						down: [{ actionId: ActionId.zoomI }],
+						up: [{ actionId: ActionId.zoomS }],
 					},
 				],
 			},
@@ -445,14 +412,10 @@ class ModuleInstance extends InstanceBase {
 					color: COLOR.white,
 					bgcolor: COLOR.black,
 				},
-				actions: [
+				steps: [
 					{
-						action: 'zoomO',
-					},
-				],
-				release_actions: [
-					{
-						action: 'zoomS',
+						down: [{ actionId: ActionId.zoomO }],
+						up: [{ actionId: ActionId.stop }],
 					},
 				],
 			},
@@ -466,9 +429,10 @@ class ModuleInstance extends InstanceBase {
 					color: COLOR.white,
 					bgcolor: COLOR.black,
 				},
-				actions: [
+				steps: [
 					{
-						action: 'zoomSpeedU',
+						down: [{ actionId: ActionId.zoomSpeedU }],
+						up: [],
 					},
 				],
 			},
@@ -482,9 +446,10 @@ class ModuleInstance extends InstanceBase {
 					color: COLOR.white,
 					bgcolor: COLOR.black,
 				},
-				actions: [
+				steps: [
 					{
-						action: 'zoomSpeedD',
+						down: [{ actionId: ActionId.zoomSpeedD }],
+						up: [],
 					},
 				],
 			},
@@ -498,14 +463,10 @@ class ModuleInstance extends InstanceBase {
 					color: COLOR.white,
 					bgcolor: COLOR.black,
 				},
-				actions: [
+				steps: [
 					{
-						action: 'focusN',
-					},
-				],
-				release_actions: [
-					{
-						action: 'focusS',
+						down: [{ actionId: ActionId.focusN }],
+						up: [{ actionId: ActionId.focusS }],
 					},
 				],
 			},
@@ -519,14 +480,10 @@ class ModuleInstance extends InstanceBase {
 					color: COLOR.white,
 					bgcolor: COLOR.black,
 				},
-				actions: [
+				steps: [
 					{
-						action: 'focusF',
-					},
-				],
-				release_actions: [
-					{
-						action: 'focusS',
+						down: [{ actionId: ActionId.focusF }],
+						up: [{ actionId: ActionId.focusS }],
 					},
 				],
 			},
@@ -539,22 +496,15 @@ class ModuleInstance extends InstanceBase {
 					size: '18',
 					color: COLOR.white,
 					bgcolor: COLOR.black,
-					latch: true,
 				},
-				actions: [
+				steps: [
 					{
-						action: 'focusM',
-						options: {
-							bol: 0,
-						},
+						down: [{ actionId: ActionId.focusM, options: { bol: 0 } }],
+						up: [],
 					},
-				],
-				release_actions: [
 					{
-						action: 'focusM',
-						options: {
-							bol: 1,
-						},
+						down: [{ actionId: ActionId.focusM, options: { bol: 1 } }],
+						up: [],
 					},
 				],
 			},
@@ -567,22 +517,15 @@ class ModuleInstance extends InstanceBase {
 					size: '18',
 					color: COLOR.white,
 					bgcolor: COLOR.black,
-					latch: true,
 				},
-				actions: [
+				steps: [
 					{
-						action: 'expM',
-						options: {
-							bol: 0,
-						},
+						down: [{ actionId: ActionId.expM, options: { bol: 0 } }],
+						up: [],
 					},
-				],
-				release_actions: [
 					{
-						action: 'expM',
-						options: {
-							bol: 1,
-						},
+						down: [{ actionId: ActionId.expM, options: { bol: 1 } }],
+						up: [],
 					},
 				],
 			},
@@ -612,9 +555,10 @@ class ModuleInstance extends InstanceBase {
 					color: COLOR.white,
 					bgcolor: COLOR.black,
 				},
-				actions: [
+				steps: [
 					{
-						action: 'irisD',
+						down: [{ actionId: ActionId.irisD }],
+						up: [],
 					},
 				],
 			},
@@ -628,9 +572,10 @@ class ModuleInstance extends InstanceBase {
 					color: COLOR.white,
 					bgcolor: COLOR.black,
 				},
-				actions: [
+				steps: [
 					{
-						action: 'shutU',
+						down: [{ actionId: ActionId.shutU }],
+						up: [],
 					},
 				],
 			},
@@ -644,9 +589,10 @@ class ModuleInstance extends InstanceBase {
 					color: COLOR.white,
 					bgcolor: COLOR.black,
 				},
-				actions: [
+				steps: [
 					{
-						action: 'shutD',
+						down: [{ actionId: ActionId.shutD }],
+						up: [],
 					},
 				],
 			},
@@ -660,12 +606,10 @@ class ModuleInstance extends InstanceBase {
 					color: COLOR.white,
 					bgcolor: COLOR.green,
 				},
-				actions: [
+				steps: [
 					{
-						action: 'tally',
-						options: {
-							val: 1,
-						},
+						down: [{ actionId: ActionId.tally, options: { val: 1 } }],
+						up: [],
 					},
 				],
 			},
@@ -679,12 +623,10 @@ class ModuleInstance extends InstanceBase {
 					color: COLOR.white,
 					bgcolor: COLOR.red,
 				},
-				actions: [
+				steps: [
 					{
-						action: 'tally',
-						options: {
-							val: 0,
-						},
+						down: [{ actionId: ActionId.tally, options: { val: 0 } }],
+						up: [],
 					},
 				],
 			},
@@ -698,12 +640,10 @@ class ModuleInstance extends InstanceBase {
 					color: COLOR.white,
 					bgcolor: COLOR.black,
 				},
-				actions: [
+				steps: [
 					{
-						action: 'tally',
-						options: {
-							val: 2,
-						},
+						down: [{ actionId: ActionId.tally, options: { val: 2 } }],
+						up: [],
 					},
 				],
 			},
@@ -716,22 +656,15 @@ class ModuleInstance extends InstanceBase {
 					size: '18',
 					color: COLOR.white,
 					bgcolor: COLOR.black,
-					latch: true,
 				},
-				actions: [
+				steps: [
 					{
-						action: 'osd',
-						options: {
-							val: 0,
-						},
+						down: [{ actionId: ActionId.osd, options: { val: 0 } }],
+						up: [],
 					},
-				],
-				release_actions: [
 					{
-						action: 'osd',
-						options: {
-							val: 1,
-						},
+						down: [{ actionId: ActionId.osd, options: { val: 1 } }],
+						up: [],
 					},
 				],
 			},
@@ -746,12 +679,10 @@ class ModuleInstance extends InstanceBase {
 					color: COLOR.white,
 					bgcolor: COLOR.black,
 				},
-				actions: [
+				steps: [
 					{
-						action: 'osd',
-						options: {
-							val: 2,
-						},
+						down: [{ actionId: ActionId.osd, options: { val: 2 } }],
+						up: [],
 					},
 				],
 			},
@@ -766,12 +697,10 @@ class ModuleInstance extends InstanceBase {
 					color: COLOR.white,
 					bgcolor: COLOR.black,
 				},
-				actions: [
+				steps: [
 					{
-						action: 'osd',
-						options: {
-							val: 3,
-						},
+						down: [{ actionId: ActionId.osd, options: { val: 3 } }],
+						up: [],
 					},
 				],
 			},
@@ -788,20 +717,10 @@ class ModuleInstance extends InstanceBase {
 					color: COLOR.white,
 					bgcolor: COLOR.black,
 				},
-				actions: [
+				steps: [
 					{
-						action: 'osd',
-						options: {
-							val: 4,
-						},
-					},
-				],
-				release_actions: [
-					{
-						action: 'osd',
-						options: {
-							val: 8,
-						},
+						down: [{ actionId: ActionId.osd, options: { val: 4 } }],
+						up: [{ actionId: ActionId.osd, options: { val: 8 } }],
 					},
 				],
 			},
@@ -818,20 +737,10 @@ class ModuleInstance extends InstanceBase {
 					color: COLOR.white,
 					bgcolor: COLOR.black,
 				},
-				actions: [
+				steps: [
 					{
-						action: 'osd',
-						options: {
-							val: 5,
-						},
-					},
-				],
-				release_actions: [
-					{
-						action: 'osd',
-						options: {
-							val: 8,
-						},
+						down: [{ actionId: ActionId.osd, options: { val: 5 } }],
+						up: [{ actionId: ActionId.osd, options: { val: 8 } }],
 					},
 				],
 			},
@@ -848,20 +757,10 @@ class ModuleInstance extends InstanceBase {
 					color: COLOR.white,
 					bgcolor: COLOR.black,
 				},
-				actions: [
+				steps: [
 					{
-						action: 'osd',
-						options: {
-							val: 6,
-						},
-					},
-				],
-				release_actions: [
-					{
-						action: 'osd',
-						options: {
-							val: 8,
-						},
+						down: [{ actionId: ActionId.osd, options: { val: 6 } }],
+						up: [{ actionId: ActionId.osd, options: { val: 8 } }],
 					},
 				],
 			},
@@ -878,20 +777,10 @@ class ModuleInstance extends InstanceBase {
 					color: COLOR.white,
 					bgcolor: COLOR.black,
 				},
-				actions: [
+				steps: [
 					{
-						action: 'osd',
-						options: {
-							val: 7,
-						},
-					},
-				],
-				release_actions: [
-					{
-						action: 'osd',
-						options: {
-							val: 8,
-						},
+						down: [{ actionId: ActionId.osd, options: { val: 7 } }],
+						up: [{ actionId: ActionId.osd, options: { val: 8 } }],
 					},
 				],
 			},
