@@ -539,9 +539,10 @@ class ModuleInstance extends InstanceBase {
 					color: COLOR.white,
 					bgcolor: COLOR.black,
 				},
-				actions: [
+				steps: [
 					{
-						action: 'irisU',
+						down: [{ actionId: ActionId.irisU }],
+						up: [],
 					},
 				],
 			},
