@@ -166,16 +166,15 @@ class ModuleInstance extends InstanceBase {
 	updateVariables() {
 		this.setVariableDefinitions(this.getVariables())
 
-		const ptSpeed = findChoiceById(CHOICE_PTSPEED, this.ptSpeed)
-		const zoomSpeed = findChoiceById(CHOICE_ZOOMSPEED, this.zoomSpeed)
+		const ptSpeedChoice = findChoiceById(CHOICE_PTSPEED, this.ptSpeed)
+		const zoomSpeedChoice = findChoiceById(CHOICE_ZOOMSPEED, this.zoomSpeed)
 
 		const variables = {
-			pt_speed: ptSpeed,
-			pt_speed_description: CHOICE_PTSPEED[ptSpeed].label,
-			zoom_speed: zoomSpeed,
-			zoom_speed_description: CHOICE_ZOOMSPEED[zoomSpeed].label,
+			pt_speed: ptSpeedChoice.id,
+			pt_speed_description: ptSpeedChoice.label,
+			zoom_speed: zoomSpeedChoice.id,
+			zoom_speed_description: zoomSpeedChoice.label,
 		}
-		console.log('variables', variables)
 		this.setVariableValues(variables)
 	}
 
