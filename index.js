@@ -2,14 +2,13 @@ import { InstanceBase, Regex, runEntrypoint, InstanceStatus, TCPHelper } from '@
 import UpgradeScripts from './upgrades.js'
 import { getPresets } from './presets.js'
 import { getActions } from './actions.js'
-import { ok_pkt, CHOICE_PTSPEED } from './constants.js'
+import { ok_pkt, CHOICE_PTSPEED, CHOICE_ZOOMSPEED } from './constants.js'
 
 class ModuleInstance extends InstanceBase {
 	request_state
 	config = {}
 	ptSpeed = '0C'
 	zoomSpeed = '07'
-	zoomSpeedIndex = 7
 
 	constructor(internal) {
 		super(internal)
@@ -147,11 +146,13 @@ class ModuleInstance extends InstanceBase {
 		this.setVariableDefinitions(this.getVariables())
 
 		const ptSpeed = CHOICE_PTSPEED.findIndex((speed) => speed.id === this.ptSpeed)
+		const zoomSpeed = CHOICE_ZOOMSPEED.findIndex((speed) => speed.id === this.zoomSpeed)
 
 		const variables = {
 			pt_speed: ptSpeed,
 			pt_speed_description: CHOICE_PTSPEED[ptSpeed].label,
-			zoom_speed: this.zoomSpeedIndex,
+			zoom_speed: zoomSpeed,
+			zoom_speed_description: CHOICE_ZOOMSPEED[zoomSpeed].label,
 		}
 		console.log('variables', variables)
 		this.setVariableValues(variables)
@@ -170,6 +171,10 @@ class ModuleInstance extends InstanceBase {
 			{
 				name: 'Zoom Speed',
 				variableId: 'zoom_speed',
+			},
+			{
+				name: 'Zoom Speed Description',
+				variableId: 'zoom_speed_description',
 			},
 		]
 	}

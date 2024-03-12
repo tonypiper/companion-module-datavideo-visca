@@ -5,6 +5,18 @@ for (let i = 0; i < 64; ++i) {
 	CHOICE_PRESET.push({ id: `0${i.toString(16)}`.slice(-2), label: `Preset ${i}` })
 }
 
+export function nextChoiceId(choices, currentId) {
+	let index = choices.findIndex((c) => c.id === currentId) + 1
+	index = Math.min(index, choices.length)
+	return choices[index].id
+}
+
+export function prevChoiceId(choices, currentId) {
+	let index = choices.findIndex((c) => c.id === currentId) - 1
+	index = Math.max(index, 0)
+	return choices[index].id
+}
+
 export const CHOICE_IRIS = [
 	{ id: '11', label: 'F1.8' },
 	{ id: '10', label: 'F2.0' },

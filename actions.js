@@ -1,4 +1,4 @@
-import { ActionId, CHOICE_PRESET, CHOICE_PTSPEED, CHOICE_ZOOMSPEED, CHOICE_IRIS, CHOICE_SHUTTER } from './constants.js'
+import { ActionId, CHOICE_PRESET, CHOICE_PTSPEED, CHOICE_ZOOMSPEED, CHOICE_IRIS, CHOICE_SHUTTER, nextChoiceId, prevChoiceId } from './constants.js'
 
 export function getActions(instance) {
 	const panspeed = String.fromCharCode(parseInt(instance.ptSpeed, 16) & 0xff)
@@ -102,10 +102,7 @@ export function getActions(instance) {
 		[ActionId.ptSpeedU]: {
 			name: 'P/T Speed Up',
 			callback: async (_action) => {
-				let newSpeedIndex = CHOICE_PTSPEED.findIndex((speed) => speed.id === instance.ptSpeed) + 1
-				newSpeedIndex = Math.min(newSpeedIndex, CHOICE_PTSPEED.length)
-				instance.ptSpeed = CHOICE_PTSPEED[newSpeedIndex].id
-				console.log(`ptSpeed=${instance.ptSpeed}`)
+				instance.ptSpeed = nextChoiceId(CHOICE_PTSPEED, instance.ptSpeed)
 				instance.updateVariables()
 			},
 			options: [],
@@ -113,10 +110,7 @@ export function getActions(instance) {
 		[ActionId.ptSpeedD]: {
 			name: 'P/T Speed Down',
 			callback: async (_action) => {
-				let newSpeedIndex = CHOICE_PTSPEED.findIndex((speed) => speed.id === instance.ptSpeed) - 1
-				newSpeedIndex = Math.max(newSpeedIndex, 0)
-				instance.ptSpeed = CHOICE_PTSPEED[newSpeedIndex].id
-				console.log(`ptSpeed=${instance.ptSpeed}`)
+				instance.ptSpeed = prevChoiceId(CHOICE_PTSPEED, instance.ptSpeed)
 				instance.updateVariables()
 			},
 			options: [],
@@ -177,33 +171,21 @@ export function getActions(instance) {
 			],
 			callback: async (action) => {
 				instance.zoomSpeed = action.options.speed
-
-				let idx = -1
-				for (let i = 0; i < CHOICE_ZOOMSPEED.length; ++i) {
-					if (CHOICE_ZOOMSPEED[i].id == instance.zoomSpeed) {
-						idx = i
-						break
-					}
-				}
-				if (idx > -1) {
-					instance.zoomSpeedIndex = idx
-				}
-				instance.debug(`${instance.zoomSpeed} == ${instance.zoomSpeedIndex}`)
 			},
 		},
 		[ActionId.zoomSpeedU]: {
 			name: 'Zoom Speed Up',
 			callback: async (_action) => {
-				instance.zoomSpeedIndex = Math.min(7, instance.zoomSpeedIndex++)
-				instance.zoomSpeed = CHOICE_ZOOMSPEED[instance.zoomSpeedIndex].id
+				instance.zoomSpeed = nextChoiceId(CHOICE_ZOOMSPEED, instance.zoomSpeed)
+				instance.updateVariables()
 			},
 			options: [],
 		},
 		[ActionId.zoomSpeedD]: {
 			name: 'Zoom Speed Down',
 			callback: async (_action) => {
-				instance.zoomSpeedIndex = Math.max(1, instance.zoomSpeedIndex--)
-				instance.zoomSpeed = CHOICE_ZOOMSPEED[instance.zoomSpeedIndex].id
+				instance.zoomSpeed = prevChoiceId(CHOICE_ZOOMSPEED, instance.zoomSpeed)
+				instance.updateVariables()
 			},
 			options: [],
 		},
