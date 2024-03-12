@@ -6,15 +6,19 @@ for (let i = 0; i < 64; ++i) {
 }
 
 export function nextChoiceId(choices, currentId) {
-	let index = choices.findIndex((c) => c.id === currentId) + 1
+	let index = findChoiceById(choices, currentId) + 1
 	index = Math.min(index, choices.length)
 	return choices[index].id
 }
 
 export function prevChoiceId(choices, currentId) {
-	let index = choices.findIndex((c) => c.id === currentId) - 1
+	let index = findChoiceById(choices, currentId) - 1
 	index = Math.max(index, 0)
 	return choices[index].id
+}
+
+export function findChoiceById(choices, id) {
+	return choices.find((c) => c.id === id)
 }
 
 export const CHOICE_IRIS = [
