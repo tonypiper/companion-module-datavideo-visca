@@ -8,7 +8,8 @@
 		"format": "prettier -w .",
 		"lint:raw": "eslint --ext .ts --ext .js --ignore-pattern dist --ignore-pattern pkg",
 		"lint": "yarn lint:raw .",
-		"package": "companion-module-build"
+		"package": "companion-module-build",
+		"server": "node utils/server.js"
 	},
 	"license": "MIT",
 	"repository": {
