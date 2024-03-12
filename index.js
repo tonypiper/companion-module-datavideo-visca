@@ -2,13 +2,12 @@ import { InstanceBase, Regex, runEntrypoint, InstanceStatus, TCPHelper } from '@
 import UpgradeScripts from './upgrades.js'
 import { getPresets } from './presets.js'
 import { getActions } from './actions.js'
-import { ok_pkt } from './constants.js'
+import { ok_pkt, CHOICE_SPEED } from './constants.js'
 
 class ModuleInstance extends InstanceBase {
 	request_state
 	config = {}
 	ptSpeed = '0C'
-	ptSpeedIndex = 12
 	zoomSpeed = '07'
 	zoomSpeedIndex = 7
 
@@ -75,19 +74,6 @@ class ModuleInstance extends InstanceBase {
 		})
 
 		this.debug(`${this.tcp.host}:${this.config.port}`)
-	}
-
-	getVariables() {
-		return [
-			{
-				label: 'Pan/Tilt Speed',
-				name: 'pt_speed',
-			},
-			{
-				label: 'Zoom Speed',
-				name: 'zoom_speed',
-			},
-		]
 	}
 
 	async configUpdated(config) {
@@ -160,10 +146,32 @@ class ModuleInstance extends InstanceBase {
 	updateVariables() {
 		this.setVariableDefinitions(this.getVariables())
 
-		this.setVariableValues({
-			pt_speed: this.ptSpeedIndex,
+		const speed = CHOICE_SPEED.findIndex((speed) => speed.id === this.ptSpeed)
+
+		const variables = {
+			pt_speed: speed,
+			pt_speed_description: CHOICE_SPEED[speed].label,
 			zoom_speed: this.zoomSpeedIndex,
-		})
+		}
+		console.log('variables', variables)
+		this.setVariableValues(variables)
+	}
+
+	getVariables() {
+		return [
+			{
+				name: 'Pan/Tilt Speed',
+				variableId: 'pt_speed',
+			},
+			{
+				name: 'Pan/Tilt Speed Description',
+				variableId: 'pt_speed_description',
+			},
+			{
+				name: 'Zoom Speed',
+				variableId: 'zoom_speed',
+			},
+		]
 	}
 
 	async destroy() {
@@ -208,11 +216,6 @@ class ModuleInstance extends InstanceBase {
 
 		this.debug(this.prependPacketSize(buf))
 		this.tcp.send(this.prependPacketSize(buf))
-	}
-
-	action = function (_action) {
-		this.setVariable('pt_speed', this.ptSpeedIndex)
-		this.setVariable('zoom_speed', this.zoomSpeedIndex)
 	}
 }
 runEntrypoint(ModuleInstance, UpgradeScripts)

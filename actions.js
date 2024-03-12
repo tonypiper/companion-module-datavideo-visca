@@ -97,33 +97,27 @@ export function getActions(instance) {
 			],
 			callback: async (action) => {
 				instance.ptSpeed = action.options.speed
-
-				let idx = -1
-				for (let i = 0; i < CHOICE_SPEED.length; ++i) {
-					if (CHOICE_SPEED[i].id == instance.ptSpeed) {
-						idx = i
-						break
-					}
-				}
-				if (idx > -1) {
-					instance.ptSpeedIndex = idx
-				}
-				instance.debug(`${instance.ptSpeed} == ${instance.ptSpeedIndex}`)
 			},
 		},
 		[ActionId.ptSpeedU]: {
 			name: 'P/T Speed Up',
 			callback: async (_action) => {
-				instance.ptSpeedIndex = Math.min(23, instance.ptSpeedIndex++)
-				instance.ptSpeed = CHOICE_SPEED[instance.ptSpeedIndex].id
+				let newSpeedIndex = CHOICE_SPEED.findIndex((speed) => speed.id === instance.ptSpeed) + 1
+				newSpeedIndex = Math.min(newSpeedIndex, CHOICE_SPEED.length)
+				instance.ptSpeed = CHOICE_SPEED[newSpeedIndex].id
+				console.log(`ptSpeed=${instance.ptSpeed}`)
+				instance.updateVariables()
 			},
 			options: [],
 		},
 		[ActionId.ptSpeedD]: {
 			name: 'P/T Speed Down',
 			callback: async (_action) => {
-				instance.ptSpeedIndex = Math.max(0, instance.ptSpeedIndex--)
-				instance.ptSpeed = CHOICE_SPEED[instance.ptSpeedIndex].id
+				let newSpeedIndex = CHOICE_SPEED.findIndex((speed) => speed.id === instance.ptSpeed) - 1
+				newSpeedIndex = Math.max(newSpeedIndex, 0)
+				instance.ptSpeed = CHOICE_SPEED[newSpeedIndex].id
+				console.log(`ptSpeed=${instance.ptSpeed}`)
+				instance.updateVariables()
 			},
 			options: [],
 		},
