@@ -14,8 +14,12 @@ import {
 	prevChoiceId,
 } from './constants.js'
 
+function hex2str(hex) {
+	return String.fromCharCode(parseInt(hex, 16) & 0xff)
+}
+
 export function getActions(instance) {
-	const panspeed = String.fromCharCode(parseInt(instance.ptSpeed, 16) & 0xff)
+	const panspeed = hex2str(instance.ptSpeed)
 	const tiltspeed = String.fromCharCode(Math.min(parseInt(instance.ptSpeed, 16), 0x14) & 0xff)
 
 	return {
@@ -428,7 +432,7 @@ export function getActions(instance) {
 				},
 			],
 			callback: async (action) => {
-				const cmd = `\x01\x04\x3F\x01${String.fromCharCode(parseInt(action.options.val, 16) & 0xff)}\xFF`
+				const cmd = `\x01\x04\x3F\x01${hex2str(action.options.val)}\xFF`
 				instance.sendVISCACommand(cmd)
 			},
 		},
@@ -443,7 +447,7 @@ export function getActions(instance) {
 				},
 			],
 			callback: async (action) => {
-				const cmd = `\x01\x04\x3F\x02${String.fromCharCode(parseInt(action.options.val, 16) & 0xff)}\xFF`
+				const cmd = `\x01\x04\x3F\x02${hex2str(action.options.val)}\xFF`
 				instance.sendVISCACommand(cmd)
 			},
 		},
@@ -504,7 +508,7 @@ export function getActions(instance) {
 				},
 			],
 			callback: async (action) => {
-				const cmd = `\x01\x7E\x01\x0B${String.fromCharCode(parseInt(action.options.val, 16) & 0xff)}${String.fromCharCode(parseInt(action.options.speed, 16) & 0xff)}\xFF`
+				const cmd = `\x01\x7E\x01\x0B${hex2str(action.options.val)}${hex2str(action.options.speed)}\xFF`
 				instance.sendVISCACommand(cmd)
 			},
 		},
