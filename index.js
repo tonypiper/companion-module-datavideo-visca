@@ -16,6 +16,8 @@ class ModuleInstance extends InstanceBase {
 
 	async init(config) {
 		this.config = config
+		this.ptSpeed = config.ptSpeed
+		this.zoomSpeed = config.zoomSpeed
 
 		this.updateStatus(InstanceStatus.Connecting, 'Connecting')
 
@@ -77,6 +79,8 @@ class ModuleInstance extends InstanceBase {
 
 	async configUpdated(config) {
 		this.config = config
+		this.ptSpeed = config.ptSpeed
+		this.zoomSpeed = config.zoomSpeed
 
 		clearInterval(this.request_state)
 
@@ -90,12 +94,13 @@ class ModuleInstance extends InstanceBase {
 		if (this.config.host !== undefined) {
 			this.init_tcp()
 		}
+		this.updateVariables()
 	}
 
 	getConfigFields() {
 		return [
 			{
-				type: 'text',
+				type: 'static-text',
 				id: 'info',
 				width: 12,
 				label: 'Information',
@@ -130,6 +135,22 @@ class ModuleInstance extends InstanceBase {
 				id: 'feedback',
 				label: 'Full Status Inquiry',
 				default: '0',
+			},
+			{
+				type: 'dropdown',
+				id: 'ptSpeed',
+				label: 'Default Pan/Tilt Speed',
+				default: '0C',
+				choices: CHOICE_PTSPEED,
+				width: 6,
+			},
+			{
+				type: 'dropdown',
+				id: 'zoomSpeed',
+				label: 'Default Zoom Speed',
+				default: '07',
+				choices: CHOICE_ZOOMSPEED,
+				width: 6,
 			},
 		]
 	}

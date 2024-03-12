@@ -1,4 +1,13 @@
-import { ActionId, CHOICE_PRESET, CHOICE_PTSPEED, CHOICE_ZOOMSPEED, CHOICE_IRIS, CHOICE_SHUTTER, nextChoiceId, prevChoiceId } from './constants.js'
+import {
+	ActionId,
+	CHOICE_PRESET,
+	CHOICE_PTSPEED,
+	CHOICE_ZOOMSPEED,
+	CHOICE_IRIS,
+	CHOICE_SHUTTER,
+	nextChoiceId,
+	prevChoiceId,
+} from './constants.js'
 
 export function getActions(instance) {
 	const panspeed = String.fromCharCode(parseInt(instance.ptSpeed, 16) & 0xff)
