@@ -39,7 +39,7 @@ export const CHOICE_SHUTTER = [
 	{ id: '02', label: '1/60' },
 	{ id: '01', label: '1/30' },
 ]
-export const CHOICE_SPEED = [
+export const CHOICE_PTSPEED = [
 	{ id: '01', label: 'Speed 01 (Slow)' },
 	{ id: '02', label: 'Speed 02' },
 	{ id: '03', label: 'Speed 03' },

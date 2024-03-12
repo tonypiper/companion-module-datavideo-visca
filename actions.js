@@ -1,4 +1,4 @@
-import { ActionId, CHOICE_PRESET, CHOICE_SPEED, CHOICE_ZOOMSPEED, CHOICE_IRIS, CHOICE_SHUTTER } from './constants.js'
+import { ActionId, CHOICE_PRESET, CHOICE_PTSPEED, CHOICE_ZOOMSPEED, CHOICE_IRIS, CHOICE_SHUTTER } from './constants.js'
 
 export function getActions(instance) {
 	const panspeed = String.fromCharCode(parseInt(instance.ptSpeed, 16) & 0xff)
@@ -92,7 +92,7 @@ export function getActions(instance) {
 					type: 'dropdown',
 					label: 'speed setting',
 					id: 'speed',
-					choices: CHOICE_SPEED,
+					choices: CHOICE_PTSPEED,
 				},
 			],
 			callback: async (action) => {
@@ -102,9 +102,9 @@ export function getActions(instance) {
 		[ActionId.ptSpeedU]: {
 			name: 'P/T Speed Up',
 			callback: async (_action) => {
-				let newSpeedIndex = CHOICE_SPEED.findIndex((speed) => speed.id === instance.ptSpeed) + 1
-				newSpeedIndex = Math.min(newSpeedIndex, CHOICE_SPEED.length)
-				instance.ptSpeed = CHOICE_SPEED[newSpeedIndex].id
+				let newSpeedIndex = CHOICE_PTSPEED.findIndex((speed) => speed.id === instance.ptSpeed) + 1
+				newSpeedIndex = Math.min(newSpeedIndex, CHOICE_PTSPEED.length)
+				instance.ptSpeed = CHOICE_PTSPEED[newSpeedIndex].id
 				console.log(`ptSpeed=${instance.ptSpeed}`)
 				instance.updateVariables()
 			},
@@ -113,9 +113,9 @@ export function getActions(instance) {
 		[ActionId.ptSpeedD]: {
 			name: 'P/T Speed Down',
 			callback: async (_action) => {
-				let newSpeedIndex = CHOICE_SPEED.findIndex((speed) => speed.id === instance.ptSpeed) - 1
+				let newSpeedIndex = CHOICE_PTSPEED.findIndex((speed) => speed.id === instance.ptSpeed) - 1
 				newSpeedIndex = Math.max(newSpeedIndex, 0)
-				instance.ptSpeed = CHOICE_SPEED[newSpeedIndex].id
+				instance.ptSpeed = CHOICE_PTSPEED[newSpeedIndex].id
 				console.log(`ptSpeed=${instance.ptSpeed}`)
 				instance.updateVariables()
 			},
@@ -520,7 +520,7 @@ export function getActions(instance) {
 					type: 'dropdown',
 					label: 'speed setting',
 					id: 'speed',
-					choices: CHOICE_SPEED,
+					choices: CHOICE_PTSPEED,
 				},
 			],
 			callback: async (action) => {
