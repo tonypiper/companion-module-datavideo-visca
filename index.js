@@ -43,11 +43,16 @@ class ModuleInstance extends InstanceBase {
 		this.deviceAddress = Buffer.alloc(1)
 		this.deviceAddress.writeUInt8(this.config.deviceAddress + 128, 0)
 
+		this.tcp.on('connect', () => {
+			this.updateStatus(InstanceStatus.Ok, 'Connected')
+		})
+
 		this.tcp.on('status_change', (status, message) => {
-			this.status(status, message)
+			this.updateStatus(status, message)
 		})
 
 		this.tcp.on('error', (e) => {
+			this.updateStatus(InstanceStatus.ConnectionFailure, e.message)
 			this.log('debug', 'tcp error:', e.message)
 		})
 
@@ -74,7 +79,7 @@ class ModuleInstance extends InstanceBase {
 			clearInterval(this.request_state)
 		})
 
-		this.log('debug', `${this.tcp.host}:${this.config.port}`)
+		this.log('debug', `${this.config.host}:${this.config.port}`)
 	}
 
 	async configUpdated(config) {
@@ -239,7 +244,6 @@ class ModuleInstance extends InstanceBase {
 		//Add device ID
 		buf = Buffer.concat([this.deviceAddress, buf])
 
-		this.log('debug', this.prependPacketSize(buf))
 		this.tcp.send(this.prependPacketSize(buf))
 	}
 }
