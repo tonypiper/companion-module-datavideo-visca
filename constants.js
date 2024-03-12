@@ -87,6 +87,42 @@ export const CHOICE_ZOOMSPEED = [
 	{ id: '06', label: 'Speed 06' },
 	{ id: '07', label: 'Speed 07 (Fast)' },
 ]
+
+export const CHOICE_FOCUSMODE = [
+	{ id: '0', label: 'Auto Focus' },
+	{ id: '1', label: 'Manual Focus' },
+]
+
+export const CHOICE_ONOFF = [
+	{ id: '1', label: 'Off' },
+	{ id: '0', label: 'On' },
+]
+
+export const CHOICE_EXPOSUREMODE = [
+	{ id: '0', label: 'Full auto' },
+	{ id: '1', label: 'Manual' },
+	{ id: '2', label: 'Shutter Pri' },
+	{ id: '3', label: 'Iris Pri' },
+	{ id: '4', label: 'Bright mode (manual)' },
+]
+
+export const CHOICE_TALLY = [
+	{ id: '0', label: 'Red' },
+	{ id: '1', label: 'Green' },
+	{ id: '2', label: 'Off' },
+]
+
+export const CHOICE_OSD = [
+	{ id: '0', label: 'OSD ON' },
+	{ id: '1', label: 'OSD OFF' },
+	{ id: '2', label: 'ENTER' },
+	{ id: '3', label: 'BACK' },
+	{ id: '4', label: 'UP' },
+	{ id: '5', label: 'DOWN' },
+	{ id: '6', label: 'LEFT' },
+	{ id: '7', label: 'RIGHT' },
+	{ id: '8', label: 'STOP' },
+]
 export const COLOR = {
 	black: combineRgb(0, 0, 0),
 	white: combineRgb(255, 255, 255),

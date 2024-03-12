@@ -5,6 +5,11 @@ import {
 	CHOICE_ZOOMSPEED,
 	CHOICE_IRIS,
 	CHOICE_SHUTTER,
+	CHOICE_FOCUSMODE,
+	CHOICE_ONOFF,
+	CHOICE_EXPOSUREMODE,
+	CHOICE_TALLY,
+	CHOICE_OSD,
 	nextChoiceId,
 	prevChoiceId,
 } from './constants.js'
@@ -131,10 +136,7 @@ export function getActions(instance) {
 					type: 'dropdown',
 					label: 'Slow Mode On/Off',
 					id: 'bol',
-					choices: [
-						{ id: '1', label: 'Off' },
-						{ id: '0', label: 'On' },
-					],
+					choices: CHOICE_ONOFF,
 				},
 			],
 			callback: async (_action) => {},
@@ -316,10 +318,7 @@ export function getActions(instance) {
 					type: 'dropdown',
 					label: 'Auto / Manual Focus',
 					id: 'bol',
-					choices: [
-						{ id: '0', label: 'Auto Focus' },
-						{ id: '1', label: 'Manual Focus' },
-					],
+					choices: CHOICE_FOCUSMODE,
 				},
 			],
 			callback: async (action) => {
@@ -334,13 +333,7 @@ export function getActions(instance) {
 					type: 'dropdown',
 					label: 'Mode setting',
 					id: 'val',
-					choices: [
-						{ id: '0', label: 'Full auto' },
-						{ id: '1', label: 'Manual' },
-						{ id: '2', label: 'Shutter Pri' },
-						{ id: '3', label: 'Iris Pri' },
-						{ id: '4', label: 'Bright mode (manual)' },
-					],
+					choices: CHOICE_EXPOSUREMODE,
 				},
 			],
 			callback: async (action) => {
@@ -481,11 +474,7 @@ export function getActions(instance) {
 					label: 'Colour setting',
 					id: 'val',
 					default: 0,
-					choices: [
-						{ id: '0', label: 'Red' },
-						{ id: '1', label: 'Green' },
-						{ id: '2', label: 'Off' },
-					],
+					choices: CHOICE_TALLY,
 				},
 			],
 			callback: async (action) => {
@@ -527,17 +516,7 @@ export function getActions(instance) {
 					label: 'OSD button',
 					id: 'val',
 					default: 0,
-					choices: [
-						{ id: '0', label: 'OSD ON' },
-						{ id: '1', label: 'OSD OFF' },
-						{ id: '2', label: 'ENTER' },
-						{ id: '3', label: 'BACK' },
-						{ id: '4', label: 'UP' },
-						{ id: '5', label: 'DOWN' },
-						{ id: '6', label: 'LEFT' },
-						{ id: '7', label: 'RIGHT' },
-						{ id: '8', label: 'STOP' },
-					],
+					choices: CHOICE_OSD,
 				},
 			],
 			callback: async (action) => {
