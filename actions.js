@@ -384,7 +384,6 @@ export function getActions(instance) {
 				cmd.writeUInt8((parseInt(action.options.val, 16) & 0xf0) >> 4, 6)
 				cmd.writeUInt8(parseInt(action.options.val, 16) & 0x0f, 7)
 				instance.sendVISCACommand(cmd)
-				instance.debug('cmd=', cmd)
 			},
 		},
 		[ActionId.shutU]: {
@@ -418,7 +417,6 @@ export function getActions(instance) {
 				cmd.writeUInt8((parseInt(action.options.val, 16) & 0xf0) >> 4, 6)
 				cmd.writeUInt8(parseInt(action.options.val, 16) & 0x0f, 7)
 				instance.sendVISCACommand(cmd)
-				instance.debug('cmd=', cmd)
 			},
 		},
 		[ActionId.savePset]: {

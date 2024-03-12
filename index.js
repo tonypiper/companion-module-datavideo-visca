@@ -48,13 +48,13 @@ class ModuleInstance extends InstanceBase {
 		})
 
 		this.tcp.on('error', (e) => {
-			this.debug('tcp error:', e.message)
+			this.log('debug', 'tcp error:', e.message)
 		})
 
 		this.tcp.on('data', (data) => {
 			//Ignore the ok response
 			if (!data.equals(ok_pkt)) {
-				this.debug('Data from Datavideo VISCA: ', data)
+				this.log('debug', 'Data from Datavideo VISCA: ', data)
 			}
 		})
 
@@ -74,7 +74,7 @@ class ModuleInstance extends InstanceBase {
 			clearInterval(this.request_state)
 		})
 
-		this.debug(`${this.tcp.host}:${this.config.port}`)
+		this.log('debug', `${this.tcp.host}:${this.config.port}`)
 	}
 
 	async configUpdated(config) {
@@ -206,7 +206,7 @@ class ModuleInstance extends InstanceBase {
 		if (this.tcp !== undefined) {
 			this.tcp.destroy()
 		}
-		this.debug('destroy', this.id)
+		this.log('debug', 'destroy', this.id)
 	}
 
 	initPresets() {
@@ -240,7 +240,7 @@ class ModuleInstance extends InstanceBase {
 		//Add device ID
 		buf = Buffer.concat([this.deviceAddress, buf])
 
-		this.debug(this.prependPacketSize(buf))
+		this.log('debug', this.prependPacketSize(buf))
 		this.tcp.send(this.prependPacketSize(buf))
 	}
 }
