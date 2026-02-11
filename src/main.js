@@ -133,7 +133,10 @@ class DatavideoViscaInstance extends InstanceBase {
 
 			this.tcp.on('data', (data) => {
 				if (!data.equals(ok_pkt)) {
-					this.log('debug', 'Data from Datavideo VISCA: ' + data.toString('hex'))
+					this.log(
+					'debug',
+					`Received (${data.length} bytes): ${data.toString('hex').match(/../g).join(' ')}`,
+				)
 				}
 			})
 
