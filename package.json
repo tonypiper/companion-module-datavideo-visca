@@ -1,27 +1,29 @@
 {
 	"name": "datavideo-visca",
-	"version": "1.0.5",
-	"api_version": "1.0.0",
-	"keywords": [
-		"Protocol",
-		"Camera"
-	],
-	"manufacturer": "Datavideo",
-	"product": "VISCA",
-	"shortname": "dv-visca",
-	"description": "Module to control PTZ cameras with Datavideo Visca protocol over IP",
-	"main": "index.js",
-	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
-	},
-	"author": "Rose O, Håkon Nessjøen <haakon@bitfocus.io>",
+	"version": "2.0.0",
+	"main": "src/main.js",
 	"license": "MIT",
-	"homepage": "https://github.com/bitfocus/companion-module-datavideo-visca#readme",
-	"bugs": {
-		"url": "https://github.com/bitfocus/companion-module-datavideo-visca/issues"
-	},
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/bitfocus/companion-module-datavideo-visca.git"
+	},
+	"engines": {
+		"node": "^22.20",
+		"yarn": "^4"
+	},
+	"dependencies": {
+		"@companion-module/base": "~1.14.1"
+	},
+	"devDependencies": {
+		"@companion-module/tools": "^2.6.1",
+		"eslint": "^9.36.0",
+		"prettier": "^3.7.4"
+	},
+	"prettier": "@companion-module/tools/.prettierrc.json",
+	"scripts": {
+		"format": "prettier -w .",
+		"lint:raw": "eslint",
+		"lint": "yarn lint:raw .",
+		"package": "companion-module-build"
 	}
 }
