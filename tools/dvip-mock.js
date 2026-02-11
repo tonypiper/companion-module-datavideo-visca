@@ -329,6 +329,15 @@ function timestamp() {
 	return new Date().toISOString().substr(11, 12)
 }
 
+server.on('error', (err) => {
+	if (err.code === 'EADDRINUSE') {
+		console.error(`Port ${PORT} is already in use. Stop the other process or use: node tools/dvip-mock.js <port>`)
+	} else {
+		console.error(`Server error: ${err.message}`)
+	}
+	process.exit(1)
+})
+
 server.listen(PORT, () => {
 	console.log(`DVIP Mock Server listening on port ${PORT}`)
 	console.log(`Point Companion to 127.0.0.1:${PORT}`)
