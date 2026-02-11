@@ -1,5 +1,10 @@
 const { combineRgb } = require('@companion-module/base')
 
+const WHITE = combineRgb(255, 255, 255)
+const BLACK = combineRgb(0, 0, 0)
+const RED = combineRgb(255, 0, 0)
+const GREEN = combineRgb(0, 255, 0)
+
 const image_up =
 	'iVBORw0KGgoAAAANSUhEUgAAAEgAAAA6AQMAAAApyY3OAAABS2lUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxNDAgNzkuMTYwNDUxLCAyMDE3LzA1LzA2LTAxOjA4OjIxICAgICAgICAiPgogPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIi8+CiA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgo8P3hwYWNrZXQgZW5kPSJyIj8+LUNEtwAAAARnQU1BAACxjwv8YQUAAAABc1JHQgCuzhzpAAAABlBMVEUAAAD///+l2Z/dAAAAAXRSTlMAQObYZgAAAIFJREFUKM+90EEKgzAQRmFDFy49ghcp5FquVPBighcRegHBjWDJ68D8U6F7m00+EnhkUlW3ru6rdyCV0INQzSg1zFLLKmU2aeCQQMEEJXIQORRsTLNyKJhNm3IoaPBg4mQorp2Mh1+00kKN307o/bZrpt5O/FlPU/c75X91/fPd6wPRD1eHyHEL4wAAAABJRU5ErkJggg=='
 
@@ -50,8 +55,8 @@ module.exports = function (self) {
 				png64: dir.image,
 				pngalignment: 'center:center',
 				size: '18',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: WHITE,
+				bgcolor: BLACK,
 			},
 			steps: [
 				{
@@ -71,8 +76,8 @@ module.exports = function (self) {
 		style: {
 			text: 'HOME',
 			size: '18',
-			color: 16777215,
-			bgcolor: combineRgb(0, 0, 0),
+			color: WHITE,
+			bgcolor: BLACK,
 		},
 		steps: [
 			{
@@ -91,8 +96,8 @@ module.exports = function (self) {
 		style: {
 			text: 'SPEED\\nUP',
 			size: '18',
-			color: 16777215,
-			bgcolor: combineRgb(0, 0, 0),
+			color: WHITE,
+			bgcolor: BLACK,
 		},
 		steps: [
 			{
@@ -111,8 +116,8 @@ module.exports = function (self) {
 		style: {
 			text: 'SPEED\\nDOWN',
 			size: '18',
-			color: 16777215,
-			bgcolor: combineRgb(0, 0, 0),
+			color: WHITE,
+			bgcolor: BLACK,
 		},
 		steps: [
 			{
@@ -131,8 +136,8 @@ module.exports = function (self) {
 		style: {
 			text: 'ZOOM\\nIN',
 			size: '18',
-			color: 16777215,
-			bgcolor: combineRgb(0, 0, 0),
+			color: WHITE,
+			bgcolor: BLACK,
 		},
 		steps: [
 			{
@@ -151,8 +156,8 @@ module.exports = function (self) {
 		style: {
 			text: 'ZOOM\\nOUT',
 			size: '18',
-			color: 16777215,
-			bgcolor: combineRgb(0, 0, 0),
+			color: WHITE,
+			bgcolor: BLACK,
 		},
 		steps: [
 			{
@@ -171,8 +176,8 @@ module.exports = function (self) {
 		style: {
 			text: 'Z SPEED\\nUP',
 			size: '14',
-			color: 16777215,
-			bgcolor: combineRgb(0, 0, 0),
+			color: WHITE,
+			bgcolor: BLACK,
 		},
 		steps: [
 			{
@@ -191,8 +196,8 @@ module.exports = function (self) {
 		style: {
 			text: 'Z SPEED\\nDOWN',
 			size: '14',
-			color: 16777215,
-			bgcolor: combineRgb(0, 0, 0),
+			color: WHITE,
+			bgcolor: BLACK,
 		},
 		steps: [
 			{
@@ -211,8 +216,8 @@ module.exports = function (self) {
 		style: {
 			text: 'FOCUS\\nNEAR',
 			size: '18',
-			color: 16777215,
-			bgcolor: combineRgb(0, 0, 0),
+			color: WHITE,
+			bgcolor: BLACK,
 		},
 		steps: [
 			{
@@ -231,8 +236,8 @@ module.exports = function (self) {
 		style: {
 			text: 'FOCUS\\nFAR',
 			size: '18',
-			color: 16777215,
-			bgcolor: combineRgb(0, 0, 0),
+			color: WHITE,
+			bgcolor: BLACK,
 		},
 		steps: [
 			{
@@ -251,8 +256,8 @@ module.exports = function (self) {
 		style: {
 			text: 'AUTO\\nFOCUS',
 			size: '18',
-			color: 16777215,
-			bgcolor: combineRgb(0, 0, 0),
+			color: WHITE,
+			bgcolor: BLACK,
 		},
 		steps: [
 			{
@@ -271,8 +276,8 @@ module.exports = function (self) {
 		style: {
 			text: 'EXP\\nMODE',
 			size: '18',
-			color: 16777215,
-			bgcolor: combineRgb(0, 0, 0),
+			color: WHITE,
+			bgcolor: BLACK,
 		},
 		steps: [
 			{
@@ -291,8 +296,8 @@ module.exports = function (self) {
 		style: {
 			text: 'IRIS\\nUP',
 			size: '18',
-			color: 16777215,
-			bgcolor: combineRgb(0, 0, 0),
+			color: WHITE,
+			bgcolor: BLACK,
 		},
 		steps: [
 			{
@@ -311,8 +316,8 @@ module.exports = function (self) {
 		style: {
 			text: 'IRIS\\nDOWN',
 			size: '18',
-			color: 16777215,
-			bgcolor: combineRgb(0, 0, 0),
+			color: WHITE,
+			bgcolor: BLACK,
 		},
 		steps: [
 			{
@@ -331,8 +336,8 @@ module.exports = function (self) {
 		style: {
 			text: 'Shut\\nUP',
 			size: '18',
-			color: 16777215,
-			bgcolor: combineRgb(0, 0, 0),
+			color: WHITE,
+			bgcolor: BLACK,
 		},
 		steps: [
 			{
@@ -351,8 +356,8 @@ module.exports = function (self) {
 		style: {
 			text: 'Shut\\nDOWN',
 			size: '18',
-			color: 16777215,
-			bgcolor: combineRgb(0, 0, 0),
+			color: WHITE,
+			bgcolor: BLACK,
 		},
 		steps: [
 			{
@@ -371,8 +376,8 @@ module.exports = function (self) {
 		style: {
 			text: 'GREEN',
 			size: '18',
-			color: 16777215,
-			bgcolor: combineRgb(0, 255, 0),
+			color: WHITE,
+			bgcolor: GREEN,
 		},
 		steps: [
 			{
@@ -391,8 +396,8 @@ module.exports = function (self) {
 		style: {
 			text: 'RED',
 			size: '18',
-			color: 16777215,
-			bgcolor: combineRgb(255, 0, 0),
+			color: WHITE,
+			bgcolor: RED,
 		},
 		steps: [
 			{
@@ -411,8 +416,8 @@ module.exports = function (self) {
 		style: {
 			text: 'OFF',
 			size: '18',
-			color: 16777215,
-			bgcolor: combineRgb(0, 0, 0),
+			color: WHITE,
+			bgcolor: BLACK,
 		},
 		steps: [
 			{
@@ -431,8 +436,8 @@ module.exports = function (self) {
 		style: {
 			text: 'OSD',
 			size: '18',
-			color: 16777215,
-			bgcolor: combineRgb(0, 0, 0),
+			color: WHITE,
+			bgcolor: BLACK,
 		},
 		steps: [
 			{
@@ -451,8 +456,8 @@ module.exports = function (self) {
 		style: {
 			text: 'ENTER',
 			size: '18',
-			color: 16777215,
-			bgcolor: combineRgb(0, 0, 0),
+			color: WHITE,
+			bgcolor: BLACK,
 		},
 		steps: [
 			{
@@ -471,8 +476,8 @@ module.exports = function (self) {
 		style: {
 			text: 'BACK',
 			size: '18',
-			color: 16777215,
-			bgcolor: combineRgb(0, 0, 0),
+			color: WHITE,
+			bgcolor: BLACK,
 		},
 		steps: [
 			{
@@ -494,8 +499,8 @@ module.exports = function (self) {
 			png64: image_up,
 			pngalignment: 'center:center',
 			size: '18',
-			color: 16777215,
-			bgcolor: combineRgb(0, 0, 0),
+			color: WHITE,
+			bgcolor: BLACK,
 		},
 		steps: [
 			{
@@ -517,8 +522,8 @@ module.exports = function (self) {
 			png64: image_down,
 			pngalignment: 'center:center',
 			size: '18',
-			color: 16777215,
-			bgcolor: combineRgb(0, 0, 0),
+			color: WHITE,
+			bgcolor: BLACK,
 		},
 		steps: [
 			{
@@ -540,8 +545,8 @@ module.exports = function (self) {
 			png64: image_left,
 			pngalignment: 'center:center',
 			size: '18',
-			color: 16777215,
-			bgcolor: combineRgb(0, 0, 0),
+			color: WHITE,
+			bgcolor: BLACK,
 		},
 		steps: [
 			{
@@ -563,8 +568,8 @@ module.exports = function (self) {
 			png64: image_right,
 			pngalignment: 'center:center',
 			size: '18',
-			color: 16777215,
-			bgcolor: combineRgb(0, 0, 0),
+			color: WHITE,
+			bgcolor: BLACK,
 		},
 		steps: [
 			{
@@ -585,8 +590,8 @@ module.exports = function (self) {
 			style: {
 				text: 'SAVE\\nPSET\\n' + (i + 1),
 				size: '14',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: WHITE,
+				bgcolor: BLACK,
 			},
 			steps: [
 				{
@@ -608,8 +613,8 @@ module.exports = function (self) {
 			style: {
 				text: 'Recall\\nPSET\\n' + (i + 1),
 				size: '14',
-				color: 16777215,
-				bgcolor: combineRgb(0, 0, 0),
+				color: WHITE,
+				bgcolor: BLACK,
 			},
 			steps: [
 				{
