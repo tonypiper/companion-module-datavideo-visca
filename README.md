@@ -15,3 +15,16 @@ yarn mock
 ```
 
 Point Companion at `127.0.0.1:5002` to test. The server hot-reloads on file changes.
+
+### Testing with Companion (remove before PR)
+
+On the test machine (e.g. Windows):
+
+```
+git clone -b tonypiper/upgrade-companion-v3 https://github.com/tonypiper/companion-module-datavideo-visca.git
+cd companion-module-datavideo-visca
+corepack enable
+yarn install
+```
+
+In Companion, go to Settings and set **Developer modules path** to the cloned directory. Restart Companion to pick up the module.
