@@ -24,6 +24,7 @@
 		"format": "prettier -w .",
 		"lint:raw": "eslint",
 		"lint": "yarn lint:raw .",
-		"package": "companion-module-build"
+		"package": "companion-module-build",
+		"mock": "node --watch tools/dvip-mock.js"
 	}
 }
