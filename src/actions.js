@@ -548,6 +548,125 @@ module.exports = function (self) {
 				self.sendVISCACommand(cmd)
 			},
 		},
+		gainU: {
+			name: 'Gain Up',
+			options: [],
+			callback: () => {
+				const cmd = '\x01\x04\x0C\x02\xFF'
+				self.sendVISCACommand(cmd)
+			},
+		},
+		gainD: {
+			name: 'Gain Down',
+			options: [],
+			callback: () => {
+				const cmd = '\x01\x04\x0C\x03\xFF'
+				self.sendVISCACommand(cmd)
+			},
+		},
+		gainR: {
+			name: 'Gain Reset',
+			options: [],
+			callback: () => {
+				const cmd = '\x01\x04\x0C\x00\xFF'
+				self.sendVISCACommand(cmd)
+			},
+		},
+		wbM: {
+			name: 'White Balance Mode',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'WB Mode',
+					id: 'val',
+					choices: [
+						{ id: '0', label: 'Auto' },
+						{ id: '1', label: 'Indoor' },
+						{ id: '2', label: 'Outdoor' },
+						{ id: '3', label: 'One Push' },
+						{ id: '4', label: 'VAR' },
+						{ id: '5', label: 'Manual' },
+					],
+					default: '0',
+				},
+			],
+			callback: (action) => {
+				const mode = parseInt(action.options.val, 10)
+				const cmd = '\x01\x04\x35' + String.fromCharCode(mode) + '\xFF'
+				self.sendVISCACommand(cmd)
+			},
+		},
+		wbOnePush: {
+			name: 'WB One Push Trigger',
+			options: [],
+			callback: () => {
+				const cmd = '\x01\x04\x10\x05\xFF'
+				self.sendVISCACommand(cmd)
+			},
+		},
+		colorTemp: {
+			name: 'Color Temperature (K)',
+			options: [
+				{
+					type: 'number',
+					label: 'Temperature (K)',
+					id: 'val',
+					default: 5000,
+					min: 2400,
+					max: 7100,
+					step: 100,
+				},
+			],
+			callback: (action) => {
+				const kelvin = parseInt(action.options.val, 10)
+				// Map Kelvin to camera position byte: 0x0c (2400K) to 0x33 (7100K)
+				const pos = Math.round((kelvin - 2400) * 39 / 4700) + 12
+				const cmd = '\x01\x04\x35' + String.fromCharCode(pos) + '\xFF'
+				self.sendVISCACommand(cmd)
+			},
+		},
+		rgU: {
+			name: 'Red Gain Up',
+			options: [],
+			callback: () => {
+				self.sendVISCACommand('\x01\x04\x03\x02\xFF')
+			},
+		},
+		rgD: {
+			name: 'Red Gain Down',
+			options: [],
+			callback: () => {
+				self.sendVISCACommand('\x01\x04\x03\x03\xFF')
+			},
+		},
+		rgR: {
+			name: 'Red Gain Reset',
+			options: [],
+			callback: () => {
+				self.sendVISCACommand('\x01\x04\x03\x00\xFF')
+			},
+		},
+		bgU: {
+			name: 'Blue Gain Up',
+			options: [],
+			callback: () => {
+				self.sendVISCACommand('\x01\x04\x04\x02\xFF')
+			},
+		},
+		bgD: {
+			name: 'Blue Gain Down',
+			options: [],
+			callback: () => {
+				self.sendVISCACommand('\x01\x04\x04\x03\xFF')
+			},
+		},
+		bgR: {
+			name: 'Blue Gain Reset',
+			options: [],
+			callback: () => {
+				self.sendVISCACommand('\x01\x04\x04\x00\xFF')
+			},
+		},
 		savePset: {
 			name: 'Save Preset',
 			options: [

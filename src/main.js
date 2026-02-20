@@ -4,7 +4,163 @@ const UpdateActions = require('./actions')
 const UpdatePresets = require('./presets')
 const UpdateVariableDefinitions = require('./variables')
 
-const ok_pkt = Buffer.from([0x00, 0x08, 0x81, 0x09, 0x7e, 0x7e, 0x70, 0xff])
+const AE_MODE_LABELS = {
+	0x00: 'Auto',
+	0x01: 'Manual',
+	0x02: 'Shutter',
+	0x03: 'Iris',
+	0x04: 'Bright',
+}
+
+const WB_MODE_LABELS = {
+	0x00: 'Auto',
+	0x01: 'Indoor',
+	0x02: 'Outdoor',
+	0x03: 'OnePush',
+	0x04: 'VAR',
+	0x05: 'Manual',
+	// Datavideo inquiry response values (confirmed on real hardware)
+	0x20: 'Indoor',
+	0x48: 'Outdoor',
+}
+
+function parse4Nibble(b, offset) {
+	return ((b[offset] & 0x0f) << 12) | ((b[offset + 1] & 0x0f) << 8) | ((b[offset + 2] & 0x0f) << 4) | (b[offset + 3] & 0x0f)
+}
+
+function parseSigned16(value) {
+	return value > 0x7fff ? value - 0x10000 : value
+}
+
+// Map VISCA command bytes to the inquiry that should follow
+// Key format: "category.subcmd" from bytes [1] and [3] of the VISCA command
+const COMMAND_TO_INQUIRY = {
+	'06.01': 'pan_tilt_position', // Pan-Tilt drive
+	'06.02': 'pan_tilt_position', // Pan-Tilt absolute
+	'06.04': 'pan_tilt_position', // Pan-Tilt home
+	'04.07': 'zoom_position',     // Zoom in/out/stop
+	'04.47': 'zoom_position',     // Zoom direct
+	'04.08': 'focus_position',    // Focus near/far/stop
+	'04.38': 'focus_mode',        // Focus mode auto/manual
+	'04.39': 'ae_mode',           // AE mode
+	'04.0b': 'iris_position',     // Iris up/down
+	'04.4b': 'iris_position',     // Iris direct
+	'04.0a': 'shutter_position',  // Shutter up/down
+	'04.4a': 'shutter_position',  // Shutter direct
+	'04.0c': 'gain_position',     // Gain up/down/reset
+	'04.03': 'rg_position',       // Red gain up/down/reset
+	'04.43': 'rg_position',       // Red gain direct
+	'04.04': 'bg_position',       // Blue gain up/down/reset
+	'04.44': 'bg_position',       // Blue gain direct
+	'04.33': 'backlight',         // Backlight on/off
+	'04.35': 'wb_mode',           // White balance mode
+	'04.20': 'wb_mode',           // Color temperature direct
+	'04.00': 'power_state',       // Power on/off
+}
+
+const INQUIRIES = [
+	{
+		name: 'zoom_position',
+		cmd: '\x09\x04\x47\xFF',
+		parse(b) {
+			const val = parse4Nibble(b, 2)
+			return { zoom_position: (val / 0x4000 * 100).toFixed(1) + '%' }
+		},
+	},
+	{
+		name: 'focus_position',
+		cmd: '\x09\x04\x48\xFF',
+		parse(b) {
+			return { focus_position: parse4Nibble(b, 2) }
+		},
+	},
+	{
+		name: 'focus_mode',
+		cmd: '\x09\x04\x38\xFF',
+		parse(b) {
+			return { focus_mode: b[2] === 0x02 ? 'Auto' : 'Manual' }
+		},
+	},
+	{
+		name: 'power_state',
+		cmd: '\x09\x04\x00\xFF',
+		parse(b) {
+			return { power_state: b[2] === 0x02 ? 'On' : 'Standby' }
+		},
+	},
+	{
+		name: 'ae_mode',
+		cmd: '\x09\x04\x39\xFF',
+		parse(b) {
+			return { ae_mode: AE_MODE_LABELS[b[2]] || `0x${b[2].toString(16)}` }
+		},
+	},
+	{
+		name: 'iris_position',
+		cmd: '\x09\x04\x4B\xFF',
+		parse(b) {
+			return { iris_position: parse4Nibble(b, 2) }
+		},
+	},
+	{
+		name: 'shutter_position',
+		cmd: '\x09\x04\x4A\xFF',
+		parse(b) {
+			return { shutter_position: parse4Nibble(b, 2) }
+		},
+	},
+	{
+		name: 'gain_position',
+		cmd: '\x09\x04\x4C\xFF',
+		parse(b) {
+			return { gain_position: parse4Nibble(b, 2) }
+		},
+	},
+	{
+		name: 'wb_mode',
+		cmd: '\x09\x04\x35\xFF',
+		parse(b) {
+			const val = b[2]
+			if (WB_MODE_LABELS[val]) return { wb_mode: WB_MODE_LABELS[val] }
+			// Color temp positions: 0x0c (2400K) to 0x33 (7100K)
+			if (val >= 0x0c && val <= 0x33) {
+				const kelvin = Math.round(((val - 12) * 4700 / 39 + 2400) / 100) * 100
+				return { wb_mode: 'VAR', color_temp: kelvin + 'K' }
+			}
+			return { wb_mode: `0x${val.toString(16)}` }
+		},
+	},
+	{
+		name: 'rg_position',
+		cmd: '\x09\x04\x43\xFF',
+		parse(b) {
+			return { rg_position: parse4Nibble(b, 2) }
+		},
+	},
+	{
+		name: 'bg_position',
+		cmd: '\x09\x04\x44\xFF',
+		parse(b) {
+			return { bg_position: parse4Nibble(b, 2) }
+		},
+	},
+	{
+		name: 'backlight',
+		cmd: '\x09\x04\x33\xFF',
+		parse(b) {
+			return { backlight: b[2] === 0x02 ? 'On' : 'Off' }
+		},
+	},
+	{
+		name: 'pan_tilt_position',
+		cmd: '\x09\x06\x12\xFF',
+		parse(b) {
+			const pan = parseSigned16(parse4Nibble(b, 2))
+			const tilt = parseSigned16(parse4Nibble(b, 6))
+			return { pan_position: pan, tilt_position: tilt }
+		},
+	},
+]
 
 class DatavideoViscaInstance extends InstanceBase {
 	constructor(internal) {
@@ -17,6 +173,9 @@ class DatavideoViscaInstance extends InstanceBase {
 		this.ptSpeedIndex = 12
 		this.zoomSpeed = '07'
 		this.zoomSpeedIndex = 7
+		this.inquiryIndex = 0
+		this.pendingInquiry = null
+		this.recvBuffer = Buffer.alloc(0)
 
 		this.updateStatus(InstanceStatus.Connecting)
 		this.initTcp()
@@ -49,6 +208,7 @@ class DatavideoViscaInstance extends InstanceBase {
 
 	async destroy() {
 		clearInterval(this.requestStateInterval)
+		clearTimeout(this.pollAfterCommandTimer)
 
 		if (this.tcp !== undefined) {
 			this.tcp.destroy()
@@ -132,12 +292,7 @@ class DatavideoViscaInstance extends InstanceBase {
 			})
 
 			this.tcp.on('data', (data) => {
-				if (!data.equals(ok_pkt)) {
-					this.log(
-					'debug',
-					`Received (${data.length} bytes): ${data.toString('hex').match(/../g).join(' ')}`,
-				)
-				}
+				this.handleData(data)
 			})
 
 			this.tcp.on('connect', () => {
@@ -156,12 +311,98 @@ class DatavideoViscaInstance extends InstanceBase {
 		}
 	}
 
+	handleData(data) {
+		this.recvBuffer = Buffer.concat([this.recvBuffer, data])
+
+		while (this.recvBuffer.length >= 2) {
+			const packetLen = this.recvBuffer.readUInt16BE(0)
+
+			if (packetLen < 2) {
+				this.recvBuffer = Buffer.alloc(0)
+				break
+			}
+
+			if (this.recvBuffer.length < packetLen) {
+				break
+			}
+
+			const packet = this.recvBuffer.subarray(0, packetLen)
+			this.recvBuffer = this.recvBuffer.subarray(packetLen)
+
+			this.processPacket(packet)
+		}
+	}
+
+	processPacket(packet) {
+		const visca = packet.subarray(2)
+		if (visca.length < 2) return
+
+		const type = visca[1] & 0xf0
+
+		// ACK (x0 4y FF) — ignore
+		if (type === 0x40) return
+
+		// Completion (x0 5y FF) with no payload — ignore
+		if (type === 0x50 && visca.length === 3) return
+
+		// Inquiry response (x0 50 ... FF) with payload
+		if (type === 0x50 && visca.length > 3) {
+			if (this.pendingInquiry) {
+				const inquiry = this.pendingInquiry
+				this.pendingInquiry = null
+
+				try {
+					const values = inquiry.parse(visca)
+					this.log('debug', `Inquiry ${inquiry.name}: ${JSON.stringify(values)}`)
+					this.setVariableValues(values)
+				} catch (e) {
+					this.log('debug', `Failed to parse ${inquiry.name} response: ${e.message}`)
+				}
+			}
+			return
+		}
+
+		// Log unrecognised responses
+		const hex = visca.toString('hex').match(/../g).join(' ')
+		this.log('debug', `Unrecognised packet: ${hex}`)
+	}
+
 	sendVISCACommand(str) {
 		if (this.tcp !== undefined) {
 			let buf = Buffer.from(str, 'binary')
 			buf = Buffer.concat([this.deviceAddress, buf])
 
-			this.log('debug', 'Sending: ' + this.prependPacketSize(buf).toString('hex'))
+			this.tcp.send(this.prependPacketSize(buf))
+
+			// Poll the relevant variable shortly after sending a command
+			if (this.config.feedback) {
+				const cmdBuf = Buffer.from(str, 'binary')
+				if (cmdBuf.length >= 4 && cmdBuf[0] === 0x01) {
+					const key = cmdBuf[1].toString(16).padStart(2, '0') + '.' + cmdBuf[3].toString(16).padStart(2, '0')
+					const inquiryName = COMMAND_TO_INQUIRY[key]
+					if (inquiryName) {
+						this.pollAfterCommand(inquiryName)
+					}
+				}
+			}
+		}
+	}
+
+	pollAfterCommand(inquiryName) {
+		clearTimeout(this.pollAfterCommandTimer)
+		this.pollAfterCommandTimer = setTimeout(() => {
+			const inquiry = INQUIRIES.find((i) => i.name === inquiryName)
+			if (inquiry) {
+				this.pendingInquiry = inquiry
+				this.sendInquiry(inquiry.cmd)
+			}
+		}, 250)
+	}
+
+	sendInquiry(cmd) {
+		if (this.tcp !== undefined) {
+			let buf = Buffer.from(cmd, 'binary')
+			buf = Buffer.concat([this.deviceAddress, buf])
 			this.tcp.send(this.prependPacketSize(buf))
 		}
 	}
@@ -175,8 +416,11 @@ class DatavideoViscaInstance extends InstanceBase {
 	}
 
 	requestState() {
-		const cmd = '\x09\x7E\x7E\x70\xFF'
-		this.sendVISCACommand(cmd)
+		const inquiry = INQUIRIES[this.inquiryIndex]
+		this.pendingInquiry = inquiry
+		this.inquiryIndex = (this.inquiryIndex + 1) % INQUIRIES.length
+
+		this.sendInquiry(inquiry.cmd)
 	}
 
 	getPanTiltSpeeds() {

@@ -54,7 +54,7 @@ module.exports = function (self) {
 				text: '',
 				png64: dir.image,
 				pngalignment: 'center:center',
-				size: '18',
+				size: '14',
 				color: WHITE,
 				bgcolor: BLACK,
 			},
@@ -75,7 +75,7 @@ module.exports = function (self) {
 		name: 'Home',
 		style: {
 			text: 'HOME',
-			size: '18',
+			size: '14',
 			color: WHITE,
 			bgcolor: BLACK,
 		},
@@ -95,7 +95,7 @@ module.exports = function (self) {
 		name: 'Speed Up',
 		style: {
 			text: 'SPEED\\nUP',
-			size: '18',
+			size: '14',
 			color: WHITE,
 			bgcolor: BLACK,
 		},
@@ -115,7 +115,7 @@ module.exports = function (self) {
 		name: 'Speed Down',
 		style: {
 			text: 'SPEED\\nDOWN',
-			size: '18',
+			size: '14',
 			color: WHITE,
 			bgcolor: BLACK,
 		},
@@ -135,7 +135,7 @@ module.exports = function (self) {
 		name: 'Zoom In',
 		style: {
 			text: 'ZOOM\\nIN',
-			size: '18',
+			size: '14',
 			color: WHITE,
 			bgcolor: BLACK,
 		},
@@ -155,7 +155,7 @@ module.exports = function (self) {
 		name: 'Zoom Out',
 		style: {
 			text: 'ZOOM\\nOUT',
-			size: '18',
+			size: '14',
 			color: WHITE,
 			bgcolor: BLACK,
 		},
@@ -215,7 +215,7 @@ module.exports = function (self) {
 		name: 'Focus Near',
 		style: {
 			text: 'FOCUS\\nNEAR',
-			size: '18',
+			size: '14',
 			color: WHITE,
 			bgcolor: BLACK,
 		},
@@ -235,7 +235,7 @@ module.exports = function (self) {
 		name: 'Focus Far',
 		style: {
 			text: 'FOCUS\\nFAR',
-			size: '18',
+			size: '14',
 			color: WHITE,
 			bgcolor: BLACK,
 		},
@@ -255,7 +255,7 @@ module.exports = function (self) {
 		name: 'Auto Focus',
 		style: {
 			text: 'AUTO\\nFOCUS',
-			size: '18',
+			size: '14',
 			color: WHITE,
 			bgcolor: BLACK,
 		},
@@ -275,7 +275,7 @@ module.exports = function (self) {
 		name: 'Exposure Mode',
 		style: {
 			text: 'EXP\\nMODE',
-			size: '18',
+			size: '14',
 			color: WHITE,
 			bgcolor: BLACK,
 		},
@@ -295,7 +295,7 @@ module.exports = function (self) {
 		name: 'Iris Up',
 		style: {
 			text: 'IRIS\\nUP',
-			size: '18',
+			size: '14',
 			color: WHITE,
 			bgcolor: BLACK,
 		},
@@ -315,7 +315,7 @@ module.exports = function (self) {
 		name: 'Iris Down',
 		style: {
 			text: 'IRIS\\nDOWN',
-			size: '18',
+			size: '14',
 			color: WHITE,
 			bgcolor: BLACK,
 		},
@@ -335,7 +335,7 @@ module.exports = function (self) {
 		name: 'Shutter Up',
 		style: {
 			text: 'Shut\\nUP',
-			size: '18',
+			size: '14',
 			color: WHITE,
 			bgcolor: BLACK,
 		},
@@ -355,7 +355,7 @@ module.exports = function (self) {
 		name: 'Shutter Down',
 		style: {
 			text: 'Shut\\nDOWN',
-			size: '18',
+			size: '14',
 			color: WHITE,
 			bgcolor: BLACK,
 		},
@@ -375,7 +375,7 @@ module.exports = function (self) {
 		name: 'GREEN',
 		style: {
 			text: 'GREEN',
-			size: '18',
+			size: '14',
 			color: WHITE,
 			bgcolor: GREEN,
 		},
@@ -395,7 +395,7 @@ module.exports = function (self) {
 		name: 'RED',
 		style: {
 			text: 'RED',
-			size: '18',
+			size: '14',
 			color: WHITE,
 			bgcolor: RED,
 		},
@@ -415,7 +415,7 @@ module.exports = function (self) {
 		name: 'OFF',
 		style: {
 			text: 'OFF',
-			size: '18',
+			size: '14',
 			color: WHITE,
 			bgcolor: BLACK,
 		},
@@ -435,7 +435,7 @@ module.exports = function (self) {
 		name: 'OSD Menu',
 		style: {
 			text: 'OSD',
-			size: '18',
+			size: '14',
 			color: WHITE,
 			bgcolor: BLACK,
 		},
@@ -455,7 +455,7 @@ module.exports = function (self) {
 		name: 'ENTER',
 		style: {
 			text: 'ENTER',
-			size: '18',
+			size: '14',
 			color: WHITE,
 			bgcolor: BLACK,
 		},
@@ -475,7 +475,7 @@ module.exports = function (self) {
 		name: 'BACK',
 		style: {
 			text: 'BACK',
-			size: '18',
+			size: '14',
 			color: WHITE,
 			bgcolor: BLACK,
 		},
@@ -498,7 +498,7 @@ module.exports = function (self) {
 			text: '',
 			png64: image_up,
 			pngalignment: 'center:center',
-			size: '18',
+			size: '14',
 			color: WHITE,
 			bgcolor: BLACK,
 		},
@@ -521,7 +521,7 @@ module.exports = function (self) {
 			text: '',
 			png64: image_down,
 			pngalignment: 'center:center',
-			size: '18',
+			size: '14',
 			color: WHITE,
 			bgcolor: BLACK,
 		},
@@ -544,7 +544,7 @@ module.exports = function (self) {
 			text: '',
 			png64: image_left,
 			pngalignment: 'center:center',
-			size: '18',
+			size: '14',
 			color: WHITE,
 			bgcolor: BLACK,
 		},
@@ -567,7 +567,7 @@ module.exports = function (self) {
 			text: '',
 			png64: image_right,
 			pngalignment: 'center:center',
-			size: '18',
+			size: '14',
 			color: WHITE,
 			bgcolor: BLACK,
 		},
@@ -575,6 +575,429 @@ module.exports = function (self) {
 			{
 				down: [{ actionId: 'osd', options: { val: 7 } }],
 				up: [{ actionId: 'osd', options: { val: 8 } }],
+			},
+		],
+		feedbacks: [],
+	}
+
+	// Gain Up
+	presets['gain_up'] = {
+		type: 'button',
+		category: 'Exposure',
+		name: 'Gain Up',
+		style: {
+			text: 'GAIN\\nUP',
+			size: '14',
+			color: WHITE,
+			bgcolor: BLACK,
+		},
+		steps: [
+			{
+				down: [{ actionId: 'gainU', options: {} }],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	// Gain Down
+	presets['gain_down'] = {
+		type: 'button',
+		category: 'Exposure',
+		name: 'Gain Down',
+		style: {
+			text: 'GAIN\\nDOWN',
+			size: '14',
+			color: WHITE,
+			bgcolor: BLACK,
+		},
+		steps: [
+			{
+				down: [{ actionId: 'gainD', options: {} }],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	// Gain Reset
+	presets['gain_reset'] = {
+		type: 'button',
+		category: 'Exposure',
+		name: 'Gain Reset',
+		style: {
+			text: 'GAIN\\nRESET',
+			size: '14',
+			color: WHITE,
+			bgcolor: BLACK,
+		},
+		steps: [
+			{
+				down: [{ actionId: 'gainR', options: {} }],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	// Backlight On
+	presets['backlight_on'] = {
+		type: 'button',
+		category: 'Exposure',
+		name: 'Backlight On',
+		style: {
+			text: 'BLC\\nON',
+			size: '14',
+			color: WHITE,
+			bgcolor: BLACK,
+		},
+		steps: [
+			{
+				down: [{ actionId: 'custom', options: { command: '81 01 04 33 02 FF' } }],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	// Backlight Off
+	presets['backlight_off'] = {
+		type: 'button',
+		category: 'Exposure',
+		name: 'Backlight Off',
+		style: {
+			text: 'BLC\\nOFF',
+			size: '14',
+			color: WHITE,
+			bgcolor: BLACK,
+		},
+		steps: [
+			{
+				down: [{ actionId: 'custom', options: { command: '81 01 04 33 03 FF' } }],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	// WB Auto
+	presets['wb_auto'] = {
+		type: 'button',
+		category: 'White Balance',
+		name: 'WB Auto',
+		style: {
+			text: 'WB\\nAUTO',
+			size: '14',
+			color: WHITE,
+			bgcolor: BLACK,
+		},
+		steps: [
+			{
+				down: [{ actionId: 'wbM', options: { val: '0' } }],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	// WB Indoor
+	presets['wb_indoor'] = {
+		type: 'button',
+		category: 'White Balance',
+		name: 'WB Indoor',
+		style: {
+			text: 'WB\\nINDOOR',
+			size: '14',
+			color: WHITE,
+			bgcolor: BLACK,
+		},
+		steps: [
+			{
+				down: [{ actionId: 'wbM', options: { val: '1' } }],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	// WB Outdoor
+	presets['wb_outdoor'] = {
+		type: 'button',
+		category: 'White Balance',
+		name: 'WB Outdoor',
+		style: {
+			text: 'WB\\nOUTDR',
+			size: '14',
+			color: WHITE,
+			bgcolor: BLACK,
+		},
+		steps: [
+			{
+				down: [{ actionId: 'wbM', options: { val: '2' } }],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	// WB One Push
+	presets['wb_onepush'] = {
+		type: 'button',
+		category: 'White Balance',
+		name: 'WB One Push',
+		style: {
+			text: 'WB\\n1PUSH',
+			size: '14',
+			color: WHITE,
+			bgcolor: BLACK,
+		},
+		steps: [
+			{
+				down: [{ actionId: 'wbM', options: { val: '3' } }],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	// WB VAR
+	presets['wb_var'] = {
+		type: 'button',
+		category: 'White Balance',
+		name: 'WB VAR',
+		style: {
+			text: 'WB\\nVAR',
+			size: '14',
+			color: WHITE,
+			bgcolor: BLACK,
+		},
+		steps: [
+			{
+				down: [{ actionId: 'wbM', options: { val: '4' } }],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	// WB Manual
+	presets['wb_manual'] = {
+		type: 'button',
+		category: 'White Balance',
+		name: 'WB Manual',
+		style: {
+			text: 'WB\\nMANUAL',
+			size: '14',
+			color: WHITE,
+			bgcolor: BLACK,
+		},
+		steps: [
+			{
+				down: [{ actionId: 'wbM', options: { val: '5' } }],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	// WB One Push Trigger
+	presets['wb_onepush_trigger'] = {
+		type: 'button',
+		category: 'White Balance',
+		name: 'WB Trigger',
+		style: {
+			text: 'WB\\nTRIGGER',
+			size: '14',
+			color: WHITE,
+			bgcolor: BLACK,
+		},
+		steps: [
+			{
+				down: [{ actionId: 'wbOnePush', options: {} }],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	// Color Temperature presets
+	const colorTemps = [2400, 3000, 3200, 4000, 4500, 5000, 5600, 6500, 7100]
+	for (const temp of colorTemps) {
+		presets['color_temp_' + temp] = {
+			type: 'button',
+			category: 'White Balance',
+			name: temp + 'K',
+			style: {
+				text: temp + 'K',
+				size: '14',
+				color: WHITE,
+				bgcolor: BLACK,
+			},
+			steps: [
+				{
+					down: [{ actionId: 'colorTemp', options: { val: temp } }],
+					up: [],
+				},
+			],
+			feedbacks: [],
+		}
+	}
+
+	// Red Gain Up
+	presets['rg_up'] = {
+		type: 'button',
+		category: 'White Balance',
+		name: 'Red Gain Up',
+		style: {
+			text: 'RG\\nUP',
+			size: '14',
+			color: WHITE,
+			bgcolor: BLACK,
+		},
+		steps: [
+			{
+				down: [{ actionId: 'rgU', options: {} }],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	// Red Gain Down
+	presets['rg_down'] = {
+		type: 'button',
+		category: 'White Balance',
+		name: 'Red Gain Down',
+		style: {
+			text: 'RG\\nDOWN',
+			size: '14',
+			color: WHITE,
+			bgcolor: BLACK,
+		},
+		steps: [
+			{
+				down: [{ actionId: 'rgD', options: {} }],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	// Red Gain Reset
+	presets['rg_reset'] = {
+		type: 'button',
+		category: 'White Balance',
+		name: 'Red Gain Reset',
+		style: {
+			text: 'RG\\nRESET',
+			size: '14',
+			color: WHITE,
+			bgcolor: BLACK,
+		},
+		steps: [
+			{
+				down: [{ actionId: 'rgR', options: {} }],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	// Blue Gain Up
+	presets['bg_up'] = {
+		type: 'button',
+		category: 'White Balance',
+		name: 'Blue Gain Up',
+		style: {
+			text: 'BG\\nUP',
+			size: '14',
+			color: WHITE,
+			bgcolor: BLACK,
+		},
+		steps: [
+			{
+				down: [{ actionId: 'bgU', options: {} }],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	// Blue Gain Down
+	presets['bg_down'] = {
+		type: 'button',
+		category: 'White Balance',
+		name: 'Blue Gain Down',
+		style: {
+			text: 'BG\\nDOWN',
+			size: '14',
+			color: WHITE,
+			bgcolor: BLACK,
+		},
+		steps: [
+			{
+				down: [{ actionId: 'bgD', options: {} }],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	// Blue Gain Reset
+	presets['bg_reset'] = {
+		type: 'button',
+		category: 'White Balance',
+		name: 'Blue Gain Reset',
+		style: {
+			text: 'BG\\nRESET',
+			size: '14',
+			color: WHITE,
+			bgcolor: BLACK,
+		},
+		steps: [
+			{
+				down: [{ actionId: 'bgR', options: {} }],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	// Power On
+	presets['power_on'] = {
+		type: 'button',
+		category: 'Power',
+		name: 'Power On',
+		style: {
+			text: 'POWER\\nON',
+			size: '14',
+			color: WHITE,
+			bgcolor: BLACK,
+		},
+		steps: [
+			{
+				down: [{ actionId: 'custom', options: { command: '81 01 04 00 02 FF' } }],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	// Power Off
+	presets['power_off'] = {
+		type: 'button',
+		category: 'Power',
+		name: 'Power Off',
+		style: {
+			text: 'POWER\\nOFF',
+			size: '14',
+			color: WHITE,
+			bgcolor: BLACK,
+		},
+		steps: [
+			{
+				down: [{ actionId: 'custom', options: { command: '81 01 04 00 03 FF' } }],
+				up: [],
 			},
 		],
 		feedbacks: [],

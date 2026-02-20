@@ -81,6 +81,7 @@ function identifyCommand(viscaBytes) {
 		if (cmd2 === 0x04 && b[3] === 0x00) return 'Power Status Inquiry'
 		if (cmd2 === 0x04 && b[3] === 0x43) return 'R Gain Inquiry'
 		if (cmd2 === 0x04 && b[3] === 0x44) return 'B Gain Inquiry'
+		if (cmd2 === 0x04 && b[3] === 0x4c) return 'Gain Position Inquiry'
 		if (cmd2 === 0x04 && b[3] === 0x33) return 'Backlight Inquiry'
 		return 'Inquiry (unknown)'
 	}
@@ -263,6 +264,63 @@ function makeCompletion(address) {
 	return Buffer.from([addr, 0x51, 0xff])
 }
 
+/**
+ * Encode a 16-bit value as 4 nibble bytes: 0p 0q 0r 0s
+ */
+function encode4Nibble(value) {
+	return [
+		(value >> 12) & 0x0f,
+		(value >> 8) & 0x0f,
+		(value >> 4) & 0x0f,
+		value & 0x0f,
+	]
+}
+
+/**
+ * Build an inquiry response for the given address.
+ * Returns null if no mock response is defined for this inquiry.
+ */
+function makeInquiryResponse(address, viscaBytes) {
+	const addr = ((address & 0x0f) + 8) << 4
+	const cmd2 = viscaBytes[2]
+	const cmd3 = viscaBytes[3]
+
+	// Single-byte response: addr 50 XX FF
+	function singleByte(val) {
+		return Buffer.from([addr, 0x50, val, 0xff])
+	}
+
+	// 4-nibble response: addr 50 0p 0q 0r 0s FF
+	function fourNibble(val) {
+		const nibbles = encode4Nibble(val)
+		return Buffer.from([addr, 0x50, nibbles[0], nibbles[1], nibbles[2], nibbles[3], 0xff])
+	}
+
+	if (cmd2 === 0x04) {
+		switch (cmd3) {
+			case 0x47: return fourNibble(0x2000)  // Zoom at 50%
+			case 0x48: return fourNibble(0x1000)  // Focus position
+			case 0x38: return singleByte(0x02)    // Focus mode: Auto
+			case 0x00: return singleByte(0x02)    // Power: On
+			case 0x39: return singleByte(0x00)    // AE: Auto
+			case 0x4b: return fourNibble(0x000a)  // Iris position
+			case 0x4a: return fourNibble(0x0008)  // Shutter position
+			case 0x4c: return fourNibble(0x0004)  // Gain position
+			case 0x35: return singleByte(0x00)    // WB: Auto
+			case 0x33: return singleByte(0x03)    // Backlight: Off
+		}
+	}
+
+	// Pan-Tilt Position: addr 50 0p 0q 0r 0s 0a 0b 0c 0d FF
+	if (cmd2 === 0x06 && cmd3 === 0x12) {
+		const pan = encode4Nibble(0x0000)  // Pan at centre
+		const tilt = encode4Nibble(0x0000) // Tilt at centre
+		return Buffer.from([addr, 0x50, ...pan, ...tilt, 0xff])
+	}
+
+	return null
+}
+
 const server = net.createServer((socket) => {
 	const remote = `${socket.remoteAddress}:${socket.remotePort}`
 	console.log(`\n[${timestamp()}] Connected: ${remote}`)
@@ -303,10 +361,15 @@ const server = net.createServer((socket) => {
 				console.log(`[${timestamp()}] ${cmdName}`)
 			}
 
-			// Send ACK + Completion for commands, just Completion for inquiries
+			// Send inquiry response or ACK + Completion for commands
 			if (isInquiry) {
-				const completion = prependPacketSize(makeCompletion(deviceAddr))
-				socket.write(completion)
+				const response = makeInquiryResponse(deviceAddr, viscaBytes)
+				if (response) {
+					socket.write(prependPacketSize(response))
+				} else {
+					// Unknown inquiry — send completion as fallback
+					socket.write(prependPacketSize(makeCompletion(deviceAddr)))
+				}
 			} else {
 				const ack = prependPacketSize(makeAck(deviceAddr))
 				const completion = prependPacketSize(makeCompletion(deviceAddr))
