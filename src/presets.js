@@ -1020,6 +1020,26 @@ module.exports = function (self) {
 		feedbacks: [],
 	}
 
+	// Power Toggle
+	presets['power_toggle'] = {
+		type: 'button',
+		category: 'Power',
+		name: 'Power Toggle',
+		style: {
+			text: 'POWER\\n$(' + self.label + ':power_state)',
+			size: '14',
+			color: WHITE,
+			bgcolor: BLACK,
+		},
+		steps: [
+			{
+				down: [{ actionId: 'powerToggle', options: {} }],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
 	// Power On
 	presets['power_on'] = {
 		type: 'button',

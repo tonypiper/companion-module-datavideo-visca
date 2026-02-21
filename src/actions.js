@@ -641,6 +641,18 @@ module.exports = function (self) {
 				self.pollAllPositions()
 			},
 		},
+		powerToggle: {
+			name: 'Power Toggle',
+			options: [],
+			callback: () => {
+				const current = self.getVariableValue('power_state')
+				if (current === 'On') {
+					self.sendVISCACommand('\x01\x04\x00\x03\xFF')
+				} else {
+					self.sendVISCACommand('\x01\x04\x00\x02\xFF')
+				}
+			},
+		},
 		custom: {
 			name: 'Custom command',
 			options: [
