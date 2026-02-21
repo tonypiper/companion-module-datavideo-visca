@@ -359,6 +359,13 @@ module.exports = function (self) {
 				self.pollAfterCommand('focus_position', 0)
 			},
 		},
+		focusOnePush: {
+			name: 'Focus One Push Trigger',
+			options: [],
+			callback: () => {
+				self.sendVISCACommand('\x01\x04\x18\x01\xFF')
+			},
+		},
 		focusM: {
 			name: 'Focus Mode',
 			options: [

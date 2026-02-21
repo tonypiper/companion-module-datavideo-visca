@@ -287,6 +287,26 @@ module.exports = function (self) {
 		feedbacks: [],
 	}
 
+	// Focus One Push
+	presets['focus_one_push'] = {
+		type: 'button',
+		category: 'Lens',
+		name: 'Focus One Push',
+		style: {
+			text: 'FOCUS\\n1PUSH',
+			size: '14',
+			color: WHITE,
+			bgcolor: BLACK,
+		},
+		steps: [
+			{
+				down: [{ actionId: 'focusOnePush', options: {} }],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
 	// Exposure Mode
 	presets['exp_mode'] = {
 		type: 'button',
