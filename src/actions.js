@@ -1,81 +1,4 @@
-const IRIS = [
-	{ id: '11', label: 'F1.8' },
-	{ id: '10', label: 'F2.0' },
-	{ id: '0F', label: 'F2.4' },
-	{ id: '0E', label: 'F2.8' },
-	{ id: '0D', label: 'F3.4' },
-	{ id: '0C', label: 'F4.0' },
-	{ id: '0B', label: 'F4.8' },
-	{ id: '0A', label: 'F5.6' },
-	{ id: '09', label: 'F6.8' },
-	{ id: '08', label: 'F8.0' },
-	{ id: '07', label: 'F9.6' },
-	{ id: '06', label: 'F11' },
-	{ id: '00', label: 'CLOSED' },
-]
-
-const SHUTTER = [
-	{ id: '11', label: '1/1000000' },
-	{ id: '10', label: '1/6000' },
-	{ id: '0F', label: '1/4000' },
-	{ id: '0E', label: '1/3000' },
-	{ id: '0D', label: '1/2000' },
-	{ id: '0C', label: '1/1500' },
-	{ id: '0B', label: '1/1000' },
-	{ id: '0A', label: '1/725' },
-	{ id: '09', label: '1/500' },
-	{ id: '08', label: '1/350' },
-	{ id: '07', label: '1/250' },
-	{ id: '06', label: '1/180' },
-	{ id: '05', label: '1/125' },
-	{ id: '04', label: '1/100' },
-	{ id: '03', label: '1/90' },
-	{ id: '02', label: '1/60' },
-	{ id: '01', label: '1/30' },
-]
-
-const PRESET = []
-for (let i = 0; i < 64; ++i) {
-	PRESET.push({ id: ('0' + i.toString(16)).substr(-2, 2), label: 'Preset ' + i })
-}
-
-const SPEED = [
-	{ id: '01', label: 'Speed 01 (Slow)' },
-	{ id: '02', label: 'Speed 02' },
-	{ id: '03', label: 'Speed 03' },
-	{ id: '04', label: 'Speed 04' },
-	{ id: '05', label: 'Speed 05' },
-	{ id: '06', label: 'Speed 06' },
-	{ id: '07', label: 'Speed 07' },
-	{ id: '08', label: 'Speed 08' },
-	{ id: '09', label: 'Speed 09' },
-	{ id: '0A', label: 'Speed 10' },
-	{ id: '0B', label: 'Speed 11' },
-	{ id: '0C', label: 'Speed 12' },
-	{ id: '0D', label: 'Speed 13' },
-	{ id: '0E', label: 'Speed 14' },
-	{ id: '0F', label: 'Speed 15' },
-	{ id: '10', label: 'Speed 16' },
-	{ id: '11', label: 'Speed 17' },
-	{ id: '12', label: 'Speed 18' },
-	{ id: '13', label: 'Speed 19' },
-	{ id: '14', label: 'Speed 20' },
-	{ id: '15', label: 'Speed 21' },
-	{ id: '16', label: 'Speed 22' },
-	{ id: '17', label: 'Speed 23' },
-	{ id: '18', label: 'Speed 24 (Fast)' },
-]
-
-const CHOICE_ZOOMSPEED = [
-	{ id: '00', label: 'Speed 00 (Default)' },
-	{ id: '01', label: 'Speed 01 (Slow)' },
-	{ id: '02', label: 'Speed 02' },
-	{ id: '03', label: 'Speed 03' },
-	{ id: '04', label: 'Speed 04' },
-	{ id: '05', label: 'Speed 05' },
-	{ id: '06', label: 'Speed 06' },
-	{ id: '07', label: 'Speed 07 (Fast)' },
-]
+const { IRIS, SHUTTER, PRESET, FOCUS_MODE, EXPOSURE_MODE, WB_MODE, SPEED, CHOICE_ZOOMSPEED } = require('./constants')
 
 module.exports = function (self) {
 	self.setActionDefinitions({
@@ -86,6 +9,7 @@ module.exports = function (self) {
 				const { panspeed, tiltspeed } = self.getPanTiltSpeeds()
 				const cmd = '\x01\x06\x01' + panspeed + tiltspeed + '\x01\x03\xFF'
 				self.sendVISCACommand(cmd)
+				self.startContinuousPolling('pan_tilt_position')
 			},
 		},
 		right: {
@@ -95,6 +19,7 @@ module.exports = function (self) {
 				const { panspeed, tiltspeed } = self.getPanTiltSpeeds()
 				const cmd = '\x01\x06\x01' + panspeed + tiltspeed + '\x02\x03\xFF'
 				self.sendVISCACommand(cmd)
+				self.startContinuousPolling('pan_tilt_position')
 			},
 		},
 		up: {
@@ -104,6 +29,7 @@ module.exports = function (self) {
 				const { panspeed, tiltspeed } = self.getPanTiltSpeeds()
 				const cmd = '\x01\x06\x01' + panspeed + tiltspeed + '\x03\x01\xFF'
 				self.sendVISCACommand(cmd)
+				self.startContinuousPolling('pan_tilt_position')
 			},
 		},
 		down: {
@@ -113,6 +39,7 @@ module.exports = function (self) {
 				const { panspeed, tiltspeed } = self.getPanTiltSpeeds()
 				const cmd = '\x01\x06\x01' + panspeed + tiltspeed + '\x03\x02\xFF'
 				self.sendVISCACommand(cmd)
+				self.startContinuousPolling('pan_tilt_position')
 			},
 		},
 		upLeft: {
@@ -122,6 +49,7 @@ module.exports = function (self) {
 				const { panspeed, tiltspeed } = self.getPanTiltSpeeds()
 				const cmd = '\x01\x06\x01' + panspeed + tiltspeed + '\x01\x01\xFF'
 				self.sendVISCACommand(cmd)
+				self.startContinuousPolling('pan_tilt_position')
 			},
 		},
 		upRight: {
@@ -131,6 +59,7 @@ module.exports = function (self) {
 				const { panspeed, tiltspeed } = self.getPanTiltSpeeds()
 				const cmd = '\x01\x06\x01' + panspeed + tiltspeed + '\x02\x01\xFF'
 				self.sendVISCACommand(cmd)
+				self.startContinuousPolling('pan_tilt_position')
 			},
 		},
 		downLeft: {
@@ -140,6 +69,7 @@ module.exports = function (self) {
 				const { panspeed, tiltspeed } = self.getPanTiltSpeeds()
 				const cmd = '\x01\x06\x01' + panspeed + tiltspeed + '\x01\x02\xFF'
 				self.sendVISCACommand(cmd)
+				self.startContinuousPolling('pan_tilt_position')
 			},
 		},
 		downRight: {
@@ -149,15 +79,18 @@ module.exports = function (self) {
 				const { panspeed, tiltspeed } = self.getPanTiltSpeeds()
 				const cmd = '\x01\x06\x01' + panspeed + tiltspeed + '\x02\x02\xFF'
 				self.sendVISCACommand(cmd)
+				self.startContinuousPolling('pan_tilt_position')
 			},
 		},
 		stop: {
 			name: 'P/T Stop',
 			options: [],
 			callback: () => {
+				self.stopContinuousPolling()
 				const { panspeed, tiltspeed } = self.getPanTiltSpeeds()
 				const cmd = '\x01\x06\x01' + panspeed + tiltspeed + '\x03\x03\xFF'
 				self.sendVISCACommand(cmd)
+				self.pollAfterCommand('pan_tilt_position', 0)
 			},
 		},
 		home: {
@@ -243,6 +176,7 @@ module.exports = function (self) {
 				const zoomspeed = String.fromCharCode((parseInt(self.zoomSpeed, 16) + 32) & 0xff)
 				const cmd = '\x01\x04\x07' + zoomspeed + '\xff'
 				self.sendVISCACommand(cmd)
+				self.startContinuousPolling('zoom_position')
 			},
 		},
 		zoomO: {
@@ -252,14 +186,17 @@ module.exports = function (self) {
 				const zoomspeed = String.fromCharCode((parseInt(self.zoomSpeed, 16) + 48) & 0xff)
 				const cmd = '\x01\x04\x07' + zoomspeed + '\xff'
 				self.sendVISCACommand(cmd)
+				self.startContinuousPolling('zoom_position')
 			},
 		},
 		zoomS: {
 			name: 'Zoom Stop',
 			options: [],
 			callback: () => {
+				self.stopContinuousPolling()
 				const cmd = '\x01\x04\x07\x00\xFF'
 				self.sendVISCACommand(cmd)
+				self.pollAfterCommand('zoom_position', 0)
 			},
 		},
 		zoomSpeedS: {
@@ -400,6 +337,7 @@ module.exports = function (self) {
 			callback: () => {
 				const cmd = '\x01\x04\x08\x03\xFF'
 				self.sendVISCACommand(cmd)
+				self.startContinuousPolling('focus_position')
 			},
 		},
 		focusF: {
@@ -408,14 +346,17 @@ module.exports = function (self) {
 			callback: () => {
 				const cmd = '\x01\x04\x08\x02\xFF'
 				self.sendVISCACommand(cmd)
+				self.startContinuousPolling('focus_position')
 			},
 		},
 		focusS: {
 			name: 'Focus Stop',
 			options: [],
 			callback: () => {
+				self.stopContinuousPolling()
 				const cmd = '\x01\x04\x08\x00\xFF'
 				self.sendVISCACommand(cmd)
+				self.pollAfterCommand('focus_position', 0)
 			},
 		},
 		focusM: {
@@ -425,15 +366,13 @@ module.exports = function (self) {
 					type: 'dropdown',
 					label: 'Auto / Manual Focus',
 					id: 'bol',
-					choices: [
-						{ id: '0', label: 'Auto Focus' },
-						{ id: '1', label: 'Manual Focus' },
-					],
+					choices: FOCUS_MODE,
 					default: '0',
 				},
 			],
 			callback: (action) => {
-				self.setVariableValues({ focus_mode: action.options.bol == 0 ? 'Auto' : 'Manual' })
+				const match = FOCUS_MODE.find((m) => m.id === action.options.bol)
+				self.setVariableValues({ focus_mode: match ? match.label : action.options.bol.toString() })
 				let cmd = ''
 				if (action.options.bol == 0) {
 					cmd = '\x01\x04\x38\x02\xFF'
@@ -451,19 +390,13 @@ module.exports = function (self) {
 					type: 'dropdown',
 					label: 'Mode setting',
 					id: 'val',
-					choices: [
-						{ id: '0', label: 'Full auto' },
-						{ id: '1', label: 'Manual' },
-						{ id: '2', label: 'Shutter Pri' },
-						{ id: '3', label: 'Iris Pri' },
-						{ id: '4', label: 'Bright mode (manual)' },
-					],
+					choices: EXPOSURE_MODE,
 					default: '0',
 				},
 			],
 			callback: (action) => {
-				const labels = { 0: 'Auto', 1: 'Manual', 2: 'Shutter', 3: 'Iris', 4: 'Bright' }
-				self.setVariableValues({ ae_mode: labels[action.options.val] || action.options.val.toString() })
+				const match = EXPOSURE_MODE.find((m) => m.id === action.options.val)
+				self.setVariableValues({ ae_mode: match ? match.label : action.options.val.toString() })
 				let cmd = ''
 				if (action.options.val == 0) {
 					cmd = '\x01\x04\x39\x00\xFF'
@@ -513,8 +446,8 @@ module.exports = function (self) {
 			callback: (action) => {
 				self.setVariableValues({ iris_position: parseInt(action.options.val, 16) })
 				const cmd = Buffer.from('\x01\x04\x4B\x00\x00\x00\x00\xFF', 'binary')
-				cmd.writeUInt8((parseInt(action.options.val, 16) & 0xf0) >> 4, 6)
-				cmd.writeUInt8(parseInt(action.options.val, 16) & 0x0f, 7)
+				cmd.writeUInt8((parseInt(action.options.val, 16) & 0xf0) >> 4, 5)
+				cmd.writeUInt8(parseInt(action.options.val, 16) & 0x0f, 6)
 				self.sendVISCACommand(cmd)
 			},
 		},
@@ -548,8 +481,8 @@ module.exports = function (self) {
 			callback: (action) => {
 				self.setVariableValues({ shutter_position: parseInt(action.options.val, 16) })
 				const cmd = Buffer.from('\x01\x04\x4A\x00\x00\x00\x00\xFF', 'binary')
-				cmd.writeUInt8((parseInt(action.options.val, 16) & 0xf0) >> 4, 6)
-				cmd.writeUInt8(parseInt(action.options.val, 16) & 0x0f, 7)
+				cmd.writeUInt8((parseInt(action.options.val, 16) & 0xf0) >> 4, 5)
+				cmd.writeUInt8(parseInt(action.options.val, 16) & 0x0f, 6)
 				self.sendVISCACommand(cmd)
 			},
 		},
@@ -584,21 +517,14 @@ module.exports = function (self) {
 					type: 'dropdown',
 					label: 'WB Mode',
 					id: 'val',
-					choices: [
-						{ id: '0', label: 'Auto' },
-						{ id: '1', label: 'Indoor' },
-						{ id: '2', label: 'Outdoor' },
-						{ id: '3', label: 'One Push' },
-						{ id: '4', label: 'VAR' },
-						{ id: '5', label: 'Manual' },
-					],
+					choices: WB_MODE,
 					default: '0',
 				},
 			],
 			callback: (action) => {
 				const mode = parseInt(action.options.val, 10)
-				const labels = { 0: 'Auto', 1: 'Indoor', 2: 'Outdoor', 3: 'OnePush', 4: 'VAR', 5: 'Manual' }
-				self.setVariableValues({ wb_mode: labels[mode] || mode.toString() })
+				const match = WB_MODE.find((m) => m.id === action.options.val)
+				self.setVariableValues({ wb_mode: match ? match.label : mode.toString() })
 				const cmd = '\x01\x04\x35' + String.fromCharCode(mode) + '\xFF'
 				self.sendVISCACommand(cmd)
 			},
@@ -705,6 +631,7 @@ module.exports = function (self) {
 			callback: (action) => {
 				const cmd = '\x01\x04\x3F\x02' + String.fromCharCode(parseInt(action.options.val, 16) & 0xff) + '\xFF'
 				self.sendVISCACommand(cmd)
+				self.pollAllPositions()
 			},
 		},
 		custom: {

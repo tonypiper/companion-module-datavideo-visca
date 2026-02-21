@@ -209,6 +209,8 @@ class DatavideoViscaInstance extends InstanceBase {
 	async destroy() {
 		clearInterval(this.requestStateInterval)
 		clearTimeout(this.pollAfterCommandTimer)
+		this.stopContinuousPolling()
+		this.stopPollAll()
 
 		if (this.tcp !== undefined) {
 			this.tcp.destroy()
@@ -388,7 +390,48 @@ class DatavideoViscaInstance extends InstanceBase {
 		}
 	}
 
-	pollAfterCommand(inquiryName) {
+	startContinuousPolling(inquiryName, interval = 250) {
+		this.stopContinuousPolling()
+		const inquiry = INQUIRIES.find((i) => i.name === inquiryName)
+		if (inquiry) {
+			this.continuousPollingTimer = setInterval(() => {
+				this.pendingInquiry = inquiry
+				this.sendInquiry(inquiry.cmd)
+			}, interval)
+		}
+	}
+
+	stopContinuousPolling() {
+		clearInterval(this.continuousPollingTimer)
+		this.continuousPollingTimer = null
+	}
+
+	pollAllPositions(duration = 5000) {
+		this.stopPollAll()
+		const positionInquiries = INQUIRIES.filter((inq) =>
+			['zoom_position', 'focus_position', 'focus_mode', 'pan_tilt_position', 'ae_mode', 'iris_position', 'shutter_position', 'wb_mode'].includes(inq.name)
+		)
+		let i = 0
+		const interval = 150
+		this.pollAllTimer = setInterval(() => {
+			const inquiry = positionInquiries[i % positionInquiries.length]
+			this.pendingInquiry = inquiry
+			this.sendInquiry(inquiry.cmd)
+			i++
+		}, interval)
+		this.pollAllStopTimer = setTimeout(() => {
+			this.stopPollAll()
+		}, duration)
+	}
+
+	stopPollAll() {
+		clearInterval(this.pollAllTimer)
+		clearTimeout(this.pollAllStopTimer)
+		this.pollAllTimer = null
+		this.pollAllStopTimer = null
+	}
+
+	pollAfterCommand(inquiryName, delay = 250) {
 		clearTimeout(this.pollAfterCommandTimer)
 		this.pollAfterCommandTimer = setTimeout(() => {
 			const inquiry = INQUIRIES.find((i) => i.name === inquiryName)
@@ -396,7 +439,7 @@ class DatavideoViscaInstance extends InstanceBase {
 				this.pendingInquiry = inquiry
 				this.sendInquiry(inquiry.cmd)
 			}
-		}, 250)
+		}, delay)
 	}
 
 	sendInquiry(cmd) {

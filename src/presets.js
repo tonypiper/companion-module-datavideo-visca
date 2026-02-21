@@ -1,4 +1,5 @@
 const { combineRgb } = require('@companion-module/base')
+const { FOCUS_MODE } = require('./constants')
 
 const WHITE = combineRgb(255, 255, 255)
 const BLACK = combineRgb(0, 0, 0)
@@ -265,6 +266,24 @@ module.exports = function (self) {
 				up: [{ actionId: 'focusM', options: { bol: '1' } }],
 			},
 		],
+		feedbacks: [],
+	}
+
+	// Focus Mode Cycle
+	presets['focus_mode_cycle'] = {
+		type: 'button',
+		category: 'Lens',
+		name: 'Focus Mode Cycle',
+		style: {
+			text: 'FOCUS\\n$(' + self.label + ':focus_mode)',
+			size: '14',
+			color: WHITE,
+			bgcolor: BLACK,
+		},
+		steps: FOCUS_MODE.map((mode) => ({
+			down: [{ actionId: 'focusM', options: { bol: mode.id } }],
+			up: [],
+		})),
 		feedbacks: [],
 	}
 
@@ -653,7 +672,7 @@ module.exports = function (self) {
 		},
 		steps: [
 			{
-				down: [{ actionId: 'custom', options: { command: '81 01 04 33 02 FF' } }],
+				down: [{ actionId: 'custom', options: { custom: '81 01 04 33 02 FF' } }],
 				up: [],
 			},
 		],
@@ -673,7 +692,7 @@ module.exports = function (self) {
 		},
 		steps: [
 			{
-				down: [{ actionId: 'custom', options: { command: '81 01 04 33 03 FF' } }],
+				down: [{ actionId: 'custom', options: { custom: '81 01 04 33 03 FF' } }],
 				up: [],
 			},
 		],
@@ -994,7 +1013,7 @@ module.exports = function (self) {
 		},
 		steps: [
 			{
-				down: [{ actionId: 'custom', options: { command: '81 01 04 00 02 FF' } }],
+				down: [{ actionId: 'custom', options: { custom: '81 01 04 00 02 FF' } }],
 				up: [],
 			},
 		],
@@ -1014,7 +1033,7 @@ module.exports = function (self) {
 		},
 		steps: [
 			{
-				down: [{ actionId: 'custom', options: { command: '81 01 04 00 03 FF' } }],
+				down: [{ actionId: 'custom', options: { custom: '81 01 04 00 03 FF' } }],
 				up: [],
 			},
 		],
