@@ -390,8 +390,22 @@ class DatavideoViscaInstance extends InstanceBase {
 		}
 	}
 
+	pauseBackgroundPolling() {
+		clearInterval(this.requestStateInterval)
+		this.requestStateInterval = null
+	}
+
+	resumeBackgroundPolling() {
+		if (this.config.feedback && !this.requestStateInterval) {
+			this.requestStateInterval = setInterval(() => {
+				this.requestState()
+			}, 1000)
+		}
+	}
+
 	startContinuousPolling(inquiryName, interval = 250) {
 		this.stopContinuousPolling()
+		this.pauseBackgroundPolling()
 		const inquiry = INQUIRIES.find((i) => i.name === inquiryName)
 		if (inquiry) {
 			this.continuousPollingTimer = setInterval(() => {
@@ -404,10 +418,14 @@ class DatavideoViscaInstance extends InstanceBase {
 	stopContinuousPolling() {
 		clearInterval(this.continuousPollingTimer)
 		this.continuousPollingTimer = null
+		if (!this.pollAllTimer) {
+			this.resumeBackgroundPolling()
+		}
 	}
 
 	pollAllPositions(duration = 5000) {
 		this.stopPollAll()
+		this.pauseBackgroundPolling()
 		const positionInquiries = INQUIRIES.filter((inq) =>
 			['zoom_position', 'focus_position', 'focus_mode', 'pan_tilt_position', 'ae_mode', 'iris_position', 'shutter_position', 'wb_mode'].includes(inq.name)
 		)
@@ -429,6 +447,9 @@ class DatavideoViscaInstance extends InstanceBase {
 		clearTimeout(this.pollAllStopTimer)
 		this.pollAllTimer = null
 		this.pollAllStopTimer = null
+		if (!this.continuousPollingTimer) {
+			this.resumeBackgroundPolling()
+		}
 	}
 
 	pollAfterCommand(inquiryName, delay = 250) {
