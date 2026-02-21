@@ -646,9 +646,9 @@ module.exports = function (self) {
 			options: [
 				{
 					type: 'textinput',
-					label: 'Custom command, must start with 8',
+					label: 'Custom command (without address byte, e.g. 01 04 00 02 FF)',
 					id: 'custom',
-					regex: '/^8[0-9a-fA-F]\\s*([0-9a-fA-F]\\s*)+$/',
+					regex: '/^[0-9a-fA-F]{2}(\\s*[0-9a-fA-F]{2})*$/',
 					width: 6,
 				},
 			],

@@ -33,7 +33,7 @@ function parseSigned16(value) {
 }
 
 // Map VISCA command bytes to the inquiry that should follow
-// Key format: "category.subcmd" from bytes [1] and [3] of the VISCA command
+// Key format: "category.subcmd" from bytes [1] and [2] of the VISCA command
 const COMMAND_TO_INQUIRY = {
 	'06.01': 'pan_tilt_position', // Pan-Tilt drive
 	'06.02': 'pan_tilt_position', // Pan-Tilt absolute
@@ -380,7 +380,7 @@ class DatavideoViscaInstance extends InstanceBase {
 			if (this.config.feedback) {
 				const cmdBuf = Buffer.from(str, 'binary')
 				if (cmdBuf.length >= 4 && cmdBuf[0] === 0x01) {
-					const key = cmdBuf[1].toString(16).padStart(2, '0') + '.' + cmdBuf[3].toString(16).padStart(2, '0')
+					const key = cmdBuf[1].toString(16).padStart(2, '0') + '.' + cmdBuf[2].toString(16).padStart(2, '0')
 					const inquiryName = COMMAND_TO_INQUIRY[key]
 					if (inquiryName) {
 						this.pollAfterCommand(inquiryName)

@@ -7,5 +7,5 @@ Default TCP port is 5002
 ## Commands
 
 - Custom Command
-  It is aloud to send a custom command. Send then in this format;
-  80 2A 02 02 11 12
+  Send a custom VISCA command without the address byte (it is added automatically). For example:
+  01 04 00 02 FF

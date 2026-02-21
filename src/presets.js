@@ -692,7 +692,7 @@ module.exports = function (self) {
 		},
 		steps: [
 			{
-				down: [{ actionId: 'custom', options: { custom: '81 01 04 33 02 FF' } }],
+				down: [{ actionId: 'custom', options: { custom: '01 04 33 02 FF' } }],
 				up: [],
 			},
 		],
@@ -712,7 +712,7 @@ module.exports = function (self) {
 		},
 		steps: [
 			{
-				down: [{ actionId: 'custom', options: { custom: '81 01 04 33 03 FF' } }],
+				down: [{ actionId: 'custom', options: { custom: '01 04 33 03 FF' } }],
 				up: [],
 			},
 		],
@@ -1033,7 +1033,7 @@ module.exports = function (self) {
 		},
 		steps: [
 			{
-				down: [{ actionId: 'custom', options: { custom: '81 01 04 00 02 FF' } }],
+				down: [{ actionId: 'custom', options: { custom: '01 04 00 02 FF' } }],
 				up: [],
 			},
 		],
@@ -1053,7 +1053,7 @@ module.exports = function (self) {
 		},
 		steps: [
 			{
-				down: [{ actionId: 'custom', options: { custom: '81 01 04 00 03 FF' } }],
+				down: [{ actionId: 'custom', options: { custom: '01 04 00 03 FF' } }],
 				up: [],
 			},
 		],
