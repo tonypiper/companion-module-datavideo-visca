@@ -843,6 +843,24 @@ module.exports = function (self) {
 		}
 	}
 
+	// Color Temperature Cycle
+	presets['color_temp_cycle'] = {
+		type: 'button',
+		category: 'White Balance',
+		name: 'Color Temp Cycle',
+		style: {
+			text: 'CT\\n$(' + self.label + ':color_temp)',
+			size: '14',
+			color: WHITE,
+			bgcolor: BLACK,
+		},
+		steps: colorTemps.map((temp) => ({
+			down: [{ actionId: 'colorTemp', options: { val: temp } }],
+			up: [],
+		})),
+		feedbacks: [],
+	}
+
 	// Red Gain Up
 	presets['rg_up'] = {
 		type: 'button',

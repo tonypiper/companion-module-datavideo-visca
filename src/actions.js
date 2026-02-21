@@ -433,6 +433,7 @@ module.exports = function (self) {
 				},
 			],
 			callback: (action) => {
+				self.setVariableValues({ focus_mode: action.options.bol == 0 ? 'Auto' : 'Manual' })
 				let cmd = ''
 				if (action.options.bol == 0) {
 					cmd = '\x01\x04\x38\x02\xFF'
@@ -461,6 +462,8 @@ module.exports = function (self) {
 				},
 			],
 			callback: (action) => {
+				const labels = { 0: 'Auto', 1: 'Manual', 2: 'Shutter', 3: 'Iris', 4: 'Bright' }
+				self.setVariableValues({ ae_mode: labels[action.options.val] || action.options.val.toString() })
 				let cmd = ''
 				if (action.options.val == 0) {
 					cmd = '\x01\x04\x39\x00\xFF'
@@ -508,6 +511,7 @@ module.exports = function (self) {
 				},
 			],
 			callback: (action) => {
+				self.setVariableValues({ iris_position: parseInt(action.options.val, 16) })
 				const cmd = Buffer.from('\x01\x04\x4B\x00\x00\x00\x00\xFF', 'binary')
 				cmd.writeUInt8((parseInt(action.options.val, 16) & 0xf0) >> 4, 6)
 				cmd.writeUInt8(parseInt(action.options.val, 16) & 0x0f, 7)
@@ -542,6 +546,7 @@ module.exports = function (self) {
 				},
 			],
 			callback: (action) => {
+				self.setVariableValues({ shutter_position: parseInt(action.options.val, 16) })
 				const cmd = Buffer.from('\x01\x04\x4A\x00\x00\x00\x00\xFF', 'binary')
 				cmd.writeUInt8((parseInt(action.options.val, 16) & 0xf0) >> 4, 6)
 				cmd.writeUInt8(parseInt(action.options.val, 16) & 0x0f, 7)
@@ -592,6 +597,8 @@ module.exports = function (self) {
 			],
 			callback: (action) => {
 				const mode = parseInt(action.options.val, 10)
+				const labels = { 0: 'Auto', 1: 'Indoor', 2: 'Outdoor', 3: 'OnePush', 4: 'VAR', 5: 'Manual' }
+				self.setVariableValues({ wb_mode: labels[mode] || mode.toString() })
 				const cmd = '\x01\x04\x35' + String.fromCharCode(mode) + '\xFF'
 				self.sendVISCACommand(cmd)
 			},
@@ -622,6 +629,7 @@ module.exports = function (self) {
 				// Map Kelvin to camera position byte: 0x0c (2400K) to 0x33 (7100K)
 				const pos = Math.round((kelvin - 2400) * 39 / 4700) + 12
 				const cmd = '\x01\x04\x35' + String.fromCharCode(pos) + '\xFF'
+				self.setVariableValues({ wb_mode: 'VAR', color_temp: kelvin + 'K' })
 				self.sendVISCACommand(cmd)
 			},
 		},
