@@ -1040,15 +1040,15 @@ module.exports = function (self) {
 		feedbacks: [],
 	}
 
-	// Save Presets (0-62)
-	for (let i = 0; i < 63; i++) {
+	// Save Presets (1-64)
+	for (let i = 1; i <= 64; i++) {
 		const hexVal = ('0' + i.toString(16).toUpperCase()).substr(-2, 2)
 		presets['save_preset_' + i] = {
 			type: 'button',
 			category: 'Save Preset',
-			name: 'Save Preset ' + (i + 1),
+			name: 'Save Preset ' + i,
 			style: {
-				text: 'SAVE\\nPSET\\n' + (i + 1),
+				text: 'SAVE\\nPSET\\n' + i,
 				size: '14',
 				color: WHITE,
 				bgcolor: BLACK,
@@ -1063,15 +1063,15 @@ module.exports = function (self) {
 		}
 	}
 
-	// Recall Presets (0-62)
-	for (let i = 0; i < 63; i++) {
+	// Recall Presets (1-64)
+	for (let i = 1; i <= 64; i++) {
 		const hexVal = ('0' + i.toString(16).toUpperCase()).substr(-2, 2)
 		presets['recall_preset_' + i] = {
 			type: 'button',
 			category: 'Recall Preset',
-			name: 'Recall Preset ' + (i + 1),
+			name: 'Recall Preset ' + i,
 			style: {
-				text: 'Recall\\nPSET\\n' + (i + 1),
+				text: 'Recall\\nPSET\\n' + i,
 				size: '14',
 				color: WHITE,
 				bgcolor: BLACK,

@@ -35,7 +35,7 @@ const SHUTTER = [
 ]
 
 const PRESET = []
-for (let i = 0; i < 64; ++i) {
+for (let i = 1; i <= 64; ++i) {
 	PRESET.push({ id: ('0' + i.toString(16)).substr(-2, 2), label: 'Preset ' + i })
 }
 
