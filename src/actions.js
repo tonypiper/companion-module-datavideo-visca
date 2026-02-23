@@ -560,7 +560,7 @@ module.exports = function (self) {
 			callback: (action) => {
 				const kelvin = parseInt(action.options.val, 10)
 				// Map Kelvin to camera position byte: 0x0c (2400K) to 0x33 (7100K)
-				const pos = Math.round((kelvin - 2400) * 39 / 4700) + 12
+				const pos = Math.round(((kelvin - 2400) * 39) / 4700) + 12
 				const cmd = '\x01\x04\x35' + String.fromCharCode(pos) + '\xFF'
 				self.setVariableValues({ wb_mode: 'VAR', color_temp: kelvin + 'K' })
 				self.sendVISCACommand(cmd)

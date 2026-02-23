@@ -25,7 +25,9 @@ const WB_MODE_LABELS = {
 }
 
 function parse4Nibble(b, offset) {
-	return ((b[offset] & 0x0f) << 12) | ((b[offset + 1] & 0x0f) << 8) | ((b[offset + 2] & 0x0f) << 4) | (b[offset + 3] & 0x0f)
+	return (
+		((b[offset] & 0x0f) << 12) | ((b[offset + 1] & 0x0f) << 8) | ((b[offset + 2] & 0x0f) << 4) | (b[offset + 3] & 0x0f)
+	)
 }
 
 function parseSigned16(value) {
@@ -38,24 +40,24 @@ const COMMAND_TO_INQUIRY = {
 	'06.01': 'pan_tilt_position', // Pan-Tilt drive
 	'06.02': 'pan_tilt_position', // Pan-Tilt absolute
 	'06.04': 'pan_tilt_position', // Pan-Tilt home
-	'04.07': 'zoom_position',     // Zoom in/out/stop
-	'04.47': 'zoom_position',     // Zoom direct
-	'04.08': 'focus_position',    // Focus near/far/stop
-	'04.38': 'focus_mode',        // Focus mode auto/manual
-	'04.39': 'ae_mode',           // AE mode
-	'04.0b': 'iris_position',     // Iris up/down
-	'04.4b': 'iris_position',     // Iris direct
-	'04.0a': 'shutter_position',  // Shutter up/down
-	'04.4a': 'shutter_position',  // Shutter direct
-	'04.0c': 'gain_position',     // Gain up/down/reset
-	'04.03': 'rg_position',       // Red gain up/down/reset
-	'04.43': 'rg_position',       // Red gain direct
-	'04.04': 'bg_position',       // Blue gain up/down/reset
-	'04.44': 'bg_position',       // Blue gain direct
-	'04.33': 'backlight',         // Backlight on/off
-	'04.35': 'wb_mode',           // White balance mode
-	'04.20': 'wb_mode',           // Color temperature direct
-	'04.00': 'power_state',       // Power on/off
+	'04.07': 'zoom_position', // Zoom in/out/stop
+	'04.47': 'zoom_position', // Zoom direct
+	'04.08': 'focus_position', // Focus near/far/stop
+	'04.38': 'focus_mode', // Focus mode auto/manual
+	'04.39': 'ae_mode', // AE mode
+	'04.0b': 'iris_position', // Iris up/down
+	'04.4b': 'iris_position', // Iris direct
+	'04.0a': 'shutter_position', // Shutter up/down
+	'04.4a': 'shutter_position', // Shutter direct
+	'04.0c': 'gain_position', // Gain up/down/reset
+	'04.03': 'rg_position', // Red gain up/down/reset
+	'04.43': 'rg_position', // Red gain direct
+	'04.04': 'bg_position', // Blue gain up/down/reset
+	'04.44': 'bg_position', // Blue gain direct
+	'04.33': 'backlight', // Backlight on/off
+	'04.35': 'wb_mode', // White balance mode
+	'04.20': 'wb_mode', // Color temperature direct
+	'04.00': 'power_state', // Power on/off
 }
 
 const INQUIRIES = [
@@ -64,7 +66,7 @@ const INQUIRIES = [
 		cmd: '\x09\x04\x47\xFF',
 		parse(b) {
 			const val = parse4Nibble(b, 2)
-			return { zoom_position: (val / 0x4000 * 100).toFixed(1) + '%' }
+			return { zoom_position: ((val / 0x4000) * 100).toFixed(1) + '%' }
 		},
 	},
 	{
@@ -124,7 +126,7 @@ const INQUIRIES = [
 			if (WB_MODE_LABELS[val]) return { wb_mode: WB_MODE_LABELS[val] }
 			// Color temp positions: 0x0c (2400K) to 0x33 (7100K)
 			if (val >= 0x0c && val <= 0x33) {
-				const kelvin = Math.round(((val - 12) * 4700 / 39 + 2400) / 100) * 100
+				const kelvin = Math.round((((val - 12) * 4700) / 39 + 2400) / 100) * 100
 				return { wb_mode: 'VAR', color_temp: kelvin + 'K' }
 			}
 			return { wb_mode: `0x${val.toString(16)}` }
@@ -427,7 +429,16 @@ class DatavideoViscaInstance extends InstanceBase {
 		this.stopPollAll()
 		this.pauseBackgroundPolling()
 		const positionInquiries = INQUIRIES.filter((inq) =>
-			['zoom_position', 'focus_position', 'focus_mode', 'pan_tilt_position', 'ae_mode', 'iris_position', 'shutter_position', 'wb_mode'].includes(inq.name)
+			[
+				'zoom_position',
+				'focus_position',
+				'focus_mode',
+				'pan_tilt_position',
+				'ae_mode',
+				'iris_position',
+				'shutter_position',
+				'wb_mode',
+			].includes(inq.name),
 		)
 		let i = 0
 		const interval = 150

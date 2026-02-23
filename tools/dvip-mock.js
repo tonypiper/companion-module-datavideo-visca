@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 /**
  * Mock DVIP server for testing the Datavideo VISCA Companion module.
  *
@@ -268,12 +266,7 @@ function makeCompletion(address) {
  * Encode a 16-bit value as 4 nibble bytes: 0p 0q 0r 0s
  */
 function encode4Nibble(value) {
-	return [
-		(value >> 12) & 0x0f,
-		(value >> 8) & 0x0f,
-		(value >> 4) & 0x0f,
-		value & 0x0f,
-	]
+	return [(value >> 12) & 0x0f, (value >> 8) & 0x0f, (value >> 4) & 0x0f, value & 0x0f]
 }
 
 /**
@@ -298,22 +291,32 @@ function makeInquiryResponse(address, viscaBytes) {
 
 	if (cmd2 === 0x04) {
 		switch (cmd3) {
-			case 0x47: return fourNibble(0x2000)  // Zoom at 50%
-			case 0x48: return fourNibble(0x1000)  // Focus position
-			case 0x38: return singleByte(0x02)    // Focus mode: Auto
-			case 0x00: return singleByte(0x02)    // Power: On
-			case 0x39: return singleByte(0x00)    // AE: Auto
-			case 0x4b: return fourNibble(0x000a)  // Iris position
-			case 0x4a: return fourNibble(0x0008)  // Shutter position
-			case 0x4c: return fourNibble(0x0004)  // Gain position
-			case 0x35: return singleByte(0x00)    // WB: Auto
-			case 0x33: return singleByte(0x03)    // Backlight: Off
+			case 0x47:
+				return fourNibble(0x2000) // Zoom at 50%
+			case 0x48:
+				return fourNibble(0x1000) // Focus position
+			case 0x38:
+				return singleByte(0x02) // Focus mode: Auto
+			case 0x00:
+				return singleByte(0x02) // Power: On
+			case 0x39:
+				return singleByte(0x00) // AE: Auto
+			case 0x4b:
+				return fourNibble(0x000a) // Iris position
+			case 0x4a:
+				return fourNibble(0x0008) // Shutter position
+			case 0x4c:
+				return fourNibble(0x0004) // Gain position
+			case 0x35:
+				return singleByte(0x00) // WB: Auto
+			case 0x33:
+				return singleByte(0x03) // Backlight: Off
 		}
 	}
 
 	// Pan-Tilt Position: addr 50 0p 0q 0r 0s 0a 0b 0c 0d FF
 	if (cmd2 === 0x06 && cmd3 === 0x12) {
-		const pan = encode4Nibble(0x0000)  // Pan at centre
+		const pan = encode4Nibble(0x0000) // Pan at centre
 		const tilt = encode4Nibble(0x0000) // Tilt at centre
 		return Buffer.from([addr, 0x50, ...pan, ...tilt, 0xff])
 	}
@@ -398,7 +401,7 @@ server.on('error', (err) => {
 	} else {
 		console.error(`Server error: ${err.message}`)
 	}
-	process.exit(1)
+	throw new Error('Server startup failed')
 })
 
 server.listen(PORT, () => {
