@@ -28,25 +28,25 @@ Protocol Spec: http://www.resource.datavideo.com/downloads/Datavideo_PTC-150_DVI
 
 When the status inquiry option is enabled, the module provides live variable updates:
 
-| Variable | Description |
-|---|---|
-| `pt_speed` | Current pan/tilt speed index |
-| `zoom_speed` | Current zoom speed index |
-| `zoom_position` | Current zoom position |
-| `focus_position` | Current focus position |
-| `focus_mode` | Auto or Manual |
-| `power_state` | Camera power state |
-| `ae_mode` | Exposure mode |
-| `iris_position` | Current iris position |
-| `shutter_position` | Current shutter position |
-| `gain_position` | Current gain position |
-| `wb_mode` | White balance mode |
-| `color_temp` | Color temperature (when in VAR mode) |
-| `rg_position` | Red gain position |
-| `bg_position` | Blue gain position |
-| `backlight` | Backlight compensation state |
-| `pan_position` | Current pan position |
-| `tilt_position` | Current tilt position |
+| Variable           | Description                          |
+| ------------------ | ------------------------------------ |
+| `pt_speed`         | Current pan/tilt speed index         |
+| `zoom_speed`       | Current zoom speed index             |
+| `zoom_position`    | Current zoom position                |
+| `focus_position`   | Current focus position               |
+| `focus_mode`       | Auto or Manual                       |
+| `power_state`      | Camera power state                   |
+| `ae_mode`          | Exposure mode                        |
+| `iris_position`    | Current iris position                |
+| `shutter_position` | Current shutter position             |
+| `gain_position`    | Current gain position                |
+| `wb_mode`          | White balance mode                   |
+| `color_temp`       | Color temperature (when in VAR mode) |
+| `rg_position`      | Red gain position                    |
+| `bg_position`      | Blue gain position                   |
+| `backlight`        | Backlight compensation state         |
+| `pan_position`     | Current pan position                 |
+| `tilt_position`    | Current tilt position                |
 
 Variables update in real-time during movements (250ms polling) and immediately on stop commands. Preset recalls trigger a full state refresh over 5 seconds to track camera settling.
 
@@ -85,9 +85,9 @@ Point Companion at `127.0.0.1:5002` to test.
 
 ### Scripts
 
-| Command | Description |
-|---|---|
-| `yarn mock` | Start mock DVIP server on port 5002 |
-| `yarn lint` | Run ESLint |
-| `yarn format` | Format code with Prettier |
-| `yarn package` | Build distributable package |
+| Command        | Description                         |
+| -------------- | ----------------------------------- |
+| `yarn mock`    | Start mock DVIP server on port 5002 |
+| `yarn lint`    | Run ESLint                          |
+| `yarn format`  | Format code with Prettier           |
+| `yarn package` | Build distributable package         |
