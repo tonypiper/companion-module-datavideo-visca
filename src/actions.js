@@ -363,6 +363,10 @@ module.exports = function (self) {
 			name: 'Focus One Push Trigger',
 			options: [],
 			callback: () => {
+				if (self.getVariableValue('focus_mode') !== 'Manual') {
+					self.log('debug', 'Focus One Push ignored — focus mode is not Manual')
+					return
+				}
 				self.sendVISCACommand('\x01\x04\x18\x01\xFF')
 			},
 		},
@@ -378,8 +382,6 @@ module.exports = function (self) {
 				},
 			],
 			callback: (action) => {
-				const match = FOCUS_MODE.find((m) => m.id === action.options.bol)
-				self.setVariableValues({ focus_mode: match ? match.label : action.options.bol.toString() })
 				let cmd = ''
 				if (action.options.bol == 0) {
 					cmd = '\x01\x04\x38\x02\xFF'

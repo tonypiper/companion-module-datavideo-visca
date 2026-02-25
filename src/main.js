@@ -2,6 +2,7 @@ const { InstanceBase, Regex, runEntrypoint, InstanceStatus, TCPHelper } = requir
 const UpgradeScripts = require('./upgrades')
 const UpdateActions = require('./actions')
 const UpdatePresets = require('./presets')
+const UpdateFeedbacks = require('./feedbacks')
 const UpdateVariableDefinitions = require('./variables')
 
 const AE_MODE_LABELS = {
@@ -182,6 +183,7 @@ class DatavideoViscaInstance extends InstanceBase {
 		this.updateStatus(InstanceStatus.Connecting)
 		this.initTcp()
 		this.updateActions()
+		this.updateFeedbacks()
 		this.updatePresets()
 		this.updateVariableDefinitions()
 
@@ -265,6 +267,10 @@ class DatavideoViscaInstance extends InstanceBase {
 
 	updateActions() {
 		UpdateActions(this)
+	}
+
+	updateFeedbacks() {
+		UpdateFeedbacks(this)
 	}
 
 	updatePresets() {
@@ -359,6 +365,9 @@ class DatavideoViscaInstance extends InstanceBase {
 					const values = inquiry.parse(visca)
 					this.log('debug', `Inquiry ${inquiry.name}: ${JSON.stringify(values)}`)
 					this.setVariableValues(values)
+					if ('focus_mode' in values) {
+						this.checkFeedbacks('focus_mode_manual')
+					}
 				} catch (e) {
 					this.log('debug', `Failed to parse ${inquiry.name} response: ${e.message}`)
 				}
