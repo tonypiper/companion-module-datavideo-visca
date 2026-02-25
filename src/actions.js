@@ -1,5 +1,7 @@
 const {
 	IRIS,
+	IRIS_LABELS,
+	IRIS_POSITIONS,
 	SHUTTER,
 	PRESET,
 	FOCUS_MODE,
@@ -21,6 +23,11 @@ const {
 	SPEED,
 	CHOICE_ZOOMSPEED,
 } = require('./constants')
+
+function irisLabel(pos) {
+	const label = IRIS_LABELS[pos]
+	return label ? label + ' (' + pos + ')' : 'Pos ' + pos
+}
 
 module.exports = function (self) {
 	self.setActionDefinitions({
@@ -481,6 +488,25 @@ module.exports = function (self) {
 				self.sendVISCACommand(cmd)
 			},
 		},
+		expMCycle: {
+			name: 'Exposure Mode Cycle',
+			options: [],
+			callback: () => {
+				const AE_CYCLE = [
+					{ label: AE_MODE_AUTO, cmd: '\x01\x04\x39\x00\xFF' },
+					{ label: AE_MODE_MANUAL, cmd: '\x01\x04\x39\x03\xFF' },
+					{ label: AE_MODE_SHUTTER, cmd: '\x01\x04\x39\x0A\xFF' },
+					{ label: AE_MODE_IRIS, cmd: '\x01\x04\x39\x0B\xFF' },
+					{ label: AE_MODE_BRIGHT, cmd: '\x01\x04\x39\x0D\xFF' },
+				]
+				const current = self.getVariableValue('ae_mode')
+				const idx = AE_CYCLE.findIndex((m) => m.label === current)
+				const next = AE_CYCLE[(idx + 1) % AE_CYCLE.length]
+				self.setVariableValues({ ae_mode: next.label })
+				self.checkFeedbacks('ae_mode_allows_iris', 'ae_mode_allows_shutter', 'ae_mode_manual')
+				self.sendVISCACommand(next.cmd)
+			},
+		},
 		irisU: {
 			name: 'Iris Up',
 			options: [],
@@ -490,8 +516,16 @@ module.exports = function (self) {
 					self.log('debug', 'Iris Up ignored — exposure mode does not allow iris control')
 					return
 				}
-				const cmd = '\x01\x04\x0B\x02\xFF'
-				self.sendVISCACommand(cmd)
+				const pos = self.getVariableValue('iris_position')
+				const idx = IRIS_POSITIONS.indexOf(pos)
+				if (idx === IRIS_POSITIONS.length - 1) {
+					self.log('debug', 'Iris Up ignored — already at maximum (F1.8)')
+					return
+				}
+				const newPos = idx >= 0 ? IRIS_POSITIONS[idx + 1] : IRIS_POSITIONS.find((p) => p > pos) ?? pos
+				self.setVariableValues({ iris_position: newPos, iris_label: irisLabel(newPos) })
+				self.checkFeedbacks('iris_can_increase', 'iris_can_decrease')
+				self.sendVISCACommand('\x01\x04\x0B\x02\xFF')
 			},
 		},
 		irisD: {
@@ -503,8 +537,16 @@ module.exports = function (self) {
 					self.log('debug', 'Iris Down ignored — exposure mode does not allow iris control')
 					return
 				}
-				const cmd = '\x01\x04\x0B\x03\xFF'
-				self.sendVISCACommand(cmd)
+				const pos = self.getVariableValue('iris_position')
+				const idx = IRIS_POSITIONS.indexOf(pos)
+				if (idx === 0) {
+					self.log('debug', 'Iris Down ignored — already at minimum (Close)')
+					return
+				}
+				const newPos = idx > 0 ? IRIS_POSITIONS[idx - 1] : [...IRIS_POSITIONS].reverse().find((p) => p < pos) ?? pos
+				self.setVariableValues({ iris_position: newPos, iris_label: irisLabel(newPos) })
+				self.checkFeedbacks('iris_can_increase', 'iris_can_decrease')
+				self.sendVISCACommand('\x01\x04\x0B\x03\xFF')
 			},
 		},
 		irisS: {
@@ -524,6 +566,18 @@ module.exports = function (self) {
 				cmd.writeUInt8((parseInt(action.options.val, 16) & 0xf0) >> 4, 5)
 				cmd.writeUInt8(parseInt(action.options.val, 16) & 0x0f, 6)
 				self.sendVISCACommand(cmd)
+			},
+		},
+		irisR: {
+			name: 'Iris Reset',
+			options: [],
+			callback: () => {
+				const mode = self.getVariableValue('ae_mode')
+				if (mode !== AE_MODE_MANUAL && mode !== AE_MODE_IRIS) {
+					self.log('debug', 'Iris Reset ignored — exposure mode does not allow iris control')
+					return
+				}
+				self.sendVISCACommand('\x01\x04\x0B\x00\xFF')
 			},
 		},
 		shutU: {
@@ -569,6 +623,18 @@ module.exports = function (self) {
 				cmd.writeUInt8((parseInt(action.options.val, 16) & 0xf0) >> 4, 5)
 				cmd.writeUInt8(parseInt(action.options.val, 16) & 0x0f, 6)
 				self.sendVISCACommand(cmd)
+			},
+		},
+		shutR: {
+			name: 'Shutter Reset',
+			options: [],
+			callback: () => {
+				const mode = self.getVariableValue('ae_mode')
+				if (mode !== AE_MODE_MANUAL && mode !== AE_MODE_SHUTTER) {
+					self.log('debug', 'Shutter Reset ignored — exposure mode does not allow shutter control')
+					return
+				}
+				self.sendVISCACommand('\x01\x04\x0A\x00\xFF')
 			},
 		},
 		gainU: {
@@ -634,6 +700,26 @@ module.exports = function (self) {
 				self.sendVISCACommand(cmd)
 			},
 		},
+		wbMCycle: {
+			name: 'WB Mode Cycle',
+			options: [],
+			callback: () => {
+				const WB_CYCLE = [
+					{ label: WB_MODE_AUTO, val: 0 },
+					{ label: WB_MODE_INDOOR, val: 1 },
+					{ label: WB_MODE_OUTDOOR, val: 2 },
+					{ label: WB_MODE_ONEPUSH, val: 3 },
+					{ label: WB_MODE_VAR, val: 4 },
+					{ label: WB_MODE_MANUAL, val: 5 },
+				]
+				const current = self.getVariableValue('wb_mode')
+				const idx = WB_CYCLE.findIndex((m) => m.label === current)
+				const next = WB_CYCLE[(idx + 1) % WB_CYCLE.length]
+				self.setVariableValues({ wb_mode: next.label })
+				self.checkFeedbacks('wb_mode_manual', 'wb_mode_onepush', 'wb_mode_var')
+				self.sendVISCACommand('\x01\x04\x35' + String.fromCharCode(next.val) + '\xFF')
+			},
+		},
 		wbOnePush: {
 			name: 'WB One Push Trigger',
 			options: [],
@@ -669,6 +755,25 @@ module.exports = function (self) {
 				const pos = Math.round(((kelvin - 2400) * 39) / 4700) + 12
 				const cmd = '\x01\x04\x35' + String.fromCharCode(pos) + '\xFF'
 				self.setVariableValues({ wb_mode: WB_MODE_VAR, color_temp: kelvin + 'K' })
+				self.sendVISCACommand(cmd)
+			},
+		},
+		colorTempCycle: {
+			name: 'Color Temperature Cycle',
+			options: [],
+			callback: () => {
+				if (self.getVariableValue('wb_mode') !== WB_MODE_VAR) {
+					self.log('debug', 'Color Temperature Cycle ignored — WB mode is not VAR')
+					return
+				}
+				const temps = [2400, 3000, 3200, 4000, 4500, 5000, 5600, 6500, 7100]
+				const current = self.getVariableValue('color_temp')
+				const currentKelvin = parseInt(current, 10) || 0
+				const idx = temps.indexOf(currentKelvin)
+				const next = temps[(idx + 1) % temps.length]
+				const pos = Math.round(((next - 2400) * 39) / 4700) + 12
+				const cmd = '\x01\x04\x35' + String.fromCharCode(pos) + '\xFF'
+				self.setVariableValues({ color_temp: next + 'K' })
 				self.sendVISCACommand(cmd)
 			},
 		},
@@ -875,6 +980,8 @@ module.exports = function (self) {
 						{ id: 6, label: 'LEFT' },
 						{ id: 7, label: 'RIGHT' },
 						{ id: 8, label: 'STOP' },
+						{ id: 9, label: 'DATA DISPLAY ON' },
+						{ id: 10, label: 'DATA DISPLAY OFF' },
 					],
 				},
 			],
@@ -907,6 +1014,12 @@ module.exports = function (self) {
 						break
 					case 8:
 						cmd = '\x01\x06\x01\x01\x01\x03\x03\xff'
+						break
+					case 9:
+						cmd = '\x01\x7E\x01\x18\x02\xFF'
+						break
+					case 10:
+						cmd = '\x01\x7E\x01\x18\x03\xFF'
 						break
 				}
 				self.sendVISCACommand(cmd)

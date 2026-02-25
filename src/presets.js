@@ -353,21 +353,21 @@ module.exports = function (self) {
 		feedbacks: [disabledWhen('focus_mode_manual')],
 	}
 
-	// Exposure Mode
-	presets['exp_mode'] = {
+	// Exposure Mode Cycle
+	presets['exp_mode_cycle'] = {
 		type: 'button',
 		category: 'Exposure',
-		name: 'Exposure Mode',
+		name: 'Exposure Mode Cycle',
 		style: {
-			text: 'EXP\\nMODE',
+			text: 'EXP\\n$(' + self.label + ':ae_mode)',
 			size: '14',
 			color: WHITE,
 			bgcolor: BLACK,
 		},
 		steps: [
 			{
-				down: [{ actionId: 'expM', options: { val: '0' } }],
-				up: [{ actionId: 'expM', options: { val: '1' } }],
+				down: [{ actionId: 'expMCycle', options: {} }],
+				up: [],
 			},
 		],
 		feedbacks: [],
@@ -390,10 +390,10 @@ module.exports = function (self) {
 				up: [],
 			},
 		],
-		feedbacks: [disabledWhen('ae_mode_allows_iris')],
+		feedbacks: [disabledWhen('ae_mode_allows_iris'), disabledWhen('iris_can_increase')],
 	}
 
-	// Iris Down (disabled when exposure mode does not allow iris control)
+	// Iris Down (disabled when exposure mode does not allow iris control or at minimum)
 	presets['iris_down'] = {
 		type: 'button',
 		category: 'Exposure',
@@ -407,6 +407,26 @@ module.exports = function (self) {
 		steps: [
 			{
 				down: [{ actionId: 'irisD', options: {} }],
+				up: [],
+			},
+		],
+		feedbacks: [disabledWhen('ae_mode_allows_iris'), disabledWhen('iris_can_decrease')],
+	}
+
+	// Iris Reset (disabled when exposure mode does not allow iris control)
+	presets['iris_reset'] = {
+		type: 'button',
+		category: 'Exposure',
+		name: 'Iris Reset',
+		style: {
+			text: 'IRIS\\n$(' + self.label + ':iris_label)',
+			size: '14',
+			color: WHITE,
+			bgcolor: BLACK,
+		},
+		steps: [
+			{
+				down: [{ actionId: 'irisR', options: {} }],
 				up: [],
 			},
 		],
@@ -447,6 +467,26 @@ module.exports = function (self) {
 		steps: [
 			{
 				down: [{ actionId: 'shutD', options: {} }],
+				up: [],
+			},
+		],
+		feedbacks: [disabledWhen('ae_mode_allows_shutter')],
+	}
+
+	// Shutter Reset (disabled when exposure mode does not allow shutter control)
+	presets['shutter_reset'] = {
+		type: 'button',
+		category: 'Exposure',
+		name: 'Shutter Reset',
+		style: {
+			text: 'SHUT\\n$(' + self.label + ':shutter_label)',
+			size: '14',
+			color: WHITE,
+			bgcolor: BLACK,
+		},
+		steps: [
+			{
+				down: [{ actionId: 'shutR', options: {} }],
 				up: [],
 			},
 		],
@@ -711,7 +751,7 @@ module.exports = function (self) {
 		category: 'Exposure',
 		name: 'Gain Reset',
 		style: {
-			text: 'GAIN\\nRESET',
+			text: 'GAIN\\n$(' + self.label + ':gain_position)',
 			size: '14',
 			color: WHITE,
 			bgcolor: BLACK,
@@ -759,6 +799,26 @@ module.exports = function (self) {
 		steps: [
 			{
 				down: [{ actionId: 'custom', options: { custom: '01 04 33 03 FF' } }],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	// WB Mode Cycle
+	presets['wb_mode_cycle'] = {
+		type: 'button',
+		category: 'White Balance',
+		name: 'WB Mode Cycle',
+		style: {
+			text: 'WB\\n$(' + self.label + ':wb_mode)',
+			size: '14',
+			color: WHITE,
+			bgcolor: BLACK,
+		},
+		steps: [
+			{
+				down: [{ actionId: 'wbMCycle', options: {} }],
 				up: [],
 			},
 		],
@@ -939,10 +999,12 @@ module.exports = function (self) {
 			color: WHITE,
 			bgcolor: BLACK,
 		},
-		steps: colorTemps.map((temp) => ({
-			down: [{ actionId: 'colorTemp', options: { val: temp } }],
-			up: [],
-		})),
+		steps: [
+			{
+				down: [{ actionId: 'colorTempCycle', options: {} }],
+				up: [],
+			},
+		],
 		feedbacks: [disabledWhen('wb_mode_var')],
 	}
 

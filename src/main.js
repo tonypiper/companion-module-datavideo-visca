@@ -5,6 +5,8 @@ const UpdatePresets = require('./presets')
 const UpdateFeedbacks = require('./feedbacks')
 const UpdateVariableDefinitions = require('./variables')
 const {
+	IRIS_LABELS,
+	SHUTTER_LABELS,
 	FOCUS_MODE_AUTO,
 	FOCUS_MODE_MANUAL,
 	AE_MODE_AUTO,
@@ -22,10 +24,10 @@ const {
 
 const AE_MODE_LABELS = {
 	0x00: AE_MODE_AUTO,
-	0x01: AE_MODE_MANUAL,
-	0x02: AE_MODE_SHUTTER,
-	0x03: AE_MODE_IRIS,
-	0x04: AE_MODE_BRIGHT,
+	0x03: AE_MODE_MANUAL,
+	0x0a: AE_MODE_SHUTTER,
+	0x0b: AE_MODE_IRIS,
+	0x0d: AE_MODE_BRIGHT,
 }
 
 const WB_MODE_LABELS = {
@@ -117,14 +119,17 @@ const INQUIRIES = [
 		name: 'iris_position',
 		cmd: '\x09\x04\x4B\xFF',
 		parse(b) {
-			return { iris_position: parse4Nibble(b, 2) }
+			const pos = parse4Nibble(b, 2)
+			const label = IRIS_LABELS[pos]
+			return { iris_position: pos, iris_label: label ? label + ' (' + pos + ')' : 'Pos ' + pos }
 		},
 	},
 	{
 		name: 'shutter_position',
 		cmd: '\x09\x04\x4A\xFF',
 		parse(b) {
-			return { shutter_position: parse4Nibble(b, 2) }
+			const pos = parse4Nibble(b, 2)
+			return { shutter_position: pos, shutter_label: SHUTTER_LABELS[pos] || 'Pos ' + pos }
 		},
 	},
 	{
@@ -389,6 +394,9 @@ class DatavideoViscaInstance extends InstanceBase {
 					if ('wb_mode' in values) {
 						this.checkFeedbacks('wb_mode_manual', 'wb_mode_onepush', 'wb_mode_var')
 					}
+					if ('iris_position' in values) {
+						this.checkFeedbacks('iris_can_increase', 'iris_can_decrease')
+					}
 				} catch (e) {
 					this.log('debug', `Failed to parse ${inquiry.name} response: ${e.message}`)
 				}
@@ -495,12 +503,14 @@ class DatavideoViscaInstance extends InstanceBase {
 
 	pollAfterCommand(inquiryName, delay = 250) {
 		clearTimeout(this.pollAfterCommandTimer)
+		this.pauseBackgroundPolling()
 		this.pollAfterCommandTimer = setTimeout(() => {
 			const inquiry = INQUIRIES.find((i) => i.name === inquiryName)
 			if (inquiry) {
 				this.pendingInquiry = inquiry
 				this.sendInquiry(inquiry.cmd)
 			}
+			this.resumeBackgroundPolling()
 		}, delay)
 	}
 

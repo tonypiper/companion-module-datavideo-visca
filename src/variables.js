@@ -33,8 +33,16 @@ module.exports = function (self) {
 			name: 'Iris Position',
 		},
 		{
+			variableId: 'iris_label',
+			name: 'Iris Label',
+		},
+		{
 			variableId: 'shutter_position',
 			name: 'Shutter Position',
+		},
+		{
+			variableId: 'shutter_label',
+			name: 'Shutter Label',
 		},
 		{
 			variableId: 'gain_position',

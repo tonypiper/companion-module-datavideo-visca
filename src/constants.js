@@ -10,12 +10,13 @@ const IRIS = [
 	{ id: '09', label: 'F6.8' },
 	{ id: '08', label: 'F8.0' },
 	{ id: '07', label: 'F9.6' },
-	{ id: '06', label: 'F11' },
-	{ id: '00', label: 'CLOSED' },
+	{ id: '06', label: 'F11.0' },
+	{ id: '05', label: 'F14.0' },
+	{ id: '00', label: 'Close' },
 ]
 
 const SHUTTER = [
-	{ id: '11', label: '1/1000000' },
+	{ id: '11', label: '1/10000' },
 	{ id: '10', label: '1/6000' },
 	{ id: '0F', label: '1/4000' },
 	{ id: '0E', label: '1/3000' },
@@ -116,9 +117,18 @@ const WB_MODE_ONEPUSH = 'OnePush'
 const WB_MODE_VAR = 'VAR'
 const WB_MODE_MANUAL = 'Manual'
 
+const IRIS_LABELS = Object.fromEntries(IRIS.map((i) => [parseInt(i.id, 16), i.label]))
+const IRIS_POSITIONS = IRIS.map((i) => parseInt(i.id, 16)).sort((a, b) => a - b)
+const SHUTTER_LABELS = Object.fromEntries(SHUTTER.map((s) => [parseInt(s.id, 16), s.label]))
+const SHUTTER_POSITIONS = SHUTTER.map((s) => parseInt(s.id, 16)).sort((a, b) => a - b)
+
 module.exports = {
 	IRIS,
+	IRIS_LABELS,
+	IRIS_POSITIONS,
 	SHUTTER,
+	SHUTTER_LABELS,
+	SHUTTER_POSITIONS,
 	PRESET,
 	FOCUS_MODE,
 	EXPOSURE_MODE,

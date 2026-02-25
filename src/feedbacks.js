@@ -6,6 +6,7 @@ const {
 	WB_MODE_MANUAL,
 	WB_MODE_ONEPUSH,
 	WB_MODE_VAR,
+	IRIS_POSITIONS,
 } = require('./constants')
 
 module.exports = function (self) {
@@ -80,6 +81,26 @@ module.exports = function (self) {
 			options: [],
 			callback: () => {
 				return self.getVariableValue('wb_mode') === WB_MODE_VAR
+			},
+		},
+		iris_can_increase: {
+			type: 'boolean',
+			name: 'Iris Can Increase',
+			description: 'True when the iris is below its maximum (F1.8)',
+			defaultStyle: {},
+			options: [],
+			callback: () => {
+				return self.getVariableValue('iris_position') < IRIS_POSITIONS[IRIS_POSITIONS.length - 1]
+			},
+		},
+		iris_can_decrease: {
+			type: 'boolean',
+			name: 'Iris Can Decrease',
+			description: 'True when the iris is above its minimum (Close)',
+			defaultStyle: {},
+			options: [],
+			callback: () => {
+				return self.getVariableValue('iris_position') > IRIS_POSITIONS[0]
 			},
 		},
 	})
