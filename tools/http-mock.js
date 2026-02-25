@@ -60,7 +60,7 @@ function handleAjaxcom(cmdObj) {
 }
 
 function timestamp() {
-	return new Date().toISOString().substr(11, 12)
+	return new Date().toISOString().slice(11, 23)
 }
 
 const server = http.createServer((req, res) => {
