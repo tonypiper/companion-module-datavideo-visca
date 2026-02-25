@@ -99,4 +99,43 @@ const CHOICE_ZOOMSPEED = [
 	{ id: '07', label: 'Speed 07 (Fast)' },
 ]
 
-module.exports = { IRIS, SHUTTER, PRESET, FOCUS_MODE, EXPOSURE_MODE, WB_MODE, SPEED, CHOICE_ZOOMSPEED }
+// Canonical variable value strings (used by inquiry parsers and action guards)
+const FOCUS_MODE_AUTO = 'Auto'
+const FOCUS_MODE_MANUAL = 'Manual'
+
+const AE_MODE_AUTO = 'Auto'
+const AE_MODE_MANUAL = 'Manual'
+const AE_MODE_SHUTTER = 'Shutter'
+const AE_MODE_IRIS = 'Iris'
+const AE_MODE_BRIGHT = 'Bright'
+
+const WB_MODE_AUTO = 'Auto'
+const WB_MODE_INDOOR = 'Indoor'
+const WB_MODE_OUTDOOR = 'Outdoor'
+const WB_MODE_ONEPUSH = 'OnePush'
+const WB_MODE_VAR = 'VAR'
+const WB_MODE_MANUAL = 'Manual'
+
+module.exports = {
+	IRIS,
+	SHUTTER,
+	PRESET,
+	FOCUS_MODE,
+	EXPOSURE_MODE,
+	WB_MODE,
+	SPEED,
+	CHOICE_ZOOMSPEED,
+	FOCUS_MODE_AUTO,
+	FOCUS_MODE_MANUAL,
+	AE_MODE_AUTO,
+	AE_MODE_MANUAL,
+	AE_MODE_SHUTTER,
+	AE_MODE_IRIS,
+	AE_MODE_BRIGHT,
+	WB_MODE_AUTO,
+	WB_MODE_INDOOR,
+	WB_MODE_OUTDOOR,
+	WB_MODE_ONEPUSH,
+	WB_MODE_VAR,
+	WB_MODE_MANUAL,
+}

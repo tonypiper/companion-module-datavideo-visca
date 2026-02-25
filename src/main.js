@@ -4,25 +4,40 @@ const UpdateActions = require('./actions')
 const UpdatePresets = require('./presets')
 const UpdateFeedbacks = require('./feedbacks')
 const UpdateVariableDefinitions = require('./variables')
+const {
+	FOCUS_MODE_AUTO,
+	FOCUS_MODE_MANUAL,
+	AE_MODE_AUTO,
+	AE_MODE_MANUAL,
+	AE_MODE_SHUTTER,
+	AE_MODE_IRIS,
+	AE_MODE_BRIGHT,
+	WB_MODE_AUTO,
+	WB_MODE_INDOOR,
+	WB_MODE_OUTDOOR,
+	WB_MODE_ONEPUSH,
+	WB_MODE_VAR,
+	WB_MODE_MANUAL,
+} = require('./constants')
 
 const AE_MODE_LABELS = {
-	0x00: 'Auto',
-	0x01: 'Manual',
-	0x02: 'Shutter',
-	0x03: 'Iris',
-	0x04: 'Bright',
+	0x00: AE_MODE_AUTO,
+	0x01: AE_MODE_MANUAL,
+	0x02: AE_MODE_SHUTTER,
+	0x03: AE_MODE_IRIS,
+	0x04: AE_MODE_BRIGHT,
 }
 
 const WB_MODE_LABELS = {
-	0x00: 'Auto',
-	0x01: 'Indoor',
-	0x02: 'Outdoor',
-	0x03: 'OnePush',
-	0x04: 'VAR',
-	0x05: 'Manual',
+	0x00: WB_MODE_AUTO,
+	0x01: WB_MODE_INDOOR,
+	0x02: WB_MODE_OUTDOOR,
+	0x03: WB_MODE_ONEPUSH,
+	0x04: WB_MODE_VAR,
+	0x05: WB_MODE_MANUAL,
 	// Datavideo inquiry response values (confirmed on real hardware)
-	0x20: 'Indoor',
-	0x48: 'Outdoor',
+	0x20: WB_MODE_INDOOR,
+	0x48: WB_MODE_OUTDOOR,
 }
 
 function parse4Nibble(b, offset) {
@@ -81,7 +96,7 @@ const INQUIRIES = [
 		name: 'focus_mode',
 		cmd: '\x09\x04\x38\xFF',
 		parse(b) {
-			return { focus_mode: b[2] === 0x02 ? 'Auto' : 'Manual' }
+			return { focus_mode: b[2] === 0x02 ? FOCUS_MODE_AUTO : FOCUS_MODE_MANUAL }
 		},
 	},
 	{
@@ -367,6 +382,12 @@ class DatavideoViscaInstance extends InstanceBase {
 					this.setVariableValues(values)
 					if ('focus_mode' in values) {
 						this.checkFeedbacks('focus_mode_manual')
+					}
+					if ('ae_mode' in values) {
+						this.checkFeedbacks('ae_mode_allows_iris', 'ae_mode_allows_shutter', 'ae_mode_manual')
+					}
+					if ('wb_mode' in values) {
+						this.checkFeedbacks('wb_mode_manual', 'wb_mode_onepush', 'wb_mode_var')
 					}
 				} catch (e) {
 					this.log('debug', `Failed to parse ${inquiry.name} response: ${e.message}`)

@@ -1,5 +1,4 @@
 const { combineRgb } = require('@companion-module/base')
-const { FOCUS_MODE } = require('./constants')
 
 const WHITE = combineRgb(255, 255, 255)
 const BLACK = combineRgb(0, 0, 0)
@@ -31,6 +30,29 @@ const image_up_left =
 
 const image_down_left =
 	'iVBORw0KGgoAAAANSUhEUgAAAEgAAAA6CAMAAAAk2e+/AAABS2lUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxNDAgNzkuMTYwNDUxLCAyMDE3LzA1LzA2LTAxOjA4OjIxICAgICAgICAiPgogPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIi8+CiA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgo8P3hwYWNrZXQgZW5kPSJyIj8+LUNEtwAAAARnQU1BAACxjwv8YQUAAAABc1JHQgCuzhzpAAABg1BMVEUAAAD///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////8aT76cAAAAgHRSTlMAafwJfflezc+3WA7Z5Rk6PAvpBNE73kJT89QxZ48czNIv9A1DnI3qKQUaymjT4a7HdVuGf85LR20CVHr+tLBlA0GvYSTYZEnbAcazNPX4yB4GrAgnmL6Bcj4qIVKIe8kdVadIEe27B90bOG/3Er1rYJq1wibyh+4Q5CMzRllMXDo5euMAAAGfSURBVFjD7dblUwJBGAbw5aSlBJRGQERBkLC7u7u7u7veP90jDnaEcdhjP+k9X5h9Zu43O7PLe4eQECH/KGsIaUooOEcLK75LpehH628idSrE+nMANfyQ3MY2BRm0C6mM462tUwJAJtVyUB1WmsoSFZEk46D6TBcYS3UKPpCYawxD5VxHImVD/RHIxMQbGintkGQcppkcOkuutQPYfkDfmjck556ZTSydve2YY5UWk0Mww672VPh+XFqCU8tA+whtL+KOpa+bF3Rh8B4ymDNaSnSzG9IPIpsL34/HTPZfS58auMPYuYNMWcQXOsD3U9ZDOkZkkCvqwSIqUI2WfEDmgiQxRANiIp8GKtDLO6/Znw19oOdXhKoROtEUBr1F5Y9f4dt1XygqKgh6YqcHwMQkQBWICr1H6czTgrpoQde0IGnekJEWNEwLMv/GPDDB/M/fDioVeLYA5GqoYt+xNRY4toJkCiBUG7vTEVxJu2Z549RbqXQuba7uVDZWO66mgw6d7kYaEPvvCb+REIp/srGzLP4aa0n8zKFkKUSIkD+Qb9QrYMvxAbaBAAAAAElFTkSuQmCC'
+
+function activeWhen(feedbackId) {
+	return {
+		feedbackId,
+		options: {},
+		style: {
+			bgcolor: GREEN,
+			color: BLACK,
+		},
+	}
+}
+
+function disabledWhen(feedbackId) {
+	return {
+		feedbackId,
+		options: {},
+		isInverted: true,
+		style: {
+			color: GREY,
+			bgcolor: DARK_GREY,
+		},
+	}
+}
 
 module.exports = function (self) {
 	const presets = {}
@@ -211,7 +233,7 @@ module.exports = function (self) {
 		feedbacks: [],
 	}
 
-	// Focus Near
+	// Focus Near (disabled when focus mode is not Manual)
 	presets['focus_near'] = {
 		type: 'button',
 		category: 'Lens',
@@ -228,10 +250,10 @@ module.exports = function (self) {
 				up: [{ actionId: 'focusS', options: {} }],
 			},
 		],
-		feedbacks: [],
+		feedbacks: [disabledWhen('focus_mode_manual')],
 	}
 
-	// Focus Far
+	// Focus Far (disabled when focus mode is not Manual)
 	presets['focus_far'] = {
 		type: 'button',
 		category: 'Lens',
@@ -248,7 +270,7 @@ module.exports = function (self) {
 				up: [{ actionId: 'focusS', options: {} }],
 			},
 		],
-		feedbacks: [],
+		feedbacks: [disabledWhen('focus_mode_manual')],
 	}
 
 	// Auto Focus
@@ -265,10 +287,30 @@ module.exports = function (self) {
 		steps: [
 			{
 				down: [{ actionId: 'focusM', options: { bol: '0' } }],
-				up: [{ actionId: 'focusM', options: { bol: '1' } }],
+				up: [],
 			},
 		],
-		feedbacks: [],
+		feedbacks: [{ ...activeWhen('focus_mode_manual'), isInverted: true }],
+	}
+
+	// Manual Focus
+	presets['manual_focus'] = {
+		type: 'button',
+		category: 'Lens',
+		name: 'Manual Focus',
+		style: {
+			text: 'MANUAL\\nFOCUS',
+			size: '14',
+			color: WHITE,
+			bgcolor: BLACK,
+		},
+		steps: [
+			{
+				down: [{ actionId: 'focusM', options: { bol: '1' } }],
+				up: [],
+			},
+		],
+		feedbacks: [activeWhen('focus_mode_manual')],
 	}
 
 	// Focus Mode Cycle
@@ -282,10 +324,12 @@ module.exports = function (self) {
 			color: WHITE,
 			bgcolor: BLACK,
 		},
-		steps: FOCUS_MODE.map((mode) => ({
-			down: [{ actionId: 'focusM', options: { bol: mode.id } }],
-			up: [],
-		})),
+		steps: [
+			{
+				down: [{ actionId: 'focusMCycle', options: {} }],
+				up: [],
+			},
+		],
 		feedbacks: [],
 	}
 
@@ -306,17 +350,7 @@ module.exports = function (self) {
 				up: [],
 			},
 		],
-		feedbacks: [
-			{
-				feedbackId: 'focus_mode_manual',
-				options: {},
-				isInverted: true,
-				style: {
-					color: GREY,
-					bgcolor: DARK_GREY,
-				},
-			},
-		],
+		feedbacks: [disabledWhen('focus_mode_manual')],
 	}
 
 	// Exposure Mode
@@ -339,7 +373,7 @@ module.exports = function (self) {
 		feedbacks: [],
 	}
 
-	// Iris Up
+	// Iris Up (disabled when exposure mode does not allow iris control)
 	presets['iris_up'] = {
 		type: 'button',
 		category: 'Exposure',
@@ -356,10 +390,10 @@ module.exports = function (self) {
 				up: [],
 			},
 		],
-		feedbacks: [],
+		feedbacks: [disabledWhen('ae_mode_allows_iris')],
 	}
 
-	// Iris Down
+	// Iris Down (disabled when exposure mode does not allow iris control)
 	presets['iris_down'] = {
 		type: 'button',
 		category: 'Exposure',
@@ -376,10 +410,10 @@ module.exports = function (self) {
 				up: [],
 			},
 		],
-		feedbacks: [],
+		feedbacks: [disabledWhen('ae_mode_allows_iris')],
 	}
 
-	// Shutter Up
+	// Shutter Up (disabled when exposure mode does not allow shutter control)
 	presets['shutter_up'] = {
 		type: 'button',
 		category: 'Exposure',
@@ -396,10 +430,10 @@ module.exports = function (self) {
 				up: [],
 			},
 		],
-		feedbacks: [],
+		feedbacks: [disabledWhen('ae_mode_allows_shutter')],
 	}
 
-	// Shutter Down
+	// Shutter Down (disabled when exposure mode does not allow shutter control)
 	presets['shutter_down'] = {
 		type: 'button',
 		category: 'Exposure',
@@ -416,7 +450,7 @@ module.exports = function (self) {
 				up: [],
 			},
 		],
-		feedbacks: [],
+		feedbacks: [disabledWhen('ae_mode_allows_shutter')],
 	}
 
 	// Tally GREEN
@@ -631,7 +665,7 @@ module.exports = function (self) {
 		feedbacks: [],
 	}
 
-	// Gain Up
+	// Gain Up (disabled when exposure mode is not Manual)
 	presets['gain_up'] = {
 		type: 'button',
 		category: 'Exposure',
@@ -648,10 +682,10 @@ module.exports = function (self) {
 				up: [],
 			},
 		],
-		feedbacks: [],
+		feedbacks: [disabledWhen('ae_mode_manual')],
 	}
 
-	// Gain Down
+	// Gain Down (disabled when exposure mode is not Manual)
 	presets['gain_down'] = {
 		type: 'button',
 		category: 'Exposure',
@@ -668,10 +702,10 @@ module.exports = function (self) {
 				up: [],
 			},
 		],
-		feedbacks: [],
+		feedbacks: [disabledWhen('ae_mode_manual')],
 	}
 
-	// Gain Reset
+	// Gain Reset (disabled when exposure mode is not Manual)
 	presets['gain_reset'] = {
 		type: 'button',
 		category: 'Exposure',
@@ -688,7 +722,7 @@ module.exports = function (self) {
 				up: [],
 			},
 		],
-		feedbacks: [],
+		feedbacks: [disabledWhen('ae_mode_manual')],
 	}
 
 	// Backlight On
@@ -851,7 +885,7 @@ module.exports = function (self) {
 		feedbacks: [],
 	}
 
-	// WB One Push Trigger
+	// WB One Push Trigger (disabled when WB mode is not OnePush)
 	presets['wb_onepush_trigger'] = {
 		type: 'button',
 		category: 'White Balance',
@@ -868,10 +902,10 @@ module.exports = function (self) {
 				up: [],
 			},
 		],
-		feedbacks: [],
+		feedbacks: [disabledWhen('wb_mode_onepush')],
 	}
 
-	// Color Temperature presets
+	// Color Temperature presets (disabled when WB mode is not VAR)
 	const colorTemps = [2400, 3000, 3200, 4000, 4500, 5000, 5600, 6500, 7100]
 	for (const temp of colorTemps) {
 		presets['color_temp_' + temp] = {
@@ -890,11 +924,11 @@ module.exports = function (self) {
 					up: [],
 				},
 			],
-			feedbacks: [],
+			feedbacks: [disabledWhen('wb_mode_var')],
 		}
 	}
 
-	// Color Temperature Cycle
+	// Color Temperature Cycle (disabled when WB mode is not VAR)
 	presets['color_temp_cycle'] = {
 		type: 'button',
 		category: 'White Balance',
@@ -909,10 +943,10 @@ module.exports = function (self) {
 			down: [{ actionId: 'colorTemp', options: { val: temp } }],
 			up: [],
 		})),
-		feedbacks: [],
+		feedbacks: [disabledWhen('wb_mode_var')],
 	}
 
-	// Red Gain Up
+	// Red Gain Up (disabled when WB mode is not Manual)
 	presets['rg_up'] = {
 		type: 'button',
 		category: 'White Balance',
@@ -929,10 +963,10 @@ module.exports = function (self) {
 				up: [],
 			},
 		],
-		feedbacks: [],
+		feedbacks: [disabledWhen('wb_mode_manual')],
 	}
 
-	// Red Gain Down
+	// Red Gain Down (disabled when WB mode is not Manual)
 	presets['rg_down'] = {
 		type: 'button',
 		category: 'White Balance',
@@ -949,10 +983,10 @@ module.exports = function (self) {
 				up: [],
 			},
 		],
-		feedbacks: [],
+		feedbacks: [disabledWhen('wb_mode_manual')],
 	}
 
-	// Red Gain Reset
+	// Red Gain Reset (disabled when WB mode is not Manual)
 	presets['rg_reset'] = {
 		type: 'button',
 		category: 'White Balance',
@@ -969,10 +1003,10 @@ module.exports = function (self) {
 				up: [],
 			},
 		],
-		feedbacks: [],
+		feedbacks: [disabledWhen('wb_mode_manual')],
 	}
 
-	// Blue Gain Up
+	// Blue Gain Up (disabled when WB mode is not Manual)
 	presets['bg_up'] = {
 		type: 'button',
 		category: 'White Balance',
@@ -989,10 +1023,10 @@ module.exports = function (self) {
 				up: [],
 			},
 		],
-		feedbacks: [],
+		feedbacks: [disabledWhen('wb_mode_manual')],
 	}
 
-	// Blue Gain Down
+	// Blue Gain Down (disabled when WB mode is not Manual)
 	presets['bg_down'] = {
 		type: 'button',
 		category: 'White Balance',
@@ -1009,10 +1043,10 @@ module.exports = function (self) {
 				up: [],
 			},
 		],
-		feedbacks: [],
+		feedbacks: [disabledWhen('wb_mode_manual')],
 	}
 
-	// Blue Gain Reset
+	// Blue Gain Reset (disabled when WB mode is not Manual)
 	presets['bg_reset'] = {
 		type: 'button',
 		category: 'White Balance',
@@ -1029,7 +1063,7 @@ module.exports = function (self) {
 				up: [],
 			},
 		],
-		feedbacks: [],
+		feedbacks: [disabledWhen('wb_mode_manual')],
 	}
 
 	// Power Toggle
