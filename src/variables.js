@@ -49,6 +49,10 @@ module.exports = function (self) {
 			name: 'Gain Position',
 		},
 		{
+			variableId: 'gain_label',
+			name: 'Gain Label',
+		},
+		{
 			variableId: 'wb_mode',
 			name: 'White Balance Mode',
 		},

@@ -7,6 +7,7 @@ const UpdateVariableDefinitions = require('./variables')
 const {
 	IRIS_LABELS,
 	SHUTTER_LABELS,
+	GAIN_LABELS,
 	FOCUS_MODE_AUTO,
 	FOCUS_MODE_MANUAL,
 	AE_MODE_AUTO,
@@ -137,7 +138,9 @@ const INQUIRIES = [
 		name: 'gain_position',
 		cmd: '\x09\x04\x4C\xFF',
 		parse(b) {
-			return { gain_position: parse4Nibble(b, 2) }
+			const pos = parse4Nibble(b, 2)
+			const label = GAIN_LABELS[pos]
+			return { gain_position: pos, gain_label: label ? label + ' (' + pos + ')' : 'Pos ' + pos }
 		},
 	},
 	{
@@ -401,6 +404,9 @@ class DatavideoViscaInstance extends InstanceBase {
 					if ('shutter_position' in values) {
 						this.checkFeedbacks('shutter_can_increase', 'shutter_can_decrease')
 					}
+					if ('gain_position' in values) {
+						this.checkFeedbacks('gain_can_increase', 'gain_can_decrease')
+					}
 				} catch (e) {
 					this.log('debug', `Failed to parse ${inquiry.name} response: ${e.message}`)
 				}
@@ -479,6 +485,7 @@ class DatavideoViscaInstance extends InstanceBase {
 				'ae_mode',
 				'iris_position',
 				'shutter_position',
+				'gain_position',
 				'wb_mode',
 			].includes(inq.name),
 		)

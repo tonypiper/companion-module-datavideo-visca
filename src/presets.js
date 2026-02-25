@@ -722,10 +722,10 @@ module.exports = function (self) {
 				up: [],
 			},
 		],
-		feedbacks: [disabledWhen('ae_mode_manual')],
+		feedbacks: [disabledWhen('ae_mode_manual'), disabledWhen('gain_can_increase')],
 	}
 
-	// Gain Down (disabled when exposure mode is not Manual)
+	// Gain Down (disabled when exposure mode is not Manual or at minimum)
 	presets['gain_down'] = {
 		type: 'button',
 		category: 'Exposure',
@@ -742,7 +742,7 @@ module.exports = function (self) {
 				up: [],
 			},
 		],
-		feedbacks: [disabledWhen('ae_mode_manual')],
+		feedbacks: [disabledWhen('ae_mode_manual'), disabledWhen('gain_can_decrease')],
 	}
 
 	// Gain Reset (disabled when exposure mode is not Manual)
@@ -751,7 +751,7 @@ module.exports = function (self) {
 		category: 'Exposure',
 		name: 'Gain Reset',
 		style: {
-			text: 'GAIN\\n$(' + self.label + ':gain_position)',
+			text: 'GAIN\\n$(' + self.label + ':gain_label)',
 			size: '14',
 			color: WHITE,
 			bgcolor: BLACK,

@@ -8,6 +8,7 @@ const {
 	WB_MODE_VAR,
 	IRIS_POSITIONS,
 	SHUTTER_POSITIONS,
+	GAIN_POSITIONS,
 } = require('./constants')
 
 module.exports = function (self) {
@@ -122,6 +123,26 @@ module.exports = function (self) {
 			options: [],
 			callback: () => {
 				return self.getVariableValue('shutter_position') > SHUTTER_POSITIONS[0]
+			},
+		},
+		gain_can_increase: {
+			type: 'boolean',
+			name: 'Gain Can Increase',
+			description: 'True when the gain is below its maximum (42dB)',
+			defaultStyle: {},
+			options: [],
+			callback: () => {
+				return self.getVariableValue('gain_position') < GAIN_POSITIONS[GAIN_POSITIONS.length - 1]
+			},
+		},
+		gain_can_decrease: {
+			type: 'boolean',
+			name: 'Gain Can Decrease',
+			description: 'True when the gain is above its minimum (0dB)',
+			defaultStyle: {},
+			options: [],
+			callback: () => {
+				return self.getVariableValue('gain_position') > GAIN_POSITIONS[0]
 			},
 		},
 	})

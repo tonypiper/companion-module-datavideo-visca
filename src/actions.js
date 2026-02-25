@@ -5,6 +5,8 @@ const {
 	SHUTTER,
 	SHUTTER_LABELS,
 	SHUTTER_POSITIONS,
+	GAIN_LABELS,
+	GAIN_POSITIONS,
 	PRESET,
 	FOCUS_MODE,
 	FOCUS_MODE_AUTO,
@@ -33,6 +35,11 @@ function irisLabel(pos) {
 
 function shutterLabel(pos) {
 	const label = SHUTTER_LABELS[pos]
+	return label ? label + ' (' + pos + ')' : 'Pos ' + pos
+}
+
+function gainLabel(pos) {
+	const label = GAIN_LABELS[pos]
 	return label ? label + ' (' + pos + ')' : 'Pos ' + pos
 }
 
@@ -670,8 +677,16 @@ module.exports = function (self) {
 					self.log('debug', 'Gain Up ignored — exposure mode is not Manual')
 					return
 				}
-				const cmd = '\x01\x04\x0C\x02\xFF'
-				self.sendVISCACommand(cmd)
+				const pos = self.getVariableValue('gain_position')
+				const idx = GAIN_POSITIONS.indexOf(pos)
+				if (idx === GAIN_POSITIONS.length - 1) {
+					self.log('debug', 'Gain Up ignored — already at maximum')
+					return
+				}
+				const newPos = idx >= 0 ? GAIN_POSITIONS[idx + 1] : GAIN_POSITIONS.find((p) => p > pos) ?? pos
+				self.setVariableValues({ gain_position: newPos, gain_label: gainLabel(newPos) })
+				self.checkFeedbacks('gain_can_increase', 'gain_can_decrease')
+				self.sendVISCACommand('\x01\x04\x0C\x02\xFF')
 			},
 		},
 		gainD: {
@@ -682,8 +697,16 @@ module.exports = function (self) {
 					self.log('debug', 'Gain Down ignored — exposure mode is not Manual')
 					return
 				}
-				const cmd = '\x01\x04\x0C\x03\xFF'
-				self.sendVISCACommand(cmd)
+				const pos = self.getVariableValue('gain_position')
+				const idx = GAIN_POSITIONS.indexOf(pos)
+				if (idx === 0) {
+					self.log('debug', 'Gain Down ignored — already at minimum')
+					return
+				}
+				const newPos = idx > 0 ? GAIN_POSITIONS[idx - 1] : [...GAIN_POSITIONS].reverse().find((p) => p < pos) ?? pos
+				self.setVariableValues({ gain_position: newPos, gain_label: gainLabel(newPos) })
+				self.checkFeedbacks('gain_can_increase', 'gain_can_decrease')
+				self.sendVISCACommand('\x01\x04\x0C\x03\xFF')
 			},
 		},
 		gainR: {
@@ -694,8 +717,7 @@ module.exports = function (self) {
 					self.log('debug', 'Gain Reset ignored — exposure mode is not Manual')
 					return
 				}
-				const cmd = '\x01\x04\x0C\x00\xFF'
-				self.sendVISCACommand(cmd)
+				self.sendVISCACommand('\x01\x04\x0C\x00\xFF')
 			},
 		},
 		wbM: {

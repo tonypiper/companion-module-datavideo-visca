@@ -38,6 +38,12 @@ const SHUTTER = [
 	{ id: '15', label: '1/10000' },
 ]
 
+// Gain: 0dB to 42dB in 3dB steps (VISCA positions 1-15)
+const GAIN = []
+for (let i = 0; i <= 14; i++) {
+	GAIN.push({ id: ('0' + (i + 1).toString(16)).substr(-2, 2), label: i * 3 + 'dB' })
+}
+
 const PRESET = []
 for (let i = 1; i <= 64; ++i) {
 	PRESET.push({ id: ('0' + i.toString(16)).substr(-2, 2), label: 'Preset ' + i })
@@ -124,6 +130,8 @@ const IRIS_LABELS = Object.fromEntries(IRIS.map((i) => [parseInt(i.id, 16), i.la
 const IRIS_POSITIONS = IRIS.map((i) => parseInt(i.id, 16)).sort((a, b) => a - b)
 const SHUTTER_LABELS = Object.fromEntries(SHUTTER.map((s) => [parseInt(s.id, 16), s.label]))
 const SHUTTER_POSITIONS = SHUTTER.map((s) => parseInt(s.id, 16)).sort((a, b) => a - b)
+const GAIN_LABELS = Object.fromEntries(GAIN.map((g) => [parseInt(g.id, 16), g.label]))
+const GAIN_POSITIONS = GAIN.map((g) => parseInt(g.id, 16)).sort((a, b) => a - b)
 
 module.exports = {
 	IRIS,
@@ -132,6 +140,9 @@ module.exports = {
 	SHUTTER,
 	SHUTTER_LABELS,
 	SHUTTER_POSITIONS,
+	GAIN,
+	GAIN_LABELS,
+	GAIN_POSITIONS,
 	PRESET,
 	FOCUS_MODE,
 	EXPOSURE_MODE,
