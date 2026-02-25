@@ -15,24 +15,27 @@ const IRIS = [
 	{ id: '00', label: 'Close' },
 ]
 
+// VISCA shutter positions 5-21
+// 25fps and 50/60fps use the same VISCA positions but different speeds
+// We show both where they differ: "60fps (25fps)"
 const SHUTTER = [
-	{ id: '11', label: '1/10000' },
-	{ id: '10', label: '1/6000' },
-	{ id: '0F', label: '1/4000' },
-	{ id: '0E', label: '1/3000' },
-	{ id: '0D', label: '1/2000' },
-	{ id: '0C', label: '1/1500' },
-	{ id: '0B', label: '1/1000' },
-	{ id: '0A', label: '1/725' },
-	{ id: '09', label: '1/500' },
-	{ id: '08', label: '1/350' },
-	{ id: '07', label: '1/250' },
-	{ id: '06', label: '1/180' },
-	{ id: '05', label: '1/125' },
-	{ id: '04', label: '1/100' },
-	{ id: '03', label: '1/90' },
-	{ id: '02', label: '1/60' },
-	{ id: '01', label: '1/30' },
+	{ id: '05', label: '1/30 (1/25)' },
+	{ id: '06', label: '1/60 (1/50)' },
+	{ id: '07', label: '1/90 (1/75)' },
+	{ id: '08', label: '1/100' },
+	{ id: '09', label: '1/125 (1/120)' },
+	{ id: '0A', label: '1/180 (1/150)' },
+	{ id: '0B', label: '1/250 (1/215)' },
+	{ id: '0C', label: '1/350 (1/300)' },
+	{ id: '0D', label: '1/500 (1/425)' },
+	{ id: '0E', label: '1/725 (1/600)' },
+	{ id: '0F', label: '1/1000' },
+	{ id: '10', label: '1/1500 (1/1250)' },
+	{ id: '11', label: '1/2000 (1/1750)' },
+	{ id: '12', label: '1/3000 (1/2500)' },
+	{ id: '13', label: '1/4000 (1/3500)' },
+	{ id: '14', label: '1/6000' },
+	{ id: '15', label: '1/10000' },
 ]
 
 const PRESET = []

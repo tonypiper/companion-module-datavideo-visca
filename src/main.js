@@ -129,7 +129,8 @@ const INQUIRIES = [
 		cmd: '\x09\x04\x4A\xFF',
 		parse(b) {
 			const pos = parse4Nibble(b, 2)
-			return { shutter_position: pos, shutter_label: SHUTTER_LABELS[pos] || 'Pos ' + pos }
+			const label = SHUTTER_LABELS[pos]
+			return { shutter_position: pos, shutter_label: label ? label + ' (' + pos + ')' : 'Pos ' + pos }
 		},
 	},
 	{
@@ -396,6 +397,9 @@ class DatavideoViscaInstance extends InstanceBase {
 					}
 					if ('iris_position' in values) {
 						this.checkFeedbacks('iris_can_increase', 'iris_can_decrease')
+					}
+					if ('shutter_position' in values) {
+						this.checkFeedbacks('shutter_can_increase', 'shutter_can_decrease')
 					}
 				} catch (e) {
 					this.log('debug', `Failed to parse ${inquiry.name} response: ${e.message}`)

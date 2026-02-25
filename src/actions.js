@@ -3,6 +3,8 @@ const {
 	IRIS_LABELS,
 	IRIS_POSITIONS,
 	SHUTTER,
+	SHUTTER_LABELS,
+	SHUTTER_POSITIONS,
 	PRESET,
 	FOCUS_MODE,
 	FOCUS_MODE_AUTO,
@@ -26,6 +28,11 @@ const {
 
 function irisLabel(pos) {
 	const label = IRIS_LABELS[pos]
+	return label ? label + ' (' + pos + ')' : 'Pos ' + pos
+}
+
+function shutterLabel(pos) {
+	const label = SHUTTER_LABELS[pos]
 	return label ? label + ' (' + pos + ')' : 'Pos ' + pos
 }
 
@@ -589,8 +596,17 @@ module.exports = function (self) {
 					self.log('debug', 'Shutter Up ignored — exposure mode does not allow shutter control')
 					return
 				}
-				const cmd = '\x01\x04\x0A\x02\xFF'
-				self.sendVISCACommand(cmd)
+				const positions = SHUTTER_POSITIONS
+				const pos = self.getVariableValue('shutter_position')
+				const idx = positions.indexOf(pos)
+				if (idx === positions.length - 1) {
+					self.log('debug', 'Shutter Up ignored — already at maximum')
+					return
+				}
+				const newPos = idx >= 0 ? positions[idx + 1] : positions.find((p) => p > pos) ?? pos
+				self.setVariableValues({ shutter_position: newPos, shutter_label: shutterLabel(newPos) })
+				self.checkFeedbacks('shutter_can_increase', 'shutter_can_decrease')
+				self.sendVISCACommand('\x01\x04\x0A\x02\xFF')
 			},
 		},
 		shutD: {
@@ -602,8 +618,17 @@ module.exports = function (self) {
 					self.log('debug', 'Shutter Down ignored — exposure mode does not allow shutter control')
 					return
 				}
-				const cmd = '\x01\x04\x0A\x03\xFF'
-				self.sendVISCACommand(cmd)
+				const positions = SHUTTER_POSITIONS
+				const pos = self.getVariableValue('shutter_position')
+				const idx = positions.indexOf(pos)
+				if (idx === 0) {
+					self.log('debug', 'Shutter Down ignored — already at minimum')
+					return
+				}
+				const newPos = idx > 0 ? positions[idx - 1] : [...positions].reverse().find((p) => p < pos) ?? pos
+				self.setVariableValues({ shutter_position: newPos, shutter_label: shutterLabel(newPos) })
+				self.checkFeedbacks('shutter_can_increase', 'shutter_can_decrease')
+				self.sendVISCACommand('\x01\x04\x0A\x03\xFF')
 			},
 		},
 		shutS: {

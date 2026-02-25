@@ -450,10 +450,10 @@ module.exports = function (self) {
 				up: [],
 			},
 		],
-		feedbacks: [disabledWhen('ae_mode_allows_shutter')],
+		feedbacks: [disabledWhen('ae_mode_allows_shutter'), disabledWhen('shutter_can_increase')],
 	}
 
-	// Shutter Down (disabled when exposure mode does not allow shutter control)
+	// Shutter Down (disabled when exposure mode does not allow shutter control or at minimum)
 	presets['shutter_down'] = {
 		type: 'button',
 		category: 'Exposure',
@@ -470,7 +470,7 @@ module.exports = function (self) {
 				up: [],
 			},
 		],
-		feedbacks: [disabledWhen('ae_mode_allows_shutter')],
+		feedbacks: [disabledWhen('ae_mode_allows_shutter'), disabledWhen('shutter_can_decrease')],
 	}
 
 	// Shutter Reset (disabled when exposure mode does not allow shutter control)

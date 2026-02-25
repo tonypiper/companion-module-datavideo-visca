@@ -7,6 +7,7 @@ const {
 	WB_MODE_ONEPUSH,
 	WB_MODE_VAR,
 	IRIS_POSITIONS,
+	SHUTTER_POSITIONS,
 } = require('./constants')
 
 module.exports = function (self) {
@@ -101,6 +102,26 @@ module.exports = function (self) {
 			options: [],
 			callback: () => {
 				return self.getVariableValue('iris_position') > IRIS_POSITIONS[0]
+			},
+		},
+		shutter_can_increase: {
+			type: 'boolean',
+			name: 'Shutter Can Increase',
+			description: 'True when the shutter is below its maximum (1/10000)',
+			defaultStyle: {},
+			options: [],
+			callback: () => {
+				return self.getVariableValue('shutter_position') < SHUTTER_POSITIONS[SHUTTER_POSITIONS.length - 1]
+			},
+		},
+		shutter_can_decrease: {
+			type: 'boolean',
+			name: 'Shutter Can Decrease',
+			description: 'True when the shutter is above its minimum (1/30)',
+			defaultStyle: {},
+			options: [],
+			callback: () => {
+				return self.getVariableValue('shutter_position') > SHUTTER_POSITIONS[0]
 			},
 		},
 	})
