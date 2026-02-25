@@ -41,12 +41,12 @@ const SHUTTER = [
 // Gain: 0dB to 42dB in 3dB steps (VISCA positions 1-15)
 const GAIN = []
 for (let i = 0; i <= 14; i++) {
-	GAIN.push({ id: ('0' + (i + 1).toString(16)).substr(-2, 2), label: i * 3 + 'dB' })
+	GAIN.push({ id: ('0' + (i + 1).toString(16)).slice(-2), label: i * 3 + 'dB' })
 }
 
 const PRESET = []
 for (let i = 1; i <= 64; ++i) {
-	PRESET.push({ id: ('0' + i.toString(16)).substr(-2, 2), label: 'Preset ' + i })
+	PRESET.push({ id: ('0' + i.toString(16)).slice(-2), label: 'Preset ' + i })
 }
 
 const FOCUS_MODE = [

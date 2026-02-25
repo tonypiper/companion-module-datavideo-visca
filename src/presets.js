@@ -1190,7 +1190,7 @@ module.exports = function (self) {
 
 	// Save Presets (1-64)
 	for (let i = 1; i <= 64; i++) {
-		const hexVal = ('0' + i.toString(16).toUpperCase()).substr(-2, 2)
+		const hexVal = ('0' + i.toString(16).toUpperCase()).slice(-2)
 		presets['save_preset_' + i] = {
 			type: 'button',
 			category: 'Save Preset',
@@ -1213,7 +1213,7 @@ module.exports = function (self) {
 
 	// Recall Presets (1-64)
 	for (let i = 1; i <= 64; i++) {
-		const hexVal = ('0' + i.toString(16).toUpperCase()).substr(-2, 2)
+		const hexVal = ('0' + i.toString(16).toUpperCase()).slice(-2)
 		presets['recall_preset_' + i] = {
 			type: 'button',
 			category: 'Recall Preset',
