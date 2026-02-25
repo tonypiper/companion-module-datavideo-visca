@@ -44,7 +44,7 @@ function gainLabel(pos) {
 }
 
 module.exports = function (self) {
-	self.setActionDefinitions({
+	const actions = {
 		left: {
 			name: 'Pan Left',
 			options: [],
@@ -536,7 +536,7 @@ module.exports = function (self) {
 					self.log('debug', 'Iris Up ignored — already at maximum (F1.8)')
 					return
 				}
-				const newPos = idx >= 0 ? IRIS_POSITIONS[idx + 1] : IRIS_POSITIONS.find((p) => p > pos) ?? pos
+				const newPos = idx >= 0 ? IRIS_POSITIONS[idx + 1] : (IRIS_POSITIONS.find((p) => p > pos) ?? pos)
 				self.setVariableValues({ iris_position: newPos, iris_label: irisLabel(newPos) })
 				self.checkFeedbacks('iris_can_increase', 'iris_can_decrease')
 				self.sendVISCACommand('\x01\x04\x0B\x02\xFF')
@@ -557,7 +557,7 @@ module.exports = function (self) {
 					self.log('debug', 'Iris Down ignored — already at minimum (Close)')
 					return
 				}
-				const newPos = idx > 0 ? IRIS_POSITIONS[idx - 1] : [...IRIS_POSITIONS].reverse().find((p) => p < pos) ?? pos
+				const newPos = idx > 0 ? IRIS_POSITIONS[idx - 1] : ([...IRIS_POSITIONS].reverse().find((p) => p < pos) ?? pos)
 				self.setVariableValues({ iris_position: newPos, iris_label: irisLabel(newPos) })
 				self.checkFeedbacks('iris_can_increase', 'iris_can_decrease')
 				self.sendVISCACommand('\x01\x04\x0B\x03\xFF')
@@ -610,7 +610,7 @@ module.exports = function (self) {
 					self.log('debug', 'Shutter Up ignored — already at maximum')
 					return
 				}
-				const newPos = idx >= 0 ? positions[idx + 1] : positions.find((p) => p > pos) ?? pos
+				const newPos = idx >= 0 ? positions[idx + 1] : (positions.find((p) => p > pos) ?? pos)
 				self.setVariableValues({ shutter_position: newPos, shutter_label: shutterLabel(newPos) })
 				self.checkFeedbacks('shutter_can_increase', 'shutter_can_decrease')
 				self.sendVISCACommand('\x01\x04\x0A\x02\xFF')
@@ -632,7 +632,7 @@ module.exports = function (self) {
 					self.log('debug', 'Shutter Down ignored — already at minimum')
 					return
 				}
-				const newPos = idx > 0 ? positions[idx - 1] : [...positions].reverse().find((p) => p < pos) ?? pos
+				const newPos = idx > 0 ? positions[idx - 1] : ([...positions].reverse().find((p) => p < pos) ?? pos)
 				self.setVariableValues({ shutter_position: newPos, shutter_label: shutterLabel(newPos) })
 				self.checkFeedbacks('shutter_can_increase', 'shutter_can_decrease')
 				self.sendVISCACommand('\x01\x04\x0A\x03\xFF')
@@ -683,7 +683,7 @@ module.exports = function (self) {
 					self.log('debug', 'Gain Up ignored — already at maximum')
 					return
 				}
-				const newPos = idx >= 0 ? GAIN_POSITIONS[idx + 1] : GAIN_POSITIONS.find((p) => p > pos) ?? pos
+				const newPos = idx >= 0 ? GAIN_POSITIONS[idx + 1] : (GAIN_POSITIONS.find((p) => p > pos) ?? pos)
 				self.setVariableValues({ gain_position: newPos, gain_label: gainLabel(newPos) })
 				self.checkFeedbacks('gain_can_increase', 'gain_can_decrease')
 				self.sendVISCACommand('\x01\x04\x0C\x02\xFF')
@@ -703,7 +703,7 @@ module.exports = function (self) {
 					self.log('debug', 'Gain Down ignored — already at minimum')
 					return
 				}
-				const newPos = idx > 0 ? GAIN_POSITIONS[idx - 1] : [...GAIN_POSITIONS].reverse().find((p) => p < pos) ?? pos
+				const newPos = idx > 0 ? GAIN_POSITIONS[idx - 1] : ([...GAIN_POSITIONS].reverse().find((p) => p < pos) ?? pos)
 				self.setVariableValues({ gain_position: newPos, gain_label: gainLabel(newPos) })
 				self.checkFeedbacks('gain_can_increase', 'gain_can_decrease')
 				self.sendVISCACommand('\x01\x04\x0C\x03\xFF')
@@ -1072,5 +1072,35 @@ module.exports = function (self) {
 				self.sendVISCACommand(cmd)
 			},
 		},
-	})
+	}
+
+	actions.varBrowseDown = {
+		name: 'Variable Browse (press)',
+		options: [],
+		callback: () => {
+			self._browseDownTime = Date.now()
+		},
+	}
+	actions.varBrowseUp = {
+		name: 'Variable Browse (release)',
+		options: [],
+		callback: () => {
+			const list = self._browseList || []
+			if (list.length === 0) return
+			const held = Date.now() - (self._browseDownTime || 0)
+			if (held > 600) {
+				self._browseIndex = 0
+			} else {
+				self._browseIndex = ((self._browseIndex || 0) + 1) % list.length
+			}
+			const entry = list[self._browseIndex || 0]
+			const val = self.getVariableValue(entry.variableId)
+			self.setVariableValues({
+				browse_label: entry.name,
+				browse_value: val !== undefined ? String(val) : '\u2014',
+			})
+		},
+	}
+
+	self.setActionDefinitions(actions)
 }

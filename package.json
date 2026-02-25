@@ -25,6 +25,8 @@
 		"lint:raw": "eslint",
 		"lint": "yarn lint:raw .",
 		"package": "companion-module-build",
-		"mock": "node --watch tools/dvip-mock.js"
+		"mock": "node --watch tools/dvip-mock.js & node --watch tools/http-mock.js 8180 & wait",
+		"mock:dvip": "node --watch tools/dvip-mock.js",
+		"mock:http": "node --watch tools/http-mock.js 8180"
 	}
 }

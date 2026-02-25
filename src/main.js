@@ -4,6 +4,7 @@ const UpdateActions = require('./actions')
 const UpdatePresets = require('./presets')
 const UpdateFeedbacks = require('./feedbacks')
 const UpdateVariableDefinitions = require('./variables')
+const HttpApi = require('./http-api')
 const {
 	IRIS_LABELS,
 	SHUTTER_LABELS,
@@ -211,9 +212,16 @@ class DatavideoViscaInstance extends InstanceBase {
 		this.updatePresets()
 		this.updateVariableDefinitions()
 
+		if (this.config.httpApi && this.config.host) {
+			this.initHttpApi()
+		}
+
+		this._browseIndex = 0
 		this.setVariableValues({
 			pt_speed: this.ptSpeedIndex,
 			zoom_speed: this.zoomSpeedIndex,
+			browse_label: 'Pan/Tilt Speed',
+			browse_value: '\u2014',
 		})
 	}
 
@@ -232,9 +240,16 @@ class DatavideoViscaInstance extends InstanceBase {
 		if (this.config.host !== undefined) {
 			this.initTcp()
 		}
+
+		this.updateVariableDefinitions()
+		this.destroyHttpApi()
+		if (this.config.httpApi && this.config.host) {
+			this.initHttpApi()
+		}
 	}
 
 	async destroy() {
+		this.destroyHttpApi()
 		clearInterval(this.requestStateInterval)
 		clearTimeout(this.pollAfterCommandTimer)
 		this.stopContinuousPolling()
@@ -286,6 +301,33 @@ class DatavideoViscaInstance extends InstanceBase {
 				label: 'Full Status Inquiry',
 				default: false,
 			},
+			{
+				type: 'checkbox',
+				id: 'httpApi',
+				label: 'Enable HTTP API (extended variables)',
+				default: false,
+			},
+			{
+				type: 'number',
+				id: 'httpPort',
+				label: 'HTTP API port (80 for hardware, 8180 for mock server)',
+				width: 6,
+				default: 80,
+				min: 1,
+				max: 65535,
+				isVisible: (config) => config.httpApi,
+			},
+			{
+				type: 'number',
+				id: 'httpPollInterval',
+				label: 'HTTP poll interval (ms, default 3000)',
+				width: 6,
+				default: 3000,
+				min: 500,
+				max: 30000,
+				step: 500,
+				isVisible: (config) => config.httpApi,
+			},
 		]
 	}
 
@@ -303,6 +345,19 @@ class DatavideoViscaInstance extends InstanceBase {
 
 	updateVariableDefinitions() {
 		UpdateVariableDefinitions(this)
+	}
+
+	initHttpApi() {
+		this.destroyHttpApi()
+		this.httpApi = new HttpApi(this)
+		this.httpApi.init(this.config.host, this.config.httpPort || 80, this.config.httpPollInterval || 3000)
+	}
+
+	destroyHttpApi() {
+		if (this.httpApi) {
+			this.httpApi.destroy()
+			this.httpApi = null
+		}
 	}
 
 	initTcp() {

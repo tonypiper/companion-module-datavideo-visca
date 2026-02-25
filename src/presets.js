@@ -1234,5 +1234,24 @@ module.exports = function (self) {
 		}
 	}
 
+	presets['var_browser'] = {
+		type: 'button',
+		category: 'Diagnostics',
+		name: 'Variable Browser',
+		style: {
+			text: '$(' + self.label + ':browse_label)\\n$(' + self.label + ':browse_value)',
+			size: 'auto',
+			color: WHITE,
+			bgcolor: BLACK,
+		},
+		steps: [
+			{
+				down: [{ actionId: 'varBrowseDown', options: {} }],
+				up: [{ actionId: 'varBrowseUp', options: {} }],
+			},
+		],
+		feedbacks: [],
+	}
+
 	self.setPresetDefinitions(presets)
 }
