@@ -1239,7 +1239,8 @@ module.exports = function (self) {
 		category: 'Diagnostics',
 		name: 'Variable Browser',
 		style: {
-			text: '$(' + self.label + ':browse_label)\\n$(' + self.label + ':browse_value)',
+			text:
+				'$(' + self.label + ':browse_group)\\n$(' + self.label + ':browse_label)\\n$(' + self.label + ':browse_value)',
 			size: 'auto',
 			color: WHITE,
 			bgcolor: BLACK,

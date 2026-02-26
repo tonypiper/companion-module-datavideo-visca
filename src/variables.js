@@ -103,12 +103,59 @@ module.exports = function (self) {
 	}
 
 	vars.push(
+		{ variableId: 'browse_group', name: 'Browse: Current Group' },
 		{ variableId: 'browse_label', name: 'Browse: Current Label' },
 		{ variableId: 'browse_value', name: 'Browse: Current Value' },
 	)
 
-	// Store browsable list (everything except the browse variables themselves)
-	self._browseList = vars.filter((v) => v.variableId !== 'browse_label' && v.variableId !== 'browse_value')
+	// Browse order: grouped for phone troubleshooting
+	// 1. Identity/connection  2. Position  3. Exposure  4. White balance  5. Image processing  6. Internal
+	const G = { ID: 'ID', POS: 'POS', EXP: 'EXP', WB: 'WB', IMG: 'IMG', INT: 'INT' }
+	const browseOrder = [
+		// Identity & connection
+		{ variableId: 'power_state', name: 'Power', group: G.ID },
+		{ variableId: 'http_model_name', name: 'Model', group: G.ID },
+		{ variableId: 'http_firmware_version', name: 'Firmware', group: G.ID },
+		// Position
+		{ variableId: 'pan_position', name: 'Pan', group: G.POS },
+		{ variableId: 'tilt_position', name: 'Tilt', group: G.POS },
+		{ variableId: 'zoom_position', name: 'Zoom', group: G.POS },
+		{ variableId: 'focus_position', name: 'Focus Pos', group: G.POS },
+		{ variableId: 'focus_mode', name: 'Focus Mode', group: G.POS },
+		// Exposure
+		{ variableId: 'ae_mode', name: 'AE Mode', group: G.EXP },
+		{ variableId: 'iris_label', name: 'Iris', group: G.EXP },
+		{ variableId: 'shutter_label', name: 'Shutter', group: G.EXP },
+		{ variableId: 'gain_label', name: 'Gain', group: G.EXP },
+		{ variableId: 'http_gain_limit', name: 'Gain Limit', group: G.EXP },
+		{ variableId: 'http_exp_comp', name: 'Exp Comp', group: G.EXP },
+		{ variableId: 'http_exp_comp_enabled', name: 'Exp Comp En', group: G.EXP },
+		{ variableId: 'backlight', name: 'Backlight', group: G.EXP },
+		{ variableId: 'http_anti_flicker', name: 'Anti-Flicker', group: G.EXP },
+		{ variableId: 'http_slow_shutter', name: 'Slow Shutter', group: G.EXP },
+		// White balance
+		{ variableId: 'wb_mode', name: 'WB Mode', group: G.WB },
+		{ variableId: 'color_temp', name: 'Color Temp', group: G.WB },
+		{ variableId: 'rg_position', name: 'Red Gain', group: G.WB },
+		{ variableId: 'bg_position', name: 'Blue Gain', group: G.WB },
+		// Image processing
+		{ variableId: 'http_hue', name: 'Hue', group: G.IMG },
+		{ variableId: 'http_saturation', name: 'Saturation', group: G.IMG },
+		{ variableId: 'http_luminance', name: 'Luminance', group: G.IMG },
+		{ variableId: 'http_contrast', name: 'Contrast', group: G.IMG },
+		{ variableId: 'http_sharpness', name: 'Sharpness', group: G.IMG },
+		{ variableId: 'http_gamma', name: 'Gamma', group: G.IMG },
+		{ variableId: 'http_noise_2d', name: 'NR 2D', group: G.IMG },
+		{ variableId: 'http_noise_3d', name: 'NR 3D', group: G.IMG },
+		// Internal
+		{ variableId: 'pt_speed', name: 'PT Speed', group: G.INT },
+		{ variableId: 'zoom_speed', name: 'Zoom Speed', group: G.INT },
+	]
+
+	// Only include variables that are currently defined
+	const definedIds = new Set(vars.map((v) => v.variableId))
+	const browseSkip = new Set(['browse_group', 'browse_label', 'browse_value'])
+	self._browseList = browseOrder.filter((v) => definedIds.has(v.variableId) && !browseSkip.has(v.variableId))
 
 	self.setVariableDefinitions(vars)
 }

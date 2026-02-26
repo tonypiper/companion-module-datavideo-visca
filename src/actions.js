@@ -1087,18 +1087,51 @@ module.exports = function (self) {
 		callback: () => {
 			const list = self._browseList || []
 			if (list.length === 0) return
-			const held = Date.now() - (self._browseDownTime || 0)
-			if (held > 600) {
-				self._browseIndex = 0
-			} else {
-				self._browseIndex = ((self._browseIndex || 0) + 1) % list.length
+			const now = Date.now()
+			const held = now - (self._browseDownTime || 0)
+
+			function updateDisplay() {
+				const entry = list[self._browseIndex || 0]
+				const val = self.getVariableValue(entry.variableId)
+				self.setVariableValues({
+					browse_group: entry.group,
+					browse_label: entry.name,
+					browse_value: val !== undefined ? String(val) : '\u2014',
+				})
 			}
-			const entry = list[self._browseIndex || 0]
-			const val = self.getVariableValue(entry.variableId)
-			self.setVariableValues({
-				browse_label: entry.name,
-				browse_value: val !== undefined ? String(val) : '\u2014',
-			})
+
+			if (held > 600) {
+				// Long press — reset to first (immediate, cancel any pending single)
+				clearTimeout(self._browseSingleTimer)
+				self._browseSingleTimer = null
+				self._browseIndex = 0
+				updateDisplay()
+				return
+			}
+
+			if (self._browseSingleTimer) {
+				// Second release arrived before the single-press timer fired — double press
+				clearTimeout(self._browseSingleTimer)
+				self._browseSingleTimer = null
+				// Undo the speculative single advance
+				self._browseIndex = self._browseIndexBeforeSingle
+				// Jump to next group
+				const currentGroup = list[self._browseIndex || 0].group
+				let next = (self._browseIndex || 0) + 1
+				while (next < list.length && list[next].group === currentGroup) {
+					next++
+				}
+				self._browseIndex = next < list.length ? next : 0
+				updateDisplay()
+			} else {
+				// Speculatively advance by one, but defer the display update
+				self._browseIndexBeforeSingle = self._browseIndex || 0
+				self._browseIndex = ((self._browseIndex || 0) + 1) % list.length
+				self._browseSingleTimer = setTimeout(() => {
+					self._browseSingleTimer = null
+					updateDisplay()
+				}, 400)
+			}
 		},
 	}
 

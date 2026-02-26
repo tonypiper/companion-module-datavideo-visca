@@ -220,7 +220,8 @@ class DatavideoViscaInstance extends InstanceBase {
 		this.setVariableValues({
 			pt_speed: this.ptSpeedIndex,
 			zoom_speed: this.zoomSpeedIndex,
-			browse_label: 'Pan/Tilt Speed',
+			browse_group: 'ID',
+			browse_label: 'Power',
 			browse_value: '\u2014',
 		})
 	}
