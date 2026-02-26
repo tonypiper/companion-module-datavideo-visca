@@ -2,26 +2,46 @@ const { InstanceBase, Regex, runEntrypoint, InstanceStatus, TCPHelper } = requir
 const UpgradeScripts = require('./upgrades')
 const UpdateActions = require('./actions')
 const UpdatePresets = require('./presets')
+const UpdateFeedbacks = require('./feedbacks')
 const UpdateVariableDefinitions = require('./variables')
+const HttpApi = require('./http-api')
+const {
+	IRIS_LABELS,
+	SHUTTER_LABELS,
+	GAIN_LABELS,
+	FOCUS_MODE_AUTO,
+	FOCUS_MODE_MANUAL,
+	AE_MODE_AUTO,
+	AE_MODE_MANUAL,
+	AE_MODE_SHUTTER,
+	AE_MODE_IRIS,
+	AE_MODE_BRIGHT,
+	WB_MODE_AUTO,
+	WB_MODE_INDOOR,
+	WB_MODE_OUTDOOR,
+	WB_MODE_ONEPUSH,
+	WB_MODE_VAR,
+	WB_MODE_MANUAL,
+} = require('./constants')
 
 const AE_MODE_LABELS = {
-	0x00: 'Auto',
-	0x01: 'Manual',
-	0x02: 'Shutter',
-	0x03: 'Iris',
-	0x04: 'Bright',
+	0x00: AE_MODE_AUTO,
+	0x03: AE_MODE_MANUAL,
+	0x0a: AE_MODE_SHUTTER,
+	0x0b: AE_MODE_IRIS,
+	0x0d: AE_MODE_BRIGHT,
 }
 
 const WB_MODE_LABELS = {
-	0x00: 'Auto',
-	0x01: 'Indoor',
-	0x02: 'Outdoor',
-	0x03: 'OnePush',
-	0x04: 'VAR',
-	0x05: 'Manual',
+	0x00: WB_MODE_AUTO,
+	0x01: WB_MODE_INDOOR,
+	0x02: WB_MODE_OUTDOOR,
+	0x03: WB_MODE_ONEPUSH,
+	0x04: WB_MODE_VAR,
+	0x05: WB_MODE_MANUAL,
 	// Datavideo inquiry response values (confirmed on real hardware)
-	0x20: 'Indoor',
-	0x48: 'Outdoor',
+	0x20: WB_MODE_INDOOR,
+	0x48: WB_MODE_OUTDOOR,
 }
 
 function parse4Nibble(b, offset) {
@@ -80,7 +100,7 @@ const INQUIRIES = [
 		name: 'focus_mode',
 		cmd: '\x09\x04\x38\xFF',
 		parse(b) {
-			return { focus_mode: b[2] === 0x02 ? 'Auto' : 'Manual' }
+			return { focus_mode: b[2] === 0x02 ? FOCUS_MODE_AUTO : FOCUS_MODE_MANUAL }
 		},
 	},
 	{
@@ -101,21 +121,27 @@ const INQUIRIES = [
 		name: 'iris_position',
 		cmd: '\x09\x04\x4B\xFF',
 		parse(b) {
-			return { iris_position: parse4Nibble(b, 2) }
+			const pos = parse4Nibble(b, 2)
+			const label = IRIS_LABELS[pos]
+			return { iris_position: pos, iris_label: label ? label + ' (' + pos + ')' : 'Pos ' + pos }
 		},
 	},
 	{
 		name: 'shutter_position',
 		cmd: '\x09\x04\x4A\xFF',
 		parse(b) {
-			return { shutter_position: parse4Nibble(b, 2) }
+			const pos = parse4Nibble(b, 2)
+			const label = SHUTTER_LABELS[pos]
+			return { shutter_position: pos, shutter_label: label ? label + ' (' + pos + ')' : 'Pos ' + pos }
 		},
 	},
 	{
 		name: 'gain_position',
 		cmd: '\x09\x04\x4C\xFF',
 		parse(b) {
-			return { gain_position: parse4Nibble(b, 2) }
+			const pos = parse4Nibble(b, 2)
+			const label = GAIN_LABELS[pos]
+			return { gain_position: pos, gain_label: label ? label + ' (' + pos + ')' : 'Pos ' + pos }
 		},
 	},
 	{
@@ -182,12 +208,21 @@ class DatavideoViscaInstance extends InstanceBase {
 		this.updateStatus(InstanceStatus.Connecting)
 		this.initTcp()
 		this.updateActions()
+		this.updateFeedbacks()
 		this.updatePresets()
 		this.updateVariableDefinitions()
 
+		if (this.config.httpApi && this.config.host) {
+			this.initHttpApi()
+		}
+
+		this._browseIndex = 0
 		this.setVariableValues({
 			pt_speed: this.ptSpeedIndex,
 			zoom_speed: this.zoomSpeedIndex,
+			browse_group: 'ID',
+			browse_label: 'Power',
+			browse_value: '\u2014',
 		})
 	}
 
@@ -206,9 +241,16 @@ class DatavideoViscaInstance extends InstanceBase {
 		if (this.config.host !== undefined) {
 			this.initTcp()
 		}
+
+		this.updateVariableDefinitions()
+		this.destroyHttpApi()
+		if (this.config.httpApi && this.config.host) {
+			this.initHttpApi()
+		}
 	}
 
 	async destroy() {
+		this.destroyHttpApi()
 		clearInterval(this.requestStateInterval)
 		clearTimeout(this.pollAfterCommandTimer)
 		this.stopContinuousPolling()
@@ -260,11 +302,42 @@ class DatavideoViscaInstance extends InstanceBase {
 				label: 'Full Status Inquiry',
 				default: false,
 			},
+			{
+				type: 'checkbox',
+				id: 'httpApi',
+				label: 'Enable HTTP API (extended variables)',
+				default: false,
+			},
+			{
+				type: 'number',
+				id: 'httpPort',
+				label: 'HTTP API port (80 for hardware, 8180 for mock server)',
+				width: 6,
+				default: 80,
+				min: 1,
+				max: 65535,
+				isVisible: (config) => config.httpApi,
+			},
+			{
+				type: 'number',
+				id: 'httpPollInterval',
+				label: 'HTTP poll interval (ms, default 3000)',
+				width: 6,
+				default: 3000,
+				min: 500,
+				max: 30000,
+				step: 500,
+				isVisible: (config) => config.httpApi,
+			},
 		]
 	}
 
 	updateActions() {
 		UpdateActions(this)
+	}
+
+	updateFeedbacks() {
+		UpdateFeedbacks(this)
 	}
 
 	updatePresets() {
@@ -273,6 +346,19 @@ class DatavideoViscaInstance extends InstanceBase {
 
 	updateVariableDefinitions() {
 		UpdateVariableDefinitions(this)
+	}
+
+	initHttpApi() {
+		this.destroyHttpApi()
+		this.httpApi = new HttpApi(this)
+		this.httpApi.init(this.config.host, this.config.httpPort || 80, this.config.httpPollInterval || 3000)
+	}
+
+	destroyHttpApi() {
+		if (this.httpApi) {
+			this.httpApi.destroy()
+			this.httpApi = null
+		}
 	}
 
 	initTcp() {
@@ -359,6 +445,24 @@ class DatavideoViscaInstance extends InstanceBase {
 					const values = inquiry.parse(visca)
 					this.log('debug', `Inquiry ${inquiry.name}: ${JSON.stringify(values)}`)
 					this.setVariableValues(values)
+					if ('focus_mode' in values) {
+						this.checkFeedbacks('focus_mode_manual')
+					}
+					if ('ae_mode' in values) {
+						this.checkFeedbacks('ae_mode_allows_iris', 'ae_mode_allows_shutter', 'ae_mode_manual')
+					}
+					if ('wb_mode' in values) {
+						this.checkFeedbacks('wb_mode_manual', 'wb_mode_onepush', 'wb_mode_var')
+					}
+					if ('iris_position' in values) {
+						this.checkFeedbacks('iris_can_increase', 'iris_can_decrease')
+					}
+					if ('shutter_position' in values) {
+						this.checkFeedbacks('shutter_can_increase', 'shutter_can_decrease')
+					}
+					if ('gain_position' in values) {
+						this.checkFeedbacks('gain_can_increase', 'gain_can_decrease')
+					}
 				} catch (e) {
 					this.log('debug', `Failed to parse ${inquiry.name} response: ${e.message}`)
 				}
@@ -437,6 +541,7 @@ class DatavideoViscaInstance extends InstanceBase {
 				'ae_mode',
 				'iris_position',
 				'shutter_position',
+				'gain_position',
 				'wb_mode',
 			].includes(inq.name),
 		)
@@ -465,12 +570,14 @@ class DatavideoViscaInstance extends InstanceBase {
 
 	pollAfterCommand(inquiryName, delay = 250) {
 		clearTimeout(this.pollAfterCommandTimer)
+		this.pauseBackgroundPolling()
 		this.pollAfterCommandTimer = setTimeout(() => {
 			const inquiry = INQUIRIES.find((i) => i.name === inquiryName)
 			if (inquiry) {
 				this.pendingInquiry = inquiry
 				this.sendInquiry(inquiry.cmd)
 			}
+			this.resumeBackgroundPolling()
 		}, delay)
 	}
 
