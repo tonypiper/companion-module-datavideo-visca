@@ -95,20 +95,24 @@ class HttpApi {
 		const version = await this._postAjaxcom({ QueryState: { QueryVersion: {} } })
 
 		const values = {}
-		if (sysAttr && sysAttr.SysAttr) {
-			values.http_model_name = sysAttr.SysAttr.szModelName || ''
+		// Real hardware wraps the response in stValue
+		const sysData = sysAttr?.stValue || sysAttr?.SysAttr
+		if (sysData) {
+			values.http_model_name = sysData.szModelName || ''
 		}
-		if (version && version.QueryVersion) {
-			values.http_firmware_version = version.QueryVersion.szFirmwareVersion || ''
+		const verData = version?.stValue || version?.QueryVersion
+		if (verData) {
+			values.http_firmware_version = verData.szFirmwareVersion || ''
 		}
 
 		if (Object.keys(values).length > 0) {
+			this.instance.log('debug', `HTTP API sysinfo: ${JSON.stringify(values)}`)
 			this.instance.setVariableValues(values)
 		}
 	}
 
 	async pollVideoParam() {
-		const data = await this._postAjaxcom({ GetEnv: { VideoParam: '' } })
+		const data = await this._postAjaxcom({ GetEnv: { VideoParam: { nChannel: 0 } } })
 
 		if (!data) {
 			this.consecutiveFailures++
@@ -131,12 +135,18 @@ class HttpApi {
 
 		const values = this._parseVideoParam(data)
 		if (values) {
+			this.instance.log('debug', `HTTP API poll: ${JSON.stringify(values)}`)
 			this.instance.setVariableValues(values)
 		}
 	}
 
 	_parseVideoParam(data) {
-		const vp = data.VideoParam
+		// Real hardware: { stValue: [{ nChannel: 0, stImg: {...}, ... }], nRetVal: 0 }
+		// Mock server:   { VideoParam: { stColor: {...}, stImg: {...}, ... } }
+		let vp = data.VideoParam
+		if (!vp && Array.isArray(data.stValue) && data.stValue.length > 0) {
+			vp = data.stValue[0]
+		}
 		if (!vp) return null
 
 		const values = {}
@@ -144,11 +154,11 @@ class HttpApi {
 		if (color) {
 			if (color.hue !== undefined) values.http_hue = color.hue - 15
 			if (color.saturation !== undefined) values.http_saturation = color.saturation
-			if (color.luminance !== undefined) values.http_luminance = color.luminance
 		}
 
 		const img = vp.stImg
 		if (img) {
+			if (img.luminance !== undefined) values.http_luminance = img.luminance
 			if (img.contrast !== undefined) values.http_contrast = img.contrast
 			if (img.sharpness !== undefined) values.http_sharpness = img.sharpness
 			if (img.gamma !== undefined) values.http_gamma = img.gamma
@@ -162,14 +172,28 @@ class HttpApi {
 
 		const exp = vp.stExp
 		if (exp) {
-			if (exp.gainLimit !== undefined) values.http_gain_limit = exp.gainLimit
-			if (exp.expComp !== undefined) values.http_exp_comp = exp.expComp
-			if (exp.expCompEn !== undefined) values.http_exp_comp_enabled = exp.expCompEn ? 'On' : 'Off'
-			if (exp.antiFlicker !== undefined) {
-				const flickerLabels = { 0: 'Off', 1: '50Hz', 2: '60Hz' }
-				values.http_anti_flicker = flickerLabels[exp.antiFlicker] || String(exp.antiFlicker)
+			if (exp.gainLimit !== undefined) {
+				values.http_gain_limit = exp.gainLimit
+				// gainLimit maps to dB in 3dB steps (4=9dB, 6=15dB, 15=42dB)
+				const db = exp.gainLimit * 3 - 3
+				values.http_gain_limit_label = db + 'dB'
 			}
-			if (exp.slowShutter !== undefined) values.http_slow_shutter = exp.slowShutter ? 'On' : 'Off'
+			// Real hardware uses lowercase field names
+			const expComp = exp.expComp !== undefined ? exp.expComp : exp.expcomp
+			if (expComp !== undefined) values.http_exp_comp = expComp
+			const expCompEn = exp.expCompEn !== undefined ? exp.expCompEn : exp.expcomp_mode
+			if (expCompEn !== undefined) values.http_exp_comp_enabled = expCompEn ? 'On' : 'Off'
+			const flicker = exp.antiFlicker !== undefined ? exp.antiFlicker : exp.antiflicker
+			if (flicker !== undefined) {
+				const flickerLabels = { 0: 'Off', 1: '50Hz', 2: '60Hz' }
+				values.http_anti_flicker = flickerLabels[flicker] || String(flicker)
+			}
+			const slowShutter = exp.slowShutter !== undefined ? exp.slowShutter : exp.slowLight
+			if (slowShutter === undefined && img && img.slowLight !== undefined) {
+				values.http_slow_shutter = img.slowLight ? 'On' : 'Off'
+			} else if (slowShutter !== undefined) {
+				values.http_slow_shutter = slowShutter ? 'On' : 'Off'
+			}
 		}
 
 		return values
