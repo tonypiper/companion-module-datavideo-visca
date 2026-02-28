@@ -1113,10 +1113,13 @@ export function initActions(self: Self): void {
 			if (!self._browseState[slot]) self._browseState[slot] = { index: 0 }
 			const st = self._browseState[slot]
 			const now = Date.now()
-			const held = now - (st.downTime || 0)
+			if (!st.downTime) return
+			const held = now - st.downTime
 
 			function updateDisplay(): void {
-				const entry = list[st.index || 0]
+				st.index = Math.min(st.index || 0, list.length - 1)
+				const entry = list[st.index]
+				if (!entry) return
 				const val = self.getVariableValue(entry.variableId)
 				self.setVariableValues({
 					[`browse_${slot}_group`]: entry.group,
@@ -1139,10 +1142,10 @@ export function initActions(self: Self): void {
 				clearTimeout(st.singleTimer)
 				st.singleTimer = null
 				// Undo the speculative single advance
-				st.index = st.indexBeforeSingle
+				st.index = Math.min(st.indexBeforeSingle || 0, list.length - 1)
 				// Jump to next group
-				const currentGroup = list[st.index || 0].group
-				let next = (st.index || 0) + 1
+				const currentGroup = list[st.index].group
+				let next = st.index + 1
 				while (next < list.length && list[next].group === currentGroup) {
 					next++
 				}

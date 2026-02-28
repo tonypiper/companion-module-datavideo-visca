@@ -258,10 +258,11 @@ class DatavideoViscaInstance extends InstanceBase<DatavideoViscaConfig> {
 			zoom_speed: this.zoomSpeedIndex,
 		}
 		for (let s = 1; s <= BROWSE_SLOTS; s++) {
-			this._browseState[s] = { index: 0 }
-			initVals[`browse_${s}_group`] = 'ID'
-			initVals[`browse_${s}_label`] = 'Power'
-			initVals[`browse_${s}_value`] = '\u2014'
+			const key = String(s)
+			this._browseState[key] = { index: 0 }
+			initVals[`browse_${key}_group`] = 'ID'
+			initVals[`browse_${key}_label`] = 'Power'
+			initVals[`browse_${key}_value`] = '\u2014'
 		}
 		this.setVariableValues(initVals)
 	}
@@ -534,9 +535,10 @@ class DatavideoViscaInstance extends InstanceBase<DatavideoViscaConfig> {
 		const state = this._browseState
 		const values: Record<string, string> = {}
 		for (let s = 1; s <= BROWSE_SLOTS; s++) {
-			const st = state[s]
+			const st = state[String(s)]
 			if (!st) continue
-			const entry = list[st.index || 0]
+			const idx = Math.min(st.index || 0, list.length - 1)
+			const entry = list[idx]
 			if (!entry || !(entry.variableId in updatedKeys)) continue
 			const val = this.getVariableValue(entry.variableId)
 			values[`browse_${s}_value`] = val !== undefined ? String(val) : '\u2014'
