@@ -1,5 +1,6 @@
 import { combineRgb, type CompanionPresetDefinitions, type InstanceBase } from '@companion-module/base'
 import type { DatavideoViscaConfig } from './main.js'
+import { BROWSE_SLOTS } from './variables.js'
 
 const WHITE = combineRgb(255, 255, 255)
 const BLACK = combineRgb(0, 0, 0)
@@ -1230,24 +1231,26 @@ export function initPresets(self: InstanceBase<DatavideoViscaConfig>): void {
 		}
 	}
 
-	presets['var_browser'] = {
-		type: 'button',
-		category: 'Diagnostics',
-		name: 'Variable Browser',
-		style: {
-			text:
-				'$(' + self.label + ':browse_group)\\n$(' + self.label + ':browse_label)\\n$(' + self.label + ':browse_value)',
-			size: 'auto',
-			color: WHITE,
-			bgcolor: BLACK,
-		},
-		steps: [
-			{
-				down: [{ actionId: 'varBrowseDown', options: {} }],
-				up: [{ actionId: 'varBrowseUp', options: {} }],
+	for (let s = 1; s <= BROWSE_SLOTS; s++) {
+		presets[`var_browser_${s}`] = {
+			type: 'button',
+			category: 'Diagnostics',
+			name: `Variable Browser ${s}`,
+			style: {
+				text:
+					'$(' + self.label + `:browse_${s}_group)\\n$(` + self.label + `:browse_${s}_label)\\n$(` + self.label + `:browse_${s}_value)`,
+				size: 'auto',
+				color: WHITE,
+				bgcolor: BLACK,
 			},
-		],
-		feedbacks: [],
+			steps: [
+				{
+					down: [{ actionId: 'varBrowseDown', options: { slot: String(s) } }],
+					up: [{ actionId: 'varBrowseUp', options: { slot: String(s) } }],
+				},
+			],
+			feedbacks: [],
+		}
 	}
 
 	self.setPresetDefinitions(presets)

@@ -1,6 +1,8 @@
 import type { InstanceBase } from '@companion-module/base'
 import type { DatavideoViscaConfig } from './main.js'
 
+export const BROWSE_SLOTS = 4
+
 interface BrowseEntry {
 	variableId: string
 	name: string
@@ -114,11 +116,13 @@ export function initVariables(self: InstanceBase<DatavideoViscaConfig> & Record<
 		)
 	}
 
-	vars.push(
-		{ variableId: 'browse_group', name: 'Browse: Current Group' },
-		{ variableId: 'browse_label', name: 'Browse: Current Label' },
-		{ variableId: 'browse_value', name: 'Browse: Current Value' },
-	)
+	for (let s = 1; s <= BROWSE_SLOTS; s++) {
+		vars.push(
+			{ variableId: `browse_${s}_group`, name: `Browse ${s}: Current Group` },
+			{ variableId: `browse_${s}_label`, name: `Browse ${s}: Current Label` },
+			{ variableId: `browse_${s}_value`, name: `Browse ${s}: Current Value` },
+		)
+	}
 
 	// Browse order: grouped for phone troubleshooting
 	// 1. Identity/connection  2. Position  3. Exposure  4. White balance  5. Image processing  6. Internal
@@ -166,8 +170,13 @@ export function initVariables(self: InstanceBase<DatavideoViscaConfig> & Record<
 
 	// Only include variables that are currently defined
 	const definedIds = new Set(vars.map((v) => v.variableId))
-	const browseSkip = new Set(['browse_group', 'browse_label', 'browse_value'])
-	;(self as any)._browseList = browseOrder.filter((v) => definedIds.has(v.variableId) && !browseSkip.has(v.variableId))
+	const browseSkip = new Set<string>()
+	for (let s = 1; s <= BROWSE_SLOTS; s++) {
+		browseSkip.add(`browse_${s}_group`)
+		browseSkip.add(`browse_${s}_label`)
+		browseSkip.add(`browse_${s}_value`)
+	}
+	self._browseList = browseOrder.filter((v) => definedIds.has(v.variableId) && !browseSkip.has(v.variableId))
 
 	self.setVariableDefinitions(vars)
 }
