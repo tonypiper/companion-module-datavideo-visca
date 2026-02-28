@@ -6,6 +6,12 @@ const baseConfig = await generateEslintConfig({
 
 export default [
 	...baseConfig,
+	{
+		files: ['src/**/*.ts'],
+		rules: {
+			'n/no-missing-import': 'off',
+		},
+	},
 	// Disable TypeScript-specific rules for JS files that haven't been converted yet
 	{
 		files: ['**/*.js'],
