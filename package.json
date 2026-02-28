@@ -1,8 +1,8 @@
 {
 	"name": "datavideo-visca",
 	"version": "2.0.0",
-	"main": "dist/main.js",
 	"type": "module",
+	"main": "dist/main.js",
 	"license": "MIT",
 	"repository": {
 		"type": "git",
@@ -31,9 +31,6 @@
 		"dev": "tsc -p tsconfig.build.json --watch",
 		"format": "prettier -w .",
 		"lint:raw": "eslint",
-		"build": "rimraf dist && yarn build:main",
-		"build:main": "tsc -p tsconfig.build.json",
-		"dev": "tsc -p tsconfig.build.json --watch",
 		"lint": "yarn lint:raw .",
 		"package": "yarn build && companion-module-build",
 		"mock": "node --watch tools/dvip-mock.js & node --watch tools/http-mock.js 8180 & wait",
