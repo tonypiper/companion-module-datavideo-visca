@@ -29,6 +29,7 @@ import {
 	SPEED,
 	CHOICE_ZOOMSPEED,
 } from './constants.js'
+import { BROWSE_SLOTS } from './variables.js'
 
 type Self = InstanceBase<DatavideoViscaConfig> & Record<string, any>
 
@@ -1082,61 +1083,77 @@ export function initActions(self: Self): void {
 		},
 	}
 
+	const slotChoices = Array.from({ length: BROWSE_SLOTS }, (_, i) => ({ id: String(i + 1), label: String(i + 1) }))
+	const slotOption = {
+		type: 'dropdown' as const,
+		label: 'Slot',
+		id: 'slot',
+		choices: slotChoices,
+		default: '1',
+	}
+
 	actions.varBrowseDown = {
 		name: 'Variable Browse (press)',
-		options: [],
-		callback: () => {
-			self._browseDownTime = Date.now()
+		options: [slotOption],
+		callback: (action: any) => {
+			const slot = action.options.slot || '1'
+			if (!self._browseState) self._browseState = {}
+			if (!self._browseState[slot]) self._browseState[slot] = { index: 0 }
+			self._browseState[slot].downTime = Date.now()
 		},
 	}
 	actions.varBrowseUp = {
 		name: 'Variable Browse (release)',
-		options: [],
-		callback: () => {
+		options: [slotOption],
+		callback: (action: any) => {
+			const slot = action.options.slot || '1'
 			const list = self._browseList || []
 			if (list.length === 0) return
+			if (!self._browseState) self._browseState = {}
+			if (!self._browseState[slot]) self._browseState[slot] = { index: 0 }
+			const st = self._browseState[slot]
 			const now = Date.now()
-			const held = now - (self._browseDownTime || 0)
+			const held = now - (st.downTime || 0)
 
 			function updateDisplay(): void {
-				const entry = list[self._browseIndex || 0]
+				const entry = list[st.index || 0]
 				const val = self.getVariableValue(entry.variableId)
 				self.setVariableValues({
-					browse_group: entry.group,
-					browse_label: entry.name,
-					browse_value: val !== undefined ? String(val) : '\u2014',
+					[`browse_${slot}_group`]: entry.group,
+					[`browse_${slot}_label`]: entry.name,
+					[`browse_${slot}_value`]: val !== undefined ? String(val) : '\u2014',
 				})
 			}
 
 			if (held > 600) {
 				// Long press -- reset to first (immediate, cancel any pending single)
-				clearTimeout(self._browseSingleTimer)
-				self._browseSingleTimer = null
-				self._browseIndex = 0
+				clearTimeout(st.singleTimer)
+				st.singleTimer = null
+				st.index = 0
 				updateDisplay()
 				return
 			}
 
-			if (self._browseSingleTimer) {
+			if (st.singleTimer) {
 				// Second release arrived before the single-press timer fired -- double press
-				clearTimeout(self._browseSingleTimer)
-				self._browseSingleTimer = null
+				clearTimeout(st.singleTimer)
+				st.singleTimer = null
 				// Undo the speculative single advance
-				self._browseIndex = self._browseIndexBeforeSingle
+				st.index = st.indexBeforeSingle
 				// Jump to next group
-				const currentGroup = list[self._browseIndex || 0].group
-				let next = (self._browseIndex || 0) + 1
+				const currentGroup = list[st.index || 0].group
+				let next = (st.index || 0) + 1
 				while (next < list.length && list[next].group === currentGroup) {
 					next++
 				}
-				self._browseIndex = next < list.length ? next : 0
+				st.index = next < list.length ? next : 0
 				updateDisplay()
 			} else {
 				// Speculatively advance by one, but defer the display update
-				self._browseIndexBeforeSingle = self._browseIndex || 0
-				self._browseIndex = ((self._browseIndex || 0) + 1) % list.length
-				self._browseSingleTimer = setTimeout(() => {
-					self._browseSingleTimer = null
+				st.indexBeforeSingle = st.index || 0
+				st.index = ((st.index || 0) + 1) % list.length
+				st.singleTimer = setTimeout(() => {
+					st.singleTimer = null
 					updateDisplay()
 				}, 400)
 			}

@@ -4,7 +4,7 @@ import { UpgradeScripts } from './upgrades.js'
 import { initActions } from './actions.js'
 import { initPresets } from './presets.js'
 import { initFeedbacks } from './feedbacks.js'
-import { initVariables } from './variables.js'
+import { initVariables, BROWSE_SLOTS } from './variables.js'
 import HttpApi from './http-api.js'
 import {
 	IRIS_LABELS,
@@ -219,7 +219,7 @@ class DatavideoViscaInstance extends InstanceBase<DatavideoViscaConfig> {
 	inquiryIndex: number = 0
 	pendingInquiry: Inquiry | null = null
 	httpApi: HttpApi | null = null
-	_browseIndex: number = 0
+	_browseState: Record<string, Record<string, any>> = {}
 
 	requestStateInterval: ReturnType<typeof setInterval> | null = null
 	pollAfterCommandTimer: ReturnType<typeof setTimeout> | null = null
@@ -252,14 +252,18 @@ class DatavideoViscaInstance extends InstanceBase<DatavideoViscaConfig> {
 			this.initHttpApi()
 		}
 
-		this._browseIndex = 0
-		this.setVariableValues({
+		this._browseState = {}
+		const initVals: Record<string, string | number> = {
 			pt_speed: this.ptSpeedIndex,
 			zoom_speed: this.zoomSpeedIndex,
-			browse_group: 'ID',
-			browse_label: 'Power',
-			browse_value: '\u2014',
-		})
+		}
+		for (let s = 1; s <= BROWSE_SLOTS; s++) {
+			this._browseState[s] = { index: 0 }
+			initVals[`browse_${s}_group`] = 'ID'
+			initVals[`browse_${s}_label`] = 'Power'
+			initVals[`browse_${s}_value`] = '\u2014'
+		}
+		this.setVariableValues(initVals)
 	}
 
 	async configUpdated(config: DatavideoViscaConfig): Promise<void> {
@@ -523,14 +527,23 @@ class DatavideoViscaInstance extends InstanceBase<DatavideoViscaConfig> {
 		this.log('debug', `Unrecognised packet: ${hex}`)
 	}
 
-	/** If the currently-browsed variable was updated, refresh the browse_value display. */
+	/** If the currently-browsed variable was updated in any slot, refresh its browse_N_value. */
 	refreshBrowseDisplay(updatedKeys: Record<string, unknown>): void {
 		const list = (this as any)._browseList
 		if (!list || list.length === 0) return
-		const entry = list[(this as any)._browseIndex || 0]
-		if (!entry || !(entry.variableId in updatedKeys)) return
-		const val = this.getVariableValue(entry.variableId)
-		this.setVariableValues({ browse_value: val !== undefined ? String(val) : '\u2014' })
+		const state = this._browseState
+		const values: Record<string, string> = {}
+		for (let s = 1; s <= BROWSE_SLOTS; s++) {
+			const st = state[s]
+			if (!st) continue
+			const entry = list[st.index || 0]
+			if (!entry || !(entry.variableId in updatedKeys)) continue
+			const val = this.getVariableValue(entry.variableId)
+			values[`browse_${s}_value`] = val !== undefined ? String(val) : '\u2014'
+		}
+		if (Object.keys(values).length > 0) {
+			this.setVariableValues(values)
+		}
 	}
 
 	sendVISCACommand(str: string): void {
