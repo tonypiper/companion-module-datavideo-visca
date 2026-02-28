@@ -220,6 +220,7 @@ class DatavideoViscaInstance extends InstanceBase<DatavideoViscaConfig> {
 	pendingInquiry: Inquiry | null = null
 	httpApi: HttpApi | null = null
 	_browseState: Record<string, Record<string, any>> = {}
+	_browseList: Array<{ variableId: string; name: string; group: string }> = []
 
 	requestStateInterval: ReturnType<typeof setInterval> | null = null
 	pollAfterCommandTimer: ReturnType<typeof setTimeout> | null = null
@@ -287,6 +288,10 @@ class DatavideoViscaInstance extends InstanceBase<DatavideoViscaConfig> {
 		}
 
 		this.updateVariableDefinitions()
+		// Reset browse indices — the browse list may have changed
+		for (const key of Object.keys(this._browseState)) {
+			this._browseState[key].index = 0
+		}
 		this.destroyHttpApi()
 		if (this.config.httpApi && this.config.host) {
 			this.initHttpApi()
@@ -530,8 +535,8 @@ class DatavideoViscaInstance extends InstanceBase<DatavideoViscaConfig> {
 
 	/** If the currently-browsed variable was updated in any slot, refresh its browse_N_value. */
 	refreshBrowseDisplay(updatedKeys: Record<string, unknown>): void {
-		const list = (this as any)._browseList
-		if (!list || list.length === 0) return
+		const list = this._browseList
+		if (list.length === 0) return
 		const state = this._browseState
 		const values: Record<string, string> = {}
 		for (let s = 1; s <= BROWSE_SLOTS; s++) {

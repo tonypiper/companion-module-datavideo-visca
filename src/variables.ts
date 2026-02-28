@@ -176,7 +176,7 @@ export function initVariables(self: InstanceBase<DatavideoViscaConfig> & Record<
 		browseSkip.add(`browse_${s}_label`)
 		browseSkip.add(`browse_${s}_value`)
 	}
-	;(self as any)._browseList = browseOrder.filter((v) => definedIds.has(v.variableId) && !browseSkip.has(v.variableId))
+	self._browseList = browseOrder.filter((v) => definedIds.has(v.variableId) && !browseSkip.has(v.variableId))
 
 	self.setVariableDefinitions(vars)
 }

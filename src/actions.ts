@@ -1097,7 +1097,6 @@ export function initActions(self: Self): void {
 		options: [slotOption],
 		callback: (action: any) => {
 			const slot = action.options.slot || '1'
-			if (!self._browseState) self._browseState = {}
 			if (!self._browseState[slot]) self._browseState[slot] = { index: 0 }
 			self._browseState[slot].downTime = Date.now()
 		},
@@ -1107,9 +1106,8 @@ export function initActions(self: Self): void {
 		options: [slotOption],
 		callback: (action: any) => {
 			const slot = action.options.slot || '1'
-			const list = self._browseList || []
+			const list = self._browseList
 			if (list.length === 0) return
-			if (!self._browseState) self._browseState = {}
 			if (!self._browseState[slot]) self._browseState[slot] = { index: 0 }
 			const st = self._browseState[slot]
 			const now = Date.now()
