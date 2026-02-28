@@ -127,6 +127,7 @@ export default class HttpApi {
 		if (Object.keys(values).length > 0) {
 			this.instance.log('debug', `HTTP API sysinfo: ${JSON.stringify(values)}`)
 			this.instance.setVariableValues(values)
+			;(this.instance as any).refreshBrowseDisplay?.(values)
 		}
 	}
 
@@ -156,6 +157,7 @@ export default class HttpApi {
 		if (values) {
 			this.instance.log('debug', `HTTP API poll: ${JSON.stringify(values)}`)
 			this.instance.setVariableValues(values)
+			;(this.instance as any).refreshBrowseDisplay?.(values)
 		}
 	}
 

@@ -492,6 +492,7 @@ class DatavideoViscaInstance extends InstanceBase<DatavideoViscaConfig> {
 					const values = inquiry.parse(visca)
 					this.log('debug', `Inquiry ${inquiry.name}: ${JSON.stringify(values)}`)
 					this.setVariableValues(values)
+					this.refreshBrowseDisplay(values)
 					if ('focus_mode' in values) {
 						this.checkFeedbacks('focus_mode_manual')
 					}
@@ -520,6 +521,16 @@ class DatavideoViscaInstance extends InstanceBase<DatavideoViscaConfig> {
 		// Log unrecognised responses
 		const hex = visca.toString('hex').match(/../g)!.join(' ')
 		this.log('debug', `Unrecognised packet: ${hex}`)
+	}
+
+	/** If the currently-browsed variable was updated, refresh the browse_value display. */
+	refreshBrowseDisplay(updatedKeys: Record<string, unknown>): void {
+		const list = (this as any)._browseList
+		if (!list || list.length === 0) return
+		const entry = list[(this as any)._browseIndex || 0]
+		if (!entry || !(entry.variableId in updatedKeys)) return
+		const val = this.getVariableValue(entry.variableId)
+		this.setVariableValues({ browse_value: val !== undefined ? String(val) : '\u2014' })
 	}
 
 	sendVISCACommand(str: string): void {
