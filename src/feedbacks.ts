@@ -1,4 +1,5 @@
-const {
+import type { InstanceBase } from '@companion-module/base'
+import {
 	FOCUS_MODE_MANUAL,
 	AE_MODE_MANUAL,
 	AE_MODE_SHUTTER,
@@ -9,9 +10,9 @@ const {
 	IRIS_POSITIONS,
 	SHUTTER_POSITIONS,
 	GAIN_POSITIONS,
-} = require('./constants')
+} from './constants.js'
 
-module.exports = function (self) {
+export function initFeedbacks(self: InstanceBase<any>): void {
 	self.setFeedbackDefinitions({
 		focus_mode_manual: {
 			type: 'boolean',
@@ -92,7 +93,7 @@ module.exports = function (self) {
 			defaultStyle: {},
 			options: [],
 			callback: () => {
-				return self.getVariableValue('iris_position') < IRIS_POSITIONS[IRIS_POSITIONS.length - 1]
+				return (self.getVariableValue('iris_position') as number) < IRIS_POSITIONS[IRIS_POSITIONS.length - 1]
 			},
 		},
 		iris_can_decrease: {
@@ -102,7 +103,7 @@ module.exports = function (self) {
 			defaultStyle: {},
 			options: [],
 			callback: () => {
-				return self.getVariableValue('iris_position') > IRIS_POSITIONS[0]
+				return (self.getVariableValue('iris_position') as number) > IRIS_POSITIONS[0]
 			},
 		},
 		shutter_can_increase: {
@@ -112,7 +113,7 @@ module.exports = function (self) {
 			defaultStyle: {},
 			options: [],
 			callback: () => {
-				return self.getVariableValue('shutter_position') < SHUTTER_POSITIONS[SHUTTER_POSITIONS.length - 1]
+				return (self.getVariableValue('shutter_position') as number) < SHUTTER_POSITIONS[SHUTTER_POSITIONS.length - 1]
 			},
 		},
 		shutter_can_decrease: {
@@ -122,7 +123,7 @@ module.exports = function (self) {
 			defaultStyle: {},
 			options: [],
 			callback: () => {
-				return self.getVariableValue('shutter_position') > SHUTTER_POSITIONS[0]
+				return (self.getVariableValue('shutter_position') as number) > SHUTTER_POSITIONS[0]
 			},
 		},
 		gain_can_increase: {
@@ -132,7 +133,7 @@ module.exports = function (self) {
 			defaultStyle: {},
 			options: [],
 			callback: () => {
-				return self.getVariableValue('gain_position') < GAIN_POSITIONS[GAIN_POSITIONS.length - 1]
+				return (self.getVariableValue('gain_position') as number) < GAIN_POSITIONS[GAIN_POSITIONS.length - 1]
 			},
 		},
 		gain_can_decrease: {
@@ -142,7 +143,7 @@ module.exports = function (self) {
 			defaultStyle: {},
 			options: [],
 			callback: () => {
-				return self.getVariableValue('gain_position') > GAIN_POSITIONS[0]
+				return (self.getVariableValue('gain_position') as number) > GAIN_POSITIONS[0]
 			},
 		},
 	})

@@ -26,10 +26,10 @@
 	},
 	"prettier": "@companion-module/tools/.prettierrc.json",
 	"scripts": {
-		"format": "prettier -w .",
 		"build": "rimraf dist && yarn build:main",
 		"build:main": "tsc -p tsconfig.build.json",
 		"dev": "tsc -p tsconfig.build.json --watch",
+		"format": "prettier -w .",
 		"lint:raw": "eslint",
 		"lint": "yarn lint:raw .",
 		"package": "yarn build && companion-module-build",
