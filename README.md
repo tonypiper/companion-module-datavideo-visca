@@ -60,17 +60,20 @@ The module includes preset buttons for all actions, ready to drag onto Companion
 
 ```
 src/
-  main.js        - Module entry point, TCP connection, DVIP framing, inquiries
-  actions.js     - All action definitions and callbacks
-  constants.js   - Shared choice arrays (iris, shutter, presets, speeds, modes)
-  presets.js     - Companion preset button definitions
-  variables.js   - Variable definitions
-  upgrades.js    - Configuration upgrade scripts
+  main.ts        - Module entry point, TCP connection, DVIP framing, inquiries
+  actions.ts     - All action definitions and callbacks
+  constants.ts   - Shared choice arrays (iris, shutter, presets, speeds, modes)
+  feedbacks.ts   - Boolean feedback definitions
+  presets.ts     - Companion preset button definitions
+  variables.ts   - Variable definitions and browse mode
+  upgrades.ts    - Configuration upgrade scripts
+  http-api.ts    - HTTP API polling client for extended camera parameters
 companion/
   manifest.json  - Companion v3 module manifest
   HELP.md        - User-facing help text
 tools/
   dvip-mock.js   - Mock DVIP server for testing
+  http-mock.js   - Mock HTTP API server for testing
 ```
 
 ### Mock DVIP Server
@@ -85,9 +88,11 @@ Point Companion at `127.0.0.1:5002` to test.
 
 ### Scripts
 
-| Command        | Description                         |
-| -------------- | ----------------------------------- |
-| `yarn mock`    | Start mock DVIP server on port 5002 |
-| `yarn lint`    | Run ESLint                          |
-| `yarn format`  | Format code with Prettier           |
-| `yarn package` | Build distributable package         |
+| Command        | Description                                  |
+| -------------- | -------------------------------------------- |
+| `yarn build`   | Compile TypeScript to `dist/`                |
+| `yarn dev`     | Watch mode — recompile on changes            |
+| `yarn mock`    | Start mock DVIP + HTTP servers for testing   |
+| `yarn lint`    | Run ESLint                                   |
+| `yarn format`  | Format code with Prettier                    |
+| `yarn package` | Build and create distributable package       |
