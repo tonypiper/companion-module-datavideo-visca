@@ -1,8 +1,8 @@
 {
 	"name": "datavideo-visca",
 	"version": "2.0.0",
-	"main": "dist/main.js",
 	"type": "module",
+	"main": "dist/main.js",
 	"license": "MIT",
 	"repository": {
 		"type": "git",

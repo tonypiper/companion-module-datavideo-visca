@@ -1,4 +1,14 @@
-module.exports = function (self) {
+import type { InstanceBase } from '@companion-module/base'
+
+interface BrowseEntry {
+	variableId: string
+	name: string
+	group: string
+}
+
+export function initVariables(self: InstanceBase<any>): void {
+	const config = (self as any).config
+
 	const vars = [
 		{
 			variableId: 'pt_speed',
@@ -82,7 +92,7 @@ module.exports = function (self) {
 		},
 	]
 
-	if (self.config.httpApi) {
+	if (config.httpApi) {
 		vars.push(
 			{ variableId: 'http_hue', name: 'Hue (-15 to +15) [HTTP]' },
 			{ variableId: 'http_saturation', name: 'Saturation [HTTP]' },
@@ -112,7 +122,7 @@ module.exports = function (self) {
 	// Browse order: grouped for phone troubleshooting
 	// 1. Identity/connection  2. Position  3. Exposure  4. White balance  5. Image processing  6. Internal
 	const G = { ID: 'ID', POS: 'POS', EXP: 'EXP', WB: 'WB', IMG: 'IMG', INT: 'INT' }
-	const browseOrder = [
+	const browseOrder: BrowseEntry[] = [
 		// Identity & connection
 		{ variableId: 'power_state', name: 'Power', group: G.ID },
 		{ variableId: 'http_model_name', name: 'Model', group: G.ID },
@@ -156,7 +166,7 @@ module.exports = function (self) {
 	// Only include variables that are currently defined
 	const definedIds = new Set(vars.map((v) => v.variableId))
 	const browseSkip = new Set(['browse_group', 'browse_label', 'browse_value'])
-	self._browseList = browseOrder.filter((v) => definedIds.has(v.variableId) && !browseSkip.has(v.variableId))
+	;(self as any)._browseList = browseOrder.filter((v) => definedIds.has(v.variableId) && !browseSkip.has(v.variableId))
 
 	self.setVariableDefinitions(vars)
 }
