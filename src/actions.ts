@@ -1,5 +1,5 @@
 import type { InstanceBase } from '@companion-module/base'
-import { createRequire } from 'module'
+import type { DatavideoViscaConfig } from './main.js'
 import {
 	IRIS,
 	IRIS_LABELS,
@@ -9,6 +9,7 @@ import {
 	SHUTTER_POSITIONS,
 	GAIN_LABELS,
 	GAIN_POSITIONS,
+	PRESET,
 	FOCUS_MODE,
 	FOCUS_MODE_AUTO,
 	FOCUS_MODE_MANUAL,
@@ -29,14 +30,7 @@ import {
 	CHOICE_ZOOMSPEED,
 } from './constants.js'
 
-// PRESET is built dynamically in constants.js (for-loop with push), so TypeScript
-// infers it as any[]. Use createRequire to load it with an explicit type assertion.
-const esmRequire = createRequire(import.meta.url)
-const { PRESET: PRESETS } = esmRequire('./constants.js') as {
-	PRESET: Array<{ id: string; label: string }>
-}
-
-type Self = InstanceBase<Record<string, never>> & Record<string, any>
+type Self = InstanceBase<DatavideoViscaConfig> & Record<string, any>
 
 function irisLabel(pos: number): string {
 	const label = IRIS_LABELS[pos]
@@ -911,8 +905,8 @@ export function initActions(self: Self): void {
 					type: 'dropdown',
 					label: 'Preset Nr.',
 					id: 'val',
-					choices: PRESETS,
-					default: PRESETS[0].id,
+					choices: PRESET,
+					default: PRESET[0].id,
 				},
 			],
 			callback: (action: any) => {
@@ -927,8 +921,8 @@ export function initActions(self: Self): void {
 					type: 'dropdown',
 					label: 'Preset Nr.',
 					id: 'val',
-					choices: PRESETS,
-					default: PRESETS[0].id,
+					choices: PRESET,
+					default: PRESET[0].id,
 				},
 			],
 			callback: (action: any) => {
@@ -1003,8 +997,8 @@ export function initActions(self: Self): void {
 					type: 'dropdown',
 					label: 'Preset Nr.',
 					id: 'val',
-					choices: PRESETS,
-					default: PRESETS[0].id,
+					choices: PRESET,
+					default: PRESET[0].id,
 				},
 				{
 					type: 'dropdown',

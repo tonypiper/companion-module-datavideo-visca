@@ -1,4 +1,5 @@
 import type { InstanceBase } from '@companion-module/base'
+import type { DatavideoViscaConfig } from './main.js'
 
 interface BrowseEntry {
 	variableId: string
@@ -6,8 +7,8 @@ interface BrowseEntry {
 	group: string
 }
 
-export function initVariables(self: InstanceBase<any>): void {
-	const config = (self as any).config
+export function initVariables(self: InstanceBase<DatavideoViscaConfig> & Record<string, any>): void {
+	const config = self.config as DatavideoViscaConfig
 
 	const vars = [
 		{

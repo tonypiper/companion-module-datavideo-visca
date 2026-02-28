@@ -1,15 +1,10 @@
 import { InstanceBase, Regex, runEntrypoint, InstanceStatus, TCPHelper } from '@companion-module/base'
 import type { SomeCompanionConfigField } from '@companion-module/base'
-// @ts-expect-error CJS module — will be converted to TypeScript in a separate unit
-import UpgradeScripts from './upgrades.js'
-// @ts-expect-error CJS module — will be converted to TypeScript in a separate unit
-import UpdateActions from './actions.js'
-// @ts-expect-error CJS module — will be converted to TypeScript in a separate unit
-import UpdatePresets from './presets.js'
-// @ts-expect-error CJS module — will be converted to TypeScript in a separate unit
-import UpdateFeedbacks from './feedbacks.js'
-// @ts-expect-error CJS module — will be converted to TypeScript in a separate unit
-import UpdateVariableDefinitions from './variables.js'
+import { UpgradeScripts } from './upgrades.js'
+import { initActions } from './actions.js'
+import { initPresets } from './presets.js'
+import { initFeedbacks } from './feedbacks.js'
+import { initVariables } from './variables.js'
 import HttpApi from './http-api.js'
 import {
 	IRIS_LABELS,
@@ -383,19 +378,19 @@ class DatavideoViscaInstance extends InstanceBase<DatavideoViscaConfig> {
 	}
 
 	updateActions(): void {
-		UpdateActions(this)
+		initActions(this)
 	}
 
 	updateFeedbacks(): void {
-		UpdateFeedbacks(this)
+		initFeedbacks(this)
 	}
 
 	updatePresets(): void {
-		UpdatePresets(this)
+		initPresets(this)
 	}
 
 	updateVariableDefinitions(): void {
-		UpdateVariableDefinitions(this)
+		initVariables(this)
 	}
 
 	initHttpApi(): void {

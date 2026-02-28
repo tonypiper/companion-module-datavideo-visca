@@ -1,4 +1,5 @@
 import type { InstanceBase } from '@companion-module/base'
+import type { DatavideoViscaConfig } from './main.js'
 import {
 	FOCUS_MODE_MANUAL,
 	AE_MODE_MANUAL,
@@ -12,7 +13,7 @@ import {
 	GAIN_POSITIONS,
 } from './constants.js'
 
-export function initFeedbacks(self: InstanceBase<any>): void {
+export function initFeedbacks(self: InstanceBase<DatavideoViscaConfig>): void {
 	self.setFeedbackDefinitions({
 		focus_mode_manual: {
 			type: 'boolean',

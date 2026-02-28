@@ -5,7 +5,6 @@
 	"compilerOptions": {
 		"outDir": "./dist",
 		"baseUrl": "./",
-		"allowJs": true,
 		"paths": {
 			"*": ["./node_modules/*"]
 		},

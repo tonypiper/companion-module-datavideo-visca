@@ -4,16 +4,7 @@ import type {
 	CompanionStaticUpgradeResult,
 	CompanionUpgradeContext,
 } from '@companion-module/base'
-
-// Local interface matching the module config shape.
-// This avoids importing from main.js which is not yet converted to TypeScript.
-interface DatavideoViscaConfig {
-	host?: string
-	port?: number
-	httpApi?: boolean
-	httpPort?: number
-	httpPollInterval?: number
-}
+import type { DatavideoViscaConfig } from './main.js'
 
 export const UpgradeScripts: CompanionStaticUpgradeScript<DatavideoViscaConfig>[] = [
 	function addHttpApiDefaults(

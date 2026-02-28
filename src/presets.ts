@@ -1,4 +1,5 @@
 import { combineRgb, type CompanionPresetDefinitions, type InstanceBase } from '@companion-module/base'
+import type { DatavideoViscaConfig } from './main.js'
 
 const WHITE = combineRgb(255, 255, 255)
 const BLACK = combineRgb(0, 0, 0)
@@ -54,7 +55,7 @@ function disabledWhen(feedbackId: string) {
 	}
 }
 
-export function initPresets(self: InstanceBase<any>): void {
+export function initPresets(self: InstanceBase<DatavideoViscaConfig>): void {
 	const presets: CompanionPresetDefinitions = {}
 
 	// Pan/Tilt direction presets
