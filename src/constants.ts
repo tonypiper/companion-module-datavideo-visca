@@ -1,4 +1,6 @@
-const IRIS = [
+import type { DropdownChoice } from '@companion-module/base'
+
+export const IRIS: DropdownChoice[] = [
 	{ id: '11', label: 'F1.8' },
 	{ id: '10', label: 'F2.0' },
 	{ id: '0F', label: 'F2.4' },
@@ -18,7 +20,7 @@ const IRIS = [
 // VISCA shutter positions 5-21
 // 25fps and 50/60fps use the same VISCA positions but different speeds
 // We show both where they differ: "60fps (25fps)"
-const SHUTTER = [
+export const SHUTTER: DropdownChoice[] = [
 	{ id: '05', label: '1/30 (1/25)' },
 	{ id: '06', label: '1/60 (1/50)' },
 	{ id: '07', label: '1/90 (1/75)' },
@@ -39,22 +41,22 @@ const SHUTTER = [
 ]
 
 // Gain: 0dB to 42dB in 3dB steps (VISCA positions 1-15)
-const GAIN = []
+export const GAIN: DropdownChoice[] = []
 for (let i = 0; i <= 14; i++) {
 	GAIN.push({ id: ('0' + (i + 1).toString(16)).slice(-2), label: i * 3 + 'dB' })
 }
 
-const PRESET = []
+export const PRESET: DropdownChoice[] = []
 for (let i = 1; i <= 64; ++i) {
 	PRESET.push({ id: ('0' + i.toString(16)).slice(-2), label: 'Preset ' + i })
 }
 
-const FOCUS_MODE = [
+export const FOCUS_MODE: DropdownChoice[] = [
 	{ id: '0', label: 'Auto' },
 	{ id: '1', label: 'Manual' },
 ]
 
-const EXPOSURE_MODE = [
+export const EXPOSURE_MODE: DropdownChoice[] = [
 	{ id: '0', label: 'Full Auto' },
 	{ id: '1', label: 'Manual' },
 	{ id: '2', label: 'Shutter Pri' },
@@ -62,7 +64,7 @@ const EXPOSURE_MODE = [
 	{ id: '4', label: 'Bright' },
 ]
 
-const WB_MODE = [
+export const WB_MODE: DropdownChoice[] = [
 	{ id: '0', label: 'Auto' },
 	{ id: '1', label: 'Indoor' },
 	{ id: '2', label: 'Outdoor' },
@@ -71,7 +73,7 @@ const WB_MODE = [
 	{ id: '5', label: 'Manual' },
 ]
 
-const SPEED = [
+export const SPEED: DropdownChoice[] = [
 	{ id: '01', label: 'Speed 01 (Slow)' },
 	{ id: '02', label: 'Speed 02' },
 	{ id: '03', label: 'Speed 03' },
@@ -98,7 +100,7 @@ const SPEED = [
 	{ id: '18', label: 'Speed 24 (Fast)' },
 ]
 
-const CHOICE_ZOOMSPEED = [
+export const CHOICE_ZOOMSPEED: DropdownChoice[] = [
 	{ id: '00', label: 'Speed 00 (Default)' },
 	{ id: '01', label: 'Speed 01 (Slow)' },
 	{ id: '02', label: 'Speed 02' },
@@ -110,56 +112,31 @@ const CHOICE_ZOOMSPEED = [
 ]
 
 // Canonical variable value strings (used by inquiry parsers and action guards)
-const FOCUS_MODE_AUTO = 'Auto'
-const FOCUS_MODE_MANUAL = 'Manual'
+export const FOCUS_MODE_AUTO = 'Auto'
+export const FOCUS_MODE_MANUAL = 'Manual'
 
-const AE_MODE_AUTO = 'Auto'
-const AE_MODE_MANUAL = 'Manual'
-const AE_MODE_SHUTTER = 'Shutter'
-const AE_MODE_IRIS = 'Iris'
-const AE_MODE_BRIGHT = 'Bright'
+export const AE_MODE_AUTO = 'Auto'
+export const AE_MODE_MANUAL = 'Manual'
+export const AE_MODE_SHUTTER = 'Shutter'
+export const AE_MODE_IRIS = 'Iris'
+export const AE_MODE_BRIGHT = 'Bright'
 
-const WB_MODE_AUTO = 'Auto'
-const WB_MODE_INDOOR = 'Indoor'
-const WB_MODE_OUTDOOR = 'Outdoor'
-const WB_MODE_ONEPUSH = 'OnePush'
-const WB_MODE_VAR = 'VAR'
-const WB_MODE_MANUAL = 'Manual'
+export const WB_MODE_AUTO = 'Auto'
+export const WB_MODE_INDOOR = 'Indoor'
+export const WB_MODE_OUTDOOR = 'Outdoor'
+export const WB_MODE_ONEPUSH = 'OnePush'
+export const WB_MODE_VAR = 'VAR'
+export const WB_MODE_MANUAL = 'Manual'
 
-const IRIS_LABELS = Object.fromEntries(IRIS.map((i) => [parseInt(i.id, 16), i.label]))
-const IRIS_POSITIONS = IRIS.map((i) => parseInt(i.id, 16)).sort((a, b) => a - b)
-const SHUTTER_LABELS = Object.fromEntries(SHUTTER.map((s) => [parseInt(s.id, 16), s.label]))
-const SHUTTER_POSITIONS = SHUTTER.map((s) => parseInt(s.id, 16)).sort((a, b) => a - b)
-const GAIN_LABELS = Object.fromEntries(GAIN.map((g) => [parseInt(g.id, 16), g.label]))
-const GAIN_POSITIONS = GAIN.map((g) => parseInt(g.id, 16)).sort((a, b) => a - b)
-
-module.exports = {
-	IRIS,
-	IRIS_LABELS,
-	IRIS_POSITIONS,
-	SHUTTER,
-	SHUTTER_LABELS,
-	SHUTTER_POSITIONS,
-	GAIN,
-	GAIN_LABELS,
-	GAIN_POSITIONS,
-	PRESET,
-	FOCUS_MODE,
-	EXPOSURE_MODE,
-	WB_MODE,
-	SPEED,
-	CHOICE_ZOOMSPEED,
-	FOCUS_MODE_AUTO,
-	FOCUS_MODE_MANUAL,
-	AE_MODE_AUTO,
-	AE_MODE_MANUAL,
-	AE_MODE_SHUTTER,
-	AE_MODE_IRIS,
-	AE_MODE_BRIGHT,
-	WB_MODE_AUTO,
-	WB_MODE_INDOOR,
-	WB_MODE_OUTDOOR,
-	WB_MODE_ONEPUSH,
-	WB_MODE_VAR,
-	WB_MODE_MANUAL,
-}
+export const IRIS_LABELS: Record<number, string> = Object.fromEntries(
+	IRIS.map((i) => [parseInt(String(i.id), 16), i.label]),
+)
+export const IRIS_POSITIONS: number[] = IRIS.map((i) => parseInt(String(i.id), 16)).sort((a, b) => a - b)
+export const SHUTTER_LABELS: Record<number, string> = Object.fromEntries(
+	SHUTTER.map((s) => [parseInt(String(s.id), 16), s.label]),
+)
+export const SHUTTER_POSITIONS: number[] = SHUTTER.map((s) => parseInt(String(s.id), 16)).sort((a, b) => a - b)
+export const GAIN_LABELS: Record<number, string> = Object.fromEntries(
+	GAIN.map((g) => [parseInt(String(g.id), 16), g.label]),
+)
+export const GAIN_POSITIONS: number[] = GAIN.map((g) => parseInt(String(g.id), 16)).sort((a, b) => a - b)
