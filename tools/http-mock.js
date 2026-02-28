@@ -10,7 +10,7 @@
  * Default port is 80. Point Companion's HTTP API port at 127.0.0.1:<port>.
  */
 
-const http = require('http')
+import http from 'node:http'
 
 const PORT = parseInt(process.argv[2], 10) || 80
 

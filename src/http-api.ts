@@ -1,7 +1,22 @@
-const http = require('http')
+import http from 'node:http'
+import type { InstanceBase } from '@companion-module/base'
 
-class HttpApi {
-	constructor(instance) {
+interface AjaxcomResponse {
+	stValue?: Record<string, unknown> | Record<string, unknown>[]
+	SysAttr?: Record<string, unknown>
+	QueryVersion?: Record<string, unknown>
+	VideoParam?: Record<string, unknown>
+	nRetVal?: number
+}
+
+export default class HttpApi {
+	private instance: InstanceBase<Record<string, unknown>>
+	private host: string | null
+	private port: number
+	private pollTimer: ReturnType<typeof setInterval> | null
+	private consecutiveFailures: number
+
+	constructor(instance: InstanceBase<Record<string, unknown>>) {
 		this.instance = instance
 		this.host = null
 		this.port = 80
@@ -9,37 +24,39 @@ class HttpApi {
 		this.consecutiveFailures = 0
 	}
 
-	init(host, port, intervalMs) {
+	init(host: string, port: number, intervalMs: number): void {
 		this.host = host
 		this.port = port || 80
 		const interval = intervalMs || 3000
 		this.instance.log('info', `HTTP API: starting — host=${this.host} port=${this.port} interval=${interval}ms`)
-		this.pollSysInfo()
+		void this.pollSysInfo()
 		this.startPolling(interval)
 	}
 
-	destroy() {
+	destroy(): void {
 		this.stopPolling()
 		this.host = null
 		this.consecutiveFailures = 0
 	}
 
-	startPolling(intervalMs) {
+	startPolling(intervalMs: number): void {
 		this.stopPolling()
 		this.pollTimer = setInterval(() => {
-			this.pollVideoParam()
+			void this.pollVideoParam()
 		}, intervalMs)
 	}
 
-	stopPolling() {
-		clearInterval(this.pollTimer)
+	stopPolling(): void {
+		if (this.pollTimer) {
+			clearInterval(this.pollTimer)
+		}
 		this.pollTimer = null
 	}
 
-	_postAjaxcom(cmdObj) {
+	async _postAjaxcom(cmdObj: Record<string, unknown>): Promise<AjaxcomResponse | null> {
 		return new Promise((resolve) => {
 			const body = 'szCmd=' + encodeURIComponent(JSON.stringify(cmdObj))
-			const options = {
+			const options: http.RequestOptions = {
 				hostname: this.host,
 				port: this.port,
 				path: '/ajaxcom',
@@ -53,14 +70,14 @@ class HttpApi {
 
 			const req = http.request(options, (res) => {
 				let data = ''
-				res.on('data', (chunk) => {
+				res.on('data', (chunk: string) => {
 					data += chunk
 				})
 				res.on('end', () => {
 					try {
-						resolve(JSON.parse(data))
+						resolve(JSON.parse(data) as AjaxcomResponse)
 					} catch (e) {
-						this.instance.log('debug', `HTTP API: failed to parse response: ${e.message}`)
+						this.instance.log('debug', `HTTP API: failed to parse response: ${(e as Error).message}`)
 						resolve(null)
 					}
 				})
@@ -76,7 +93,7 @@ class HttpApi {
 				resolve(null)
 			})
 
-			req.on('error', (e) => {
+			req.on('error', (e: Error) => {
 				if (this.consecutiveFailures === 0) {
 					this.instance.log('warn', `HTTP API: request error: ${e.message}`)
 				} else {
@@ -90,19 +107,21 @@ class HttpApi {
 		})
 	}
 
-	async pollSysInfo() {
-		const sysAttr = await this._postAjaxcom({ GetEnv: { SysAttr: { nChannel: -1 } } })
-		const version = await this._postAjaxcom({ QueryState: { QueryVersion: {} } })
+	async pollSysInfo(): Promise<void> {
+		const [sysAttr, version] = await Promise.all([
+			this._postAjaxcom({ GetEnv: { SysAttr: { nChannel: -1 } } }),
+			this._postAjaxcom({ QueryState: { QueryVersion: {} } }),
+		])
 
-		const values = {}
+		const values: Record<string, string> = {}
 		// Real hardware wraps the response in stValue
-		const sysData = sysAttr?.stValue || sysAttr?.SysAttr
+		const sysData = (sysAttr?.stValue as Record<string, unknown>) || sysAttr?.SysAttr
 		if (sysData) {
-			values.http_model_name = sysData.szModelName || ''
+			values.http_model_name = (sysData.szModelName as string) || ''
 		}
-		const verData = version?.stValue || version?.QueryVersion
+		const verData = (version?.stValue as Record<string, unknown>) || version?.QueryVersion
 		if (verData) {
-			values.http_firmware_version = verData.szFirmwareVersion || ''
+			values.http_firmware_version = (verData.szFirmwareVersion as string) || ''
 		}
 
 		if (Object.keys(values).length > 0) {
@@ -111,7 +130,7 @@ class HttpApi {
 		}
 	}
 
-	async pollVideoParam() {
+	async pollVideoParam(): Promise<void> {
 		const data = await this._postAjaxcom({ GetEnv: { VideoParam: { nChannel: 0 } } })
 
 		if (!data) {
@@ -140,16 +159,16 @@ class HttpApi {
 		}
 	}
 
-	_parseVideoParam(data) {
+	_parseVideoParam(data: AjaxcomResponse): Record<string, string | number> | null {
 		// Real hardware: { stValue: [{ nChannel: 0, stImg: {...}, ... }], nRetVal: 0 }
 		// Mock server:   { VideoParam: { stColor: {...}, stImg: {...}, ... } }
-		let vp = data.VideoParam
+		let vp = data.VideoParam as Record<string, Record<string, number>> | undefined
 		if (!vp && Array.isArray(data.stValue) && data.stValue.length > 0) {
-			vp = data.stValue[0]
+			vp = data.stValue[0] as Record<string, Record<string, number>>
 		}
 		if (!vp) return null
 
-		const values = {}
+		const values: Record<string, string | number> = {}
 		const color = vp.stColor
 		if (color) {
 			if (color.hue !== undefined) values.http_hue = color.hue - 15
@@ -185,7 +204,7 @@ class HttpApi {
 			if (expCompEn !== undefined) values.http_exp_comp_enabled = expCompEn ? 'On' : 'Off'
 			const flicker = exp.antiFlicker !== undefined ? exp.antiFlicker : exp.antiflicker
 			if (flicker !== undefined) {
-				const flickerLabels = { 0: 'Off', 1: '50Hz', 2: '60Hz' }
+				const flickerLabels: Record<number, string> = { 0: 'Off', 1: '50Hz', 2: '60Hz' }
 				values.http_anti_flicker = flickerLabels[flicker] || String(flicker)
 			}
 			const slowShutter = exp.slowShutter !== undefined ? exp.slowShutter : exp.slowLight
@@ -199,5 +218,3 @@ class HttpApi {
 		return values
 	}
 }
-
-module.exports = HttpApi

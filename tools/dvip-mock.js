@@ -11,7 +11,7 @@
  * Point Companion at 127.0.0.1:<port> to test.
  */
 
-const net = require('net')
+import net from 'node:net'
 
 const PORT = parseInt(process.argv[2], 10) || 5002
 

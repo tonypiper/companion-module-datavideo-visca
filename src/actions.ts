@@ -1,4 +1,6 @@
-const {
+import type { InstanceBase } from '@companion-module/base'
+import type { DatavideoViscaConfig } from './main.js'
+import {
 	IRIS,
 	IRIS_LABELS,
 	IRIS_POSITIONS,
@@ -26,25 +28,27 @@ const {
 	WB_MODE_VAR,
 	SPEED,
 	CHOICE_ZOOMSPEED,
-} = require('./constants')
+} from './constants.js'
 
-function irisLabel(pos) {
+type Self = InstanceBase<DatavideoViscaConfig> & Record<string, any>
+
+function irisLabel(pos: number): string {
 	const label = IRIS_LABELS[pos]
 	return label ? label + ' (' + pos + ')' : 'Pos ' + pos
 }
 
-function shutterLabel(pos) {
+function shutterLabel(pos: number): string {
 	const label = SHUTTER_LABELS[pos]
 	return label ? label + ' (' + pos + ')' : 'Pos ' + pos
 }
 
-function gainLabel(pos) {
+function gainLabel(pos: number): string {
 	const label = GAIN_LABELS[pos]
 	return label ? label + ' (' + pos + ')' : 'Pos ' + pos
 }
 
-module.exports = function (self) {
-	const actions = {
+export function initActions(self: Self): void {
+	const actions: Record<string, any> = {
 		left: {
 			name: 'Pan Left',
 			options: [],
@@ -155,7 +159,7 @@ module.exports = function (self) {
 					default: SPEED[0].id,
 				},
 			],
-			callback: (action) => {
+			callback: (action: any) => {
 				self.ptSpeed = action.options.speed
 
 				let idx = -1
@@ -208,7 +212,7 @@ module.exports = function (self) {
 					default: '1',
 				},
 			],
-			callback: (_action) => {
+			callback: (_action: any) => {
 				// ptSlow had no action handler in original
 			},
 		},
@@ -253,7 +257,7 @@ module.exports = function (self) {
 					default: CHOICE_ZOOMSPEED[0].id,
 				},
 			],
-			callback: (action) => {
+			callback: (action: any) => {
 				self.zoomSpeed = action.options.speed
 
 				let idx = -1
@@ -312,7 +316,7 @@ module.exports = function (self) {
 					max: 99999,
 				},
 			],
-			callback: (action) => {
+			callback: (action: any) => {
 				const opt = action.options
 				// Zoom in for ms
 				let cmd = '\x01\x04\x07\x27\xff'
@@ -342,7 +346,7 @@ module.exports = function (self) {
 					max: 99999,
 				},
 			],
-			callback: (action) => {
+			callback: (action: any) => {
 				const cmd = '\x01\x04\x07\x27\xff'
 				self.sendVISCACommand(cmd)
 
@@ -364,7 +368,7 @@ module.exports = function (self) {
 					max: 99999,
 				},
 			],
-			callback: (action) => {
+			callback: (action: any) => {
 				const cmd = '\x01\x04\x07\x37\xff'
 				self.sendVISCACommand(cmd)
 
@@ -379,7 +383,7 @@ module.exports = function (self) {
 			options: [],
 			callback: () => {
 				if (self.getVariableValue('focus_mode') !== FOCUS_MODE_MANUAL) {
-					self.log('debug', 'Focus Near ignored — focus mode is not Manual')
+					self.log('debug', 'Focus Near ignored \u2014 focus mode is not Manual')
 					return
 				}
 				const cmd = '\x01\x04\x08\x03\xFF'
@@ -392,7 +396,7 @@ module.exports = function (self) {
 			options: [],
 			callback: () => {
 				if (self.getVariableValue('focus_mode') !== FOCUS_MODE_MANUAL) {
-					self.log('debug', 'Focus Far ignored — focus mode is not Manual')
+					self.log('debug', 'Focus Far ignored \u2014 focus mode is not Manual')
 					return
 				}
 				const cmd = '\x01\x04\x08\x02\xFF'
@@ -415,7 +419,7 @@ module.exports = function (self) {
 			options: [],
 			callback: () => {
 				if (self.getVariableValue('focus_mode') !== FOCUS_MODE_MANUAL) {
-					self.log('debug', 'Focus One Push ignored — focus mode is not Manual')
+					self.log('debug', 'Focus One Push ignored \u2014 focus mode is not Manual')
 					return
 				}
 				self.sendVISCACommand('\x01\x04\x18\x01\xFF')
@@ -432,7 +436,7 @@ module.exports = function (self) {
 					default: '0',
 				},
 			],
-			callback: (action) => {
+			callback: (action: any) => {
 				const match = FOCUS_MODE.find((m) => m.id === action.options.bol)
 				self.setVariableValues({ focus_mode: match ? match.label : action.options.bol.toString() })
 				self.checkFeedbacks('focus_mode_manual')
@@ -473,15 +477,17 @@ module.exports = function (self) {
 					default: '0',
 				},
 			],
-			callback: (action) => {
-				const AE_OPTION_LABELS = {
+			callback: (action: any) => {
+				const AE_OPTION_LABELS: Record<number, string> = {
 					0: AE_MODE_AUTO,
 					1: AE_MODE_MANUAL,
 					2: AE_MODE_SHUTTER,
 					3: AE_MODE_IRIS,
 					4: AE_MODE_BRIGHT,
 				}
-				self.setVariableValues({ ae_mode: AE_OPTION_LABELS[action.options.val] || action.options.val.toString() })
+				self.setVariableValues({
+					ae_mode: AE_OPTION_LABELS[action.options.val] || action.options.val.toString(),
+				})
 				self.checkFeedbacks('ae_mode_allows_iris', 'ae_mode_allows_shutter', 'ae_mode_manual')
 				let cmd = ''
 				if (action.options.val == 0) {
@@ -527,13 +533,13 @@ module.exports = function (self) {
 			callback: () => {
 				const mode = self.getVariableValue('ae_mode')
 				if (mode !== AE_MODE_MANUAL && mode !== AE_MODE_IRIS) {
-					self.log('debug', 'Iris Up ignored — exposure mode does not allow iris control')
+					self.log('debug', 'Iris Up ignored \u2014 exposure mode does not allow iris control')
 					return
 				}
-				const pos = self.getVariableValue('iris_position')
+				const pos = Number(self.getVariableValue('iris_position') ?? 0)
 				const idx = IRIS_POSITIONS.indexOf(pos)
 				if (idx === IRIS_POSITIONS.length - 1) {
-					self.log('debug', 'Iris Up ignored — already at maximum (F1.8)')
+					self.log('debug', 'Iris Up ignored \u2014 already at maximum (F1.8)')
 					return
 				}
 				const newPos = idx >= 0 ? IRIS_POSITIONS[idx + 1] : (IRIS_POSITIONS.find((p) => p > pos) ?? pos)
@@ -548,13 +554,13 @@ module.exports = function (self) {
 			callback: () => {
 				const mode = self.getVariableValue('ae_mode')
 				if (mode !== AE_MODE_MANUAL && mode !== AE_MODE_IRIS) {
-					self.log('debug', 'Iris Down ignored — exposure mode does not allow iris control')
+					self.log('debug', 'Iris Down ignored \u2014 exposure mode does not allow iris control')
 					return
 				}
-				const pos = self.getVariableValue('iris_position')
+				const pos = Number(self.getVariableValue('iris_position') ?? 0)
 				const idx = IRIS_POSITIONS.indexOf(pos)
 				if (idx === 0) {
-					self.log('debug', 'Iris Down ignored — already at minimum (Close)')
+					self.log('debug', 'Iris Down ignored \u2014 already at minimum (Close)')
 					return
 				}
 				const newPos = idx > 0 ? IRIS_POSITIONS[idx - 1] : ([...IRIS_POSITIONS].reverse().find((p) => p < pos) ?? pos)
@@ -574,7 +580,7 @@ module.exports = function (self) {
 					default: IRIS[0].id,
 				},
 			],
-			callback: (action) => {
+			callback: (action: any) => {
 				self.setVariableValues({ iris_position: parseInt(action.options.val, 16) })
 				const cmd = Buffer.from('\x01\x04\x4B\x00\x00\x00\x00\xFF', 'binary')
 				cmd.writeUInt8((parseInt(action.options.val, 16) & 0xf0) >> 4, 5)
@@ -588,7 +594,7 @@ module.exports = function (self) {
 			callback: () => {
 				const mode = self.getVariableValue('ae_mode')
 				if (mode !== AE_MODE_MANUAL && mode !== AE_MODE_IRIS) {
-					self.log('debug', 'Iris Reset ignored — exposure mode does not allow iris control')
+					self.log('debug', 'Iris Reset ignored \u2014 exposure mode does not allow iris control')
 					return
 				}
 				self.sendVISCACommand('\x01\x04\x0B\x00\xFF')
@@ -600,14 +606,14 @@ module.exports = function (self) {
 			callback: () => {
 				const mode = self.getVariableValue('ae_mode')
 				if (mode !== AE_MODE_MANUAL && mode !== AE_MODE_SHUTTER) {
-					self.log('debug', 'Shutter Up ignored — exposure mode does not allow shutter control')
+					self.log('debug', 'Shutter Up ignored \u2014 exposure mode does not allow shutter control')
 					return
 				}
 				const positions = SHUTTER_POSITIONS
-				const pos = self.getVariableValue('shutter_position')
+				const pos = Number(self.getVariableValue('shutter_position') ?? 0)
 				const idx = positions.indexOf(pos)
 				if (idx === positions.length - 1) {
-					self.log('debug', 'Shutter Up ignored — already at maximum')
+					self.log('debug', 'Shutter Up ignored \u2014 already at maximum')
 					return
 				}
 				const newPos = idx >= 0 ? positions[idx + 1] : (positions.find((p) => p > pos) ?? pos)
@@ -622,14 +628,14 @@ module.exports = function (self) {
 			callback: () => {
 				const mode = self.getVariableValue('ae_mode')
 				if (mode !== AE_MODE_MANUAL && mode !== AE_MODE_SHUTTER) {
-					self.log('debug', 'Shutter Down ignored — exposure mode does not allow shutter control')
+					self.log('debug', 'Shutter Down ignored \u2014 exposure mode does not allow shutter control')
 					return
 				}
 				const positions = SHUTTER_POSITIONS
-				const pos = self.getVariableValue('shutter_position')
+				const pos = Number(self.getVariableValue('shutter_position') ?? 0)
 				const idx = positions.indexOf(pos)
 				if (idx === 0) {
-					self.log('debug', 'Shutter Down ignored — already at minimum')
+					self.log('debug', 'Shutter Down ignored \u2014 already at minimum')
 					return
 				}
 				const newPos = idx > 0 ? positions[idx - 1] : ([...positions].reverse().find((p) => p < pos) ?? pos)
@@ -649,7 +655,7 @@ module.exports = function (self) {
 					default: SHUTTER[0].id,
 				},
 			],
-			callback: (action) => {
+			callback: (action: any) => {
 				self.setVariableValues({ shutter_position: parseInt(action.options.val, 16) })
 				const cmd = Buffer.from('\x01\x04\x4A\x00\x00\x00\x00\xFF', 'binary')
 				cmd.writeUInt8((parseInt(action.options.val, 16) & 0xf0) >> 4, 5)
@@ -663,7 +669,7 @@ module.exports = function (self) {
 			callback: () => {
 				const mode = self.getVariableValue('ae_mode')
 				if (mode !== AE_MODE_MANUAL && mode !== AE_MODE_SHUTTER) {
-					self.log('debug', 'Shutter Reset ignored — exposure mode does not allow shutter control')
+					self.log('debug', 'Shutter Reset ignored \u2014 exposure mode does not allow shutter control')
 					return
 				}
 				self.sendVISCACommand('\x01\x04\x0A\x00\xFF')
@@ -674,13 +680,13 @@ module.exports = function (self) {
 			options: [],
 			callback: () => {
 				if (self.getVariableValue('ae_mode') !== AE_MODE_MANUAL) {
-					self.log('debug', 'Gain Up ignored — exposure mode is not Manual')
+					self.log('debug', 'Gain Up ignored \u2014 exposure mode is not Manual')
 					return
 				}
-				const pos = self.getVariableValue('gain_position')
+				const pos = Number(self.getVariableValue('gain_position') ?? 0)
 				const idx = GAIN_POSITIONS.indexOf(pos)
 				if (idx === GAIN_POSITIONS.length - 1) {
-					self.log('debug', 'Gain Up ignored — already at maximum')
+					self.log('debug', 'Gain Up ignored \u2014 already at maximum')
 					return
 				}
 				const newPos = idx >= 0 ? GAIN_POSITIONS[idx + 1] : (GAIN_POSITIONS.find((p) => p > pos) ?? pos)
@@ -694,13 +700,13 @@ module.exports = function (self) {
 			options: [],
 			callback: () => {
 				if (self.getVariableValue('ae_mode') !== AE_MODE_MANUAL) {
-					self.log('debug', 'Gain Down ignored — exposure mode is not Manual')
+					self.log('debug', 'Gain Down ignored \u2014 exposure mode is not Manual')
 					return
 				}
-				const pos = self.getVariableValue('gain_position')
+				const pos = Number(self.getVariableValue('gain_position') ?? 0)
 				const idx = GAIN_POSITIONS.indexOf(pos)
 				if (idx === 0) {
-					self.log('debug', 'Gain Down ignored — already at minimum')
+					self.log('debug', 'Gain Down ignored \u2014 already at minimum')
 					return
 				}
 				const newPos = idx > 0 ? GAIN_POSITIONS[idx - 1] : ([...GAIN_POSITIONS].reverse().find((p) => p < pos) ?? pos)
@@ -714,7 +720,7 @@ module.exports = function (self) {
 			options: [],
 			callback: () => {
 				if (self.getVariableValue('ae_mode') !== AE_MODE_MANUAL) {
-					self.log('debug', 'Gain Reset ignored — exposure mode is not Manual')
+					self.log('debug', 'Gain Reset ignored \u2014 exposure mode is not Manual')
 					return
 				}
 				self.sendVISCACommand('\x01\x04\x0C\x00\xFF')
@@ -731,8 +737,8 @@ module.exports = function (self) {
 					default: '0',
 				},
 			],
-			callback: (action) => {
-				const WB_OPTION_LABELS = {
+			callback: (action: any) => {
+				const WB_OPTION_LABELS: Record<number, string> = {
 					0: WB_MODE_AUTO,
 					1: WB_MODE_INDOOR,
 					2: WB_MODE_OUTDOOR,
@@ -740,7 +746,9 @@ module.exports = function (self) {
 					4: WB_MODE_VAR,
 					5: WB_MODE_MANUAL,
 				}
-				self.setVariableValues({ wb_mode: WB_OPTION_LABELS[action.options.val] || action.options.val.toString() })
+				self.setVariableValues({
+					wb_mode: WB_OPTION_LABELS[action.options.val] || action.options.val.toString(),
+				})
 				self.checkFeedbacks('wb_mode_manual', 'wb_mode_onepush', 'wb_mode_var')
 				const mode = parseInt(action.options.val, 10)
 				const cmd = '\x01\x04\x35' + String.fromCharCode(mode) + '\xFF'
@@ -772,7 +780,7 @@ module.exports = function (self) {
 			options: [],
 			callback: () => {
 				if (self.getVariableValue('wb_mode') !== WB_MODE_ONEPUSH) {
-					self.log('debug', 'WB One Push ignored — WB mode is not OnePush')
+					self.log('debug', 'WB One Push ignored \u2014 WB mode is not OnePush')
 					return
 				}
 				const cmd = '\x01\x04\x10\x05\xFF'
@@ -792,9 +800,9 @@ module.exports = function (self) {
 					step: 100,
 				},
 			],
-			callback: (action) => {
+			callback: (action: any) => {
 				if (self.getVariableValue('wb_mode') !== WB_MODE_VAR) {
-					self.log('debug', 'Color Temperature ignored — WB mode is not VAR')
+					self.log('debug', 'Color Temperature ignored \u2014 WB mode is not VAR')
 					return
 				}
 				const kelvin = parseInt(action.options.val, 10)
@@ -810,12 +818,12 @@ module.exports = function (self) {
 			options: [],
 			callback: () => {
 				if (self.getVariableValue('wb_mode') !== WB_MODE_VAR) {
-					self.log('debug', 'Color Temperature Cycle ignored — WB mode is not VAR')
+					self.log('debug', 'Color Temperature Cycle ignored \u2014 WB mode is not VAR')
 					return
 				}
 				const temps = [2400, 3000, 3200, 4000, 4500, 5000, 5600, 6500, 7100]
 				const current = self.getVariableValue('color_temp')
-				const currentKelvin = parseInt(current, 10) || 0
+				const currentKelvin = parseInt(String(current ?? '0'), 10) || 0
 				const idx = temps.indexOf(currentKelvin)
 				const next = temps[(idx + 1) % temps.length]
 				const pos = Math.round(((next - 2400) * 39) / 4700) + 12
@@ -829,7 +837,7 @@ module.exports = function (self) {
 			options: [],
 			callback: () => {
 				if (self.getVariableValue('wb_mode') !== WB_MODE_MANUAL) {
-					self.log('debug', 'Red Gain Up ignored — WB mode is not Manual')
+					self.log('debug', 'Red Gain Up ignored \u2014 WB mode is not Manual')
 					return
 				}
 				self.sendVISCACommand('\x01\x04\x03\x02\xFF')
@@ -840,7 +848,7 @@ module.exports = function (self) {
 			options: [],
 			callback: () => {
 				if (self.getVariableValue('wb_mode') !== WB_MODE_MANUAL) {
-					self.log('debug', 'Red Gain Down ignored — WB mode is not Manual')
+					self.log('debug', 'Red Gain Down ignored \u2014 WB mode is not Manual')
 					return
 				}
 				self.sendVISCACommand('\x01\x04\x03\x03\xFF')
@@ -851,7 +859,7 @@ module.exports = function (self) {
 			options: [],
 			callback: () => {
 				if (self.getVariableValue('wb_mode') !== WB_MODE_MANUAL) {
-					self.log('debug', 'Red Gain Reset ignored — WB mode is not Manual')
+					self.log('debug', 'Red Gain Reset ignored \u2014 WB mode is not Manual')
 					return
 				}
 				self.sendVISCACommand('\x01\x04\x03\x00\xFF')
@@ -862,7 +870,7 @@ module.exports = function (self) {
 			options: [],
 			callback: () => {
 				if (self.getVariableValue('wb_mode') !== WB_MODE_MANUAL) {
-					self.log('debug', 'Blue Gain Up ignored — WB mode is not Manual')
+					self.log('debug', 'Blue Gain Up ignored \u2014 WB mode is not Manual')
 					return
 				}
 				self.sendVISCACommand('\x01\x04\x04\x02\xFF')
@@ -873,7 +881,7 @@ module.exports = function (self) {
 			options: [],
 			callback: () => {
 				if (self.getVariableValue('wb_mode') !== WB_MODE_MANUAL) {
-					self.log('debug', 'Blue Gain Down ignored — WB mode is not Manual')
+					self.log('debug', 'Blue Gain Down ignored \u2014 WB mode is not Manual')
 					return
 				}
 				self.sendVISCACommand('\x01\x04\x04\x03\xFF')
@@ -884,7 +892,7 @@ module.exports = function (self) {
 			options: [],
 			callback: () => {
 				if (self.getVariableValue('wb_mode') !== WB_MODE_MANUAL) {
-					self.log('debug', 'Blue Gain Reset ignored — WB mode is not Manual')
+					self.log('debug', 'Blue Gain Reset ignored \u2014 WB mode is not Manual')
 					return
 				}
 				self.sendVISCACommand('\x01\x04\x04\x00\xFF')
@@ -901,7 +909,7 @@ module.exports = function (self) {
 					default: PRESET[0].id,
 				},
 			],
-			callback: (action) => {
+			callback: (action: any) => {
 				const cmd = '\x01\x04\x3F\x01' + String.fromCharCode(parseInt(action.options.val, 16) & 0xff) + '\xFF'
 				self.sendVISCACommand(cmd)
 			},
@@ -917,7 +925,7 @@ module.exports = function (self) {
 					default: PRESET[0].id,
 				},
 			],
-			callback: (action) => {
+			callback: (action: any) => {
 				const cmd = '\x01\x04\x3F\x02' + String.fromCharCode(parseInt(action.options.val, 16) & 0xff) + '\xFF'
 				self.sendVISCACommand(cmd)
 				self.pollAllPositions()
@@ -946,7 +954,7 @@ module.exports = function (self) {
 					width: 6,
 				},
 			],
-			callback: (action) => {
+			callback: (action: any) => {
 				const hexData = action.options.custom.replace(/\s+/g, '')
 				const tempBuffer = Buffer.from(hexData, 'hex')
 				const cmd = tempBuffer.toString('binary')
@@ -968,7 +976,7 @@ module.exports = function (self) {
 					],
 				},
 			],
-			callback: (action) => {
+			callback: (action: any) => {
 				let cmd = ''
 				if (action.options.val == 0) {
 					cmd = '\x01\x7E\x01\x0A\x00\x02\x03\xFF'
@@ -1000,7 +1008,7 @@ module.exports = function (self) {
 					default: SPEED[0].id,
 				},
 			],
-			callback: (action) => {
+			callback: (action: any) => {
 				const cmd =
 					'\x01\x7E\x01\x0B' +
 					String.fromCharCode(parseInt(action.options.val, 16) & 0xff) +
@@ -1032,7 +1040,7 @@ module.exports = function (self) {
 					],
 				},
 			],
-			callback: (action) => {
+			callback: (action: any) => {
 				let cmd = ''
 				switch (action.options.val) {
 					case 0:
@@ -1090,7 +1098,7 @@ module.exports = function (self) {
 			const now = Date.now()
 			const held = now - (self._browseDownTime || 0)
 
-			function updateDisplay() {
+			function updateDisplay(): void {
 				const entry = list[self._browseIndex || 0]
 				const val = self.getVariableValue(entry.variableId)
 				self.setVariableValues({
@@ -1101,7 +1109,7 @@ module.exports = function (self) {
 			}
 
 			if (held > 600) {
-				// Long press — reset to first (immediate, cancel any pending single)
+				// Long press -- reset to first (immediate, cancel any pending single)
 				clearTimeout(self._browseSingleTimer)
 				self._browseSingleTimer = null
 				self._browseIndex = 0
@@ -1110,7 +1118,7 @@ module.exports = function (self) {
 			}
 
 			if (self._browseSingleTimer) {
-				// Second release arrived before the single-press timer fired — double press
+				// Second release arrived before the single-press timer fired -- double press
 				clearTimeout(self._browseSingleTimer)
 				self._browseSingleTimer = null
 				// Undo the speculative single advance
